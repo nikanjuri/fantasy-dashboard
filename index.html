@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPL Fantasy League 2025 Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="container flex items-center justify-between">
+                <div class="logo-section">
+                    <h1 class="dashboard-title">IPL Fantasy League 2025</h1>
+                    <p class="dashboard-subtitle">Cricket Analytics Dashboard</p>
+                </div>
+                <div class="header-controls flex items-center gap-16">
+                    <button class="btn btn--secondary btn--sm" id="exportBtn">Export Data</button>
+                    <button class="btn btn--outline btn--sm" id="themeToggle">Toggle Theme</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="dashboard-nav">
+            <div class="container">
+                <div class="tab-list flex">
+                    <button class="tab-button active" data-tab="team-overview">Team Overview</button>
+                    <button class="tab-button" data-tab="player-analytics">Player Analytics</button>
+                    <button class="tab-button" data-tab="match-analysis">Match Analysis</button>
+                    <button class="tab-button" data-tab="statistics">Statistics</button>
+                    <button class="tab-button" data-tab="leaderboards">Leaderboards</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="container">
+                <!-- Team Overview Tab -->
+                <div class="tab-content active" id="team-overview">
+                    <div class="section-header">
+                        <h2>Team Overview</h2>
+                        <p>Current standings and performance analysis</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Teams</h3>
+                            <div class="stat-value">4</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Matches Played</h3>
+                            <div class="stat-value">74</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Leading Team</h3>
+                            <div class="stat-value">Royals</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Point Difference</h3>
+                            <div class="stat-value">1,633.5</div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Team Standings</h3>
+                                <canvas id="teamStandingsChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Point Distribution</h3>
+                                <canvas id="pointDistributionChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="team-cards-grid">
+                        <div class="team-card" data-team="Royals">
+                            <h4>Royals</h4>
+                            <div class="team-points">11,128.5 pts</div>
+                            <div class="team-rank">#1</div>
+                        </div>
+                        <div class="team-card" data-team="Sher">
+                            <h4>Sher</h4>
+                            <div class="team-points">10,862.5 pts</div>
+                            <div class="team-rank">#2</div>
+                        </div>
+                        <div class="team-card" data-team="Silly">
+                            <h4>Silly</h4>
+                            <div class="team-points">9,642.0 pts</div>
+                            <div class="team-rank">#3</div>
+                        </div>
+                        <div class="team-card" data-team="Kingsmen">
+                            <h4>Kingsmen</h4>
+                            <div class="team-points">9,495.0 pts</div>
+                            <div class="team-rank">#4</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Analytics Tab -->
+                <div class="tab-content" id="player-analytics">
+                    <div class="section-header">
+                        <h2>Player Analytics</h2>
+                        <p>Comprehensive player statistics and comparisons</p>
+                    </div>
+
+                    <div class="controls-section">
+                        <div class="search-controls flex gap-16">
+                            <input type="text" class="form-control" id="playerSearch" placeholder="Search players...">
+                            <select class="form-control" id="teamFilter">
+                                <option value="">All Teams</option>
+                                <option value="Royals">Royals</option>
+                                <option value="Sher">Sher</option>
+                                <option value="Silly">Silly</option>
+                                <option value="Kingsmen">Kingsmen</option>
+                            </select>
+                            <select class="form-control" id="positionFilter">
+                                <option value="">All Positions</option>
+                                <option value="Batsman">Batsman</option>
+                                <option value="Bowler">Bowler</option>
+                                <option value="All-rounder">All-rounder</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Strike Rate vs Points</h3>
+                                <canvas id="strikeRateChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Top Performers</h3>
+                                <div id="topPerformersContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Player Statistics Table</h3>
+                            <div class="table-container">
+                                <table class="data-table" id="playersTable">
+                                    <thead>
+                                        <tr>
+                                            <th data-sort="player">Player</th>
+                                            <th data-sort="team">Team</th>
+                                            <th data-sort="totalPoints">Total Points</th>
+                                            <th data-sort="runs">Runs</th>
+                                            <th data-sort="wickets">Wickets</th>
+                                            <th data-sort="catches">Catches</th>
+                                            <th data-sort="strikeRate">Strike Rate</th>
+                                            <th data-sort="economyRate">Economy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="playersTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-section">
+                        <h3>Player Comparison</h3>
+                        <div class="comparison-controls">
+                            <select class="form-control" id="comparePlayer1">
+                                <option value="">Select Player 1</option>
+                            </select>
+                            <select class="form-control" id="comparePlayer2">
+                                <option value="">Select Player 2</option>
+                            </select>
+                            <button class="btn btn--primary" id="compareBtn">Compare</button>
+                        </div>
+                        <div id="comparisonResults" class="comparison-results"></div>
+                    </div>
+                </div>
+
+                <!-- Match Analysis Tab -->
+                <div class="tab-content" id="match-analysis">
+                    <div class="section-header">
+                        <h2>Match Analysis</h2>
+                        <p>Detailed match breakdowns and performance insights</p>
+                    </div>
+
+                    <div class="controls-section">
+                        <select class="form-control" id="matchSelector">
+                            <option value="">Select a match</option>
+                        </select>
+                    </div>
+
+                    <div class="match-details-container">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Match Scorecard</h3>
+                                <div id="matchScorecard"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Points Breakdown</h3>
+                                <canvas id="matchPointsChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Match Timeline</h3>
+                            <div id="matchTimeline" class="match-timeline"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Dashboard Tab -->
+                <div class="tab-content" id="statistics">
+                    <div class="section-header">
+                        <h2>Statistics Dashboard</h2>
+                        <p>Key performance indicators and trends</p>
+                    </div>
+
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <h4>Total Runs</h4>
+                            <div class="kpi-value" id="totalRuns">329</div>
+                        </div>
+                        <div class="kpi-card">
+                            <h4>Total Wickets</h4>
+                            <div class="kpi-value" id="totalWickets">4</div>
+                        </div>
+                        <div class="kpi-card">
+                            <h4>Total Catches</h4>
+                            <div class="kpi-value" id="totalCatches">1</div>
+                        </div>
+                        <div class="kpi-card">
+                            <h4>Highest Score</h4>
+                            <div class="kpi-value" id="highestScore">428</div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Performance Categories</h3>
+                                <canvas id="categoryChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Team Comparison Radar</h3>
+                                <canvas id="radarChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboards Tab -->
+                <div class="tab-content" id="leaderboards">
+                    <div class="section-header">
+                        <h2>Leaderboards</h2>
+                        <p>Top performers across all categories</p>
+                    </div>
+
+                    <div class="leaderboard-controls">
+                        <select class="form-control" id="leaderboardCategory">
+                            <option value="points">Overall Points</option>
+                            <option value="runs">Most Runs</option>
+                            <option value="wickets">Most Wickets</option>
+                            <option value="strikeRate">Best Strike Rate</option>
+                            <option value="economy">Best Economy</option>
+                        </select>
+                    </div>
+
+                    <div class="leaderboards-grid">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Overall Leaders</h3>
+                                <div id="overallLeaderboard" class="leaderboard-list"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Batting Leaders</h3>
+                                <div id="battingLeaderboard" class="leaderboard-list"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Bowling Leaders</h3>
+                                <div id="bowlingLeaderboard" class="leaderboard-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
