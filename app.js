@@ -234,13 +234,13 @@ class DashboardApp {
                     fantasyTeam: teamName,
                     performance: fantasyPlayer || {
                         totalPoints: 0,
-                    runs: 0,
-                    wickets: 0,
-                    catches: 0,
+                        runs: 0,
+                        wickets: 0,
+                        catches: 0,
                         matchesPlayed: 0
                     },
-                    valueForMoney: this.calculateValueForMoney(fantasyPlayer?.totalPoints || 0, player.Sold || 0),
-                    priceCategory: this.categorizePriceRange(player.Sold || 0),
+                    valueForMoney: this.calculateValueForMoney(fantasyPlayer?.totalPoints || 0, player.Price || 0),
+                    priceCategory: this.categorizePriceRange(player.Price || 0),
                     experienceLevel: this.categorizeExperience(player)
                 };
             });
@@ -256,8 +256,8 @@ class DashboardApp {
             const composition = {
                 teamName,
                 totalPlayers: players.length,
-                totalInvestment: players.reduce((sum, p) => sum + (p.Sold || 0), 0),
-                avgPrice: players.reduce((sum, p) => sum + (p.Sold || 0), 0) / players.length,
+                totalInvestment: players.reduce((sum, p) => sum + (p.Price || 0), 0),
+                avgPrice: players.reduce((sum, p) => sum + (p.Price || 0), 0) / players.length,
                 playerTypes: {
                     BAT: players.filter(p => p.Type === 'BAT').length,
                     BOWL: players.filter(p => p.Type === 'BOWL').length,
@@ -288,7 +288,7 @@ class DashboardApp {
                 if (profile) {
                     allPlayers.push({
                         ...profile,
-                        pointsPerCrore: profile.performance.totalPoints / (profile.Sold || 0.1)
+                        pointsPerCrore: profile.performance.totalPoints / (profile.Price || 0.1)
                     });
                 }
             });
@@ -300,13 +300,13 @@ class DashboardApp {
         this.data.auctionData = {
             allPlayers,
             bestBargains: allPlayers.slice(0, 5),
-            expensivePicks: allPlayers.filter(p => p.Sold > 10 && p.pointsPerCrore < 50),
+            expensivePicks: allPlayers.filter(p => (p.Price || 0) > 10 && p.pointsPerCrore < 50),
             fairValue: allPlayers.filter(p => p.pointsPerCrore >= 50 && p.pointsPerCrore <= 150)
         };
     }
 
     calculateValueForMoney(points, price) {
-        if (price === 0) return points > 0 ? 1000 : 0;
+        if (price === 0 || price === null || price === undefined) return points > 0 ? 1000 : 0;
         const ratio = points / price;
         if (ratio > 150) return 'Excellent';
         if (ratio > 100) return 'Good';
@@ -378,9 +378,11 @@ class DashboardApp {
     }
 
     updateSmartInsights() {
+        if (!this.data.auctionData || !this.data.auctionData.bestBargains) return;
+        
         const bestValue = this.data.auctionData.bestBargains[0];
         const hiddenGem = this.data.auctionData.allPlayers
-            .filter(p => p.Sold < 2 && p.performance.totalPoints > 100)[0];
+            .filter(p => (p.Price || 0) < 2 && p.performance.totalPoints > 100)[0];
         const formPlayer = this.data.players
             .sort((a, b) => (b.totalPoints / b.matchesPlayed) - (a.totalPoints / a.matchesPlayed))[0];
         const balancedTeam = Object.entries(this.data.teamCompositions)
@@ -389,14 +391,14 @@ class DashboardApp {
         if (bestValue) {
             document.getElementById('bestValuePlayer').innerHTML = `
                 <strong>${bestValue.Player}</strong><br>
-                <small>₹${bestValue.Sold}Cr • ${bestValue.performance.totalPoints} pts</small>
+                <small>₹${bestValue.Price}Cr • ${bestValue.performance.totalPoints} pts</small>
             `;
         }
 
         if (hiddenGem) {
             document.getElementById('hiddenGem').innerHTML = `
                 <strong>${hiddenGem.Player}</strong><br>
-                <small>₹${hiddenGem.Sold}Cr • ${hiddenGem.performance.totalPoints} pts</small>
+                <small>₹${hiddenGem.Price}Cr • ${hiddenGem.performance.totalPoints} pts</small>
             `;
         }
 
@@ -476,7 +478,7 @@ class DashboardApp {
                     <div class="bargain-item">
                         <strong>${player.Player}</strong>
                         <div class="bargain-details">
-                            ₹${player.Sold}Cr • ${player.performance.totalPoints} pts
+                            ₹${player.Price}Cr • ${player.performance.totalPoints} pts
                             <span class="value-ratio">${player.pointsPerCrore.toFixed(1)} pts/₹Cr</span>
                         </div>
                     </div>
@@ -492,7 +494,7 @@ class DashboardApp {
                     <div class="expensive-item">
                         <strong>${player.Player}</strong>
                         <div class="expensive-details">
-                            ₹${player.Sold}Cr • ${player.performance.totalPoints} pts
+                            ₹${player.Price}Cr • ${player.performance.totalPoints} pts
                             <span class="value-ratio">${player.pointsPerCrore.toFixed(1)} pts/₹Cr</span>
                         </div>
                     </div>
@@ -513,7 +515,7 @@ class DashboardApp {
                 <tr>
                     <td><strong>${player.Player}</strong></td>
                     <td>${player.fantasyTeam}</td>
-                    <td>₹${player.Sold.toFixed(1)}</td>
+                    <td>₹${player.Price.toFixed(1)}</td>
                     <td>${player.performance.totalPoints}</td>
                     <td>${player.pointsPerCrore.toFixed(1)}</td>
                     <td><span class="value-badge ${player.valueForMoney.toLowerCase()}">${player.valueForMoney}</span></td>
@@ -783,7 +785,7 @@ class DashboardApp {
                 datasets: [{
                     label: 'Price vs Points',
                     data: players.map(player => ({
-                        x: player.Sold,
+                        x: player.Price,
                         y: player.performance.totalPoints,
                         label: player.Player
                     })),
@@ -1068,7 +1070,7 @@ class DashboardApp {
         };
 
         const totalCost = [...xi.WK, ...xi.BAT, ...xi.AR, ...xi.BOWL]
-            .reduce((sum, p) => sum + p.Sold, 0);
+            .reduce((sum, p) => sum + p.Price, 0);
 
         container.innerHTML = `
             <div class="xi-summary">
@@ -1082,7 +1084,7 @@ class DashboardApp {
                         ${players.map(player => `
                             <div class="xi-player">
                                 <strong>${player.Player}</strong>
-                                <small>₹${player.Sold}Cr • ${player.performance.totalPoints}pts</small>
+                                <small>₹${player.Price}Cr • ${player.performance.totalPoints}pts</small>
                 </div>
                         `).join('')}
                 </div>
