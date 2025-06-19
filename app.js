@@ -400,8 +400,24 @@ class DashboardApp {
     }
 
     updateEnhancedTeamCards() {
+        console.log('🎯 Starting updateEnhancedTeamCards...');
+        
         const container = document.getElementById('teamCardsContainer');
-        if (!container) return;
+        if (!container) {
+            console.error('❌ teamCardsContainer not found!');
+            return;
+        }
+        console.log('✅ Container found:', container);
+
+        // Debug: Check if data exists
+        console.log('📊 Team standings data:', this.data.teamStandings);
+        console.log('📊 Team compositions data:', Object.keys(this.data.teamCompositions || {}));
+
+        if (!this.data.teamStandings || Object.keys(this.data.teamStandings).length === 0) {
+            console.error('❌ No team standings data available!');
+            container.innerHTML = '<p style="color: red;">No team data available. Check console for errors.</p>';
+            return;
+        }
 
         // Create a mapping for consistent team display
         const teamDisplayMap = {
@@ -414,9 +430,13 @@ class DashboardApp {
         const sortedTeams = Object.entries(this.data.teamStandings)
             .sort(([,a], [,b]) => b - a)
             .map(([team, points], index) => {
+                console.log(`🏏 Processing team: ${team}, Points: ${points}`);
+                
                 // Find composition data using team name mapping
                 const compositionKey = this.findCompositionKey(team);
                 const composition = this.data.teamCompositions[compositionKey];
+                
+                console.log(`📝 Composition for ${team}:`, composition);
                 
                 return {
                     team: teamDisplayMap[team] || team,
@@ -426,13 +446,15 @@ class DashboardApp {
                 };
             });
 
-        container.innerHTML = sortedTeams.map(({team, points, rank, composition}) => `
-            <div class="enhanced-team-card" data-team="${team}">
+        console.log('🎯 Sorted teams for display:', sortedTeams);
+
+        const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => `
+            <div class="enhanced-team-card" data-team="${team}" style="border: 2px solid #ccc; margin: 10px; padding: 15px; background: white;">
                 <div class="team-header">
                     <h4>${team}</h4>
                     <div class="team-rank">#${rank}</div>
                 </div>
-                <div class="team-points">${points.toLocaleString()} pts</div>
+                <div class="team-points" style="font-size: 24px; font-weight: bold; color: #007bff;">${points.toLocaleString()} pts</div>
                 <div class="team-details">
                     <div class="detail-item">
                         <span class="label">Investment:</span>
@@ -464,9 +486,19 @@ class DashboardApp {
             </div>
         `).join('');
 
+        console.log('🎨 Generated HTML length:', cardsHTML.length);
+        console.log('🎨 Generated HTML preview:', cardsHTML.substring(0, 200) + '...');
+
+        container.innerHTML = cardsHTML;
+        
+        console.log('✅ Team cards updated! Container innerHTML length:', container.innerHTML.length);
+
+        // Add click listeners
         container.querySelectorAll('.enhanced-team-card').forEach(card => {
             card.addEventListener('click', (e) => this.filterByTeam(e.currentTarget.dataset.team));
         });
+        
+        console.log('✅ Click listeners added to', container.querySelectorAll('.enhanced-team-card').length, 'cards');
     }
 
     findCompositionKey(fantasyTeamName) {
@@ -702,7 +734,82 @@ class DashboardApp {
         const ctx = document.getElementById('pricePointsChart');
         if (!ctx) return;
 
-       
+        // Get player data for scatter plot
+        const playerData = Object.values(this.data.playerProfiles)
+            .filter(p => p.Price > 0 && p.performance.totalPoints > 0)
+            .map(p => ({
+                x: p.Price,
+                y: p.performance.totalPoints,
+                player: p.Player,
+                team: p.fantasyTeam
+            }));
+
+        if (this.charts.pricePoints) {
+            this.charts.pricePoints.destroy();
+        }
+
+        this.charts.pricePoints = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Price vs Points',
+                    data: playerData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '💰 Price vs Performance Analysis'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const point = context.raw;
+                                return [
+                                    `${point.player}`,
+                                    `Price: ₹${point.x}Cr`,
+                                    `Points: ${point.y}`,
+                                    `Team: ${point.team}`
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Price (₹Cr)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Fantasy Points'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createInvestmentChart() {
+        // Implementation of createInvestmentChart method
+    }
+
+    createPlayerTypeChart() {
+        // Implementation of createPlayerTypeChart method
+    }
+
+    createExperienceChart() {
+        // Implementation of createExperienceChart method
+    }
 
     generateBestXI() {
         const criteria = document.getElementById('xiCriteria').value;
