@@ -1,0 +1,48 @@
+{
+  "Batting Points": {
+    "Run": 1,
+    "Boundary Bonus": 4,
+    "Six Bonus": 6,
+    "25 Run Bonus": 4,
+    "50 Run Bonus": 8,
+    "75 Run Bonus": 12,
+    "100 Run Bonus": 16,
+    "Duck": -2
+  },
+  "Bowling Points": {
+    "Dot Ball": 1,
+    "Wicket": 25,
+    "LBW/Bowled Bonus": 8,
+    "3 Wicket Bonus": 4,
+    "4 Wicket Bonus": 8,
+    "5 Wicket Bonus": 16,
+    "Maiden Over": 12
+  },
+  "Fielding Points": {
+    "Catch": 8,
+    "3 Catch Bonus": 4,
+    "Stumping": 12,
+    "Run Out (Direct)": 12,
+    "Run Out (Not Direct)": 6
+  },
+  "Other Points": {
+    "Captain": "2x",
+    "Vice Captain": "1.5x"
+  },
+  "Economy Rate Points (Min 2 Overs To Be Bowled)": {
+    "Less than 5": 6,
+    "Between 5 - 5.99": 4,
+    "Between 6 - 7": 2,
+    "Between 10 - 11": -2,
+    "Between 11 - 12": -4,
+    "More than 12": -6
+  },
+  "Strike Rate Points (Min 10 Balls To Be Played)": {
+    "Above 170": 6,
+    "Between 150 - 170": 4,
+    "Between 130 - 150": 2,
+    "Between 60 - 70": -2,
+    "Between 50 - 60": -4,
+    "Below 50": -6
+  }
+}
