@@ -1969,3 +1969,148 @@ select.form-control {
 #experienceChart {
     max-height: 400px;
 }
+
+/* Match Analysis Styles */
+.match-info h3 {
+    text-align: center;
+    margin-bottom: var(--space-24);
+    color: var(--color-primary);
+}
+
+.team-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-16);
+    margin-bottom: var(--space-24);
+}
+
+.match-team-card {
+    padding: var(--space-16);
+    border-radius: var(--radius-base);
+    text-align: center;
+    position: relative;
+}
+
+.match-team-card .team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-8);
+}
+
+.match-team-card h4 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+}
+
+.winner-badge {
+    background: var(--color-success);
+    color: white;
+    padding: var(--space-4) var(--space-8);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.team-match-points {
+    font-size: 2rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.match-details-section {
+    margin-top: var(--space-24);
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-16);
+}
+
+.details-header h4 {
+    margin: 0;
+    color: var(--color-text);
+}
+
+.team-section {
+    margin-bottom: var(--space-24);
+    border-radius: var(--radius-base);
+    overflow: hidden;
+    background: var(--color-surface);
+}
+
+.team-section-header {
+    padding: var(--space-12) var(--space-16);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.team-section-header h5 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+}
+
+.team-section-total {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    font-size: var(--font-size-lg);
+}
+
+.team-players-table {
+    overflow-x: auto;
+}
+
+.players-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.players-table th,
+.players-table td {
+    padding: var(--space-8) var(--space-12);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.players-table th {
+    background: var(--color-background);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.players-table td {
+    color: var(--color-text);
+}
+
+.players-table tbody tr:hover {
+    background: var(--color-primary-light);
+}
+
+/* Responsive adjustments for match analysis */
+@media (max-width: 768px) {
+    .team-cards-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .details-header {
+        flex-direction: column;
+        gap: var(--space-8);
+        align-items: flex-start;
+    }
+    
+    .team-players-table {
+        font-size: var(--font-size-sm);
+    }
+    
+    .players-table th,
+    .players-table td {
+        padding: var(--space-6) var(--space-8);
+    }
+}

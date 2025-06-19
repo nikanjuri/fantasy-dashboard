@@ -39,13 +39,13 @@ class DashboardApp {
             
             // Initialize UI components
             console.log('🎛️ Setting up UI...');
-            this.initializeTabs();
+        this.initializeTabs();
             this.setupEventListeners();
             
             // Skip charts for now to avoid errors
             console.log('📊 Setting up charts...');
             try {
-                this.setupCharts();
+        this.setupCharts();
             } catch (chartError) {
                 console.warn('Charts failed to load:', chartError);
             }
@@ -136,7 +136,8 @@ class DashboardApp {
             const matchInfo = {
                 matchName: matchName,
                 teams: Object.keys(matchData).filter(key => key !== 'Team Total'),
-                teamTotals: {}
+                teamTotals: {},
+                players: [] // Add this to store individual player data for the match
             };
 
             Object.entries(matchData).forEach(([teamName, teamData]) => {
@@ -154,14 +155,30 @@ class DashboardApp {
                     teamData.Players.forEach(player => {
                         const playerName = player.Player;
                         
+                        // Add player data to match info
+                        const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
+                        const safeValue = (val) => (val !== null && val !== undefined && !isNaN(val)) ? val : '-';
+                        
+                        matchInfo.players.push({
+                            name: playerName,
+                            team: teamName,
+                            runs: safeNumber(player.Score),
+                            balls: safeNumber(player.Balls),
+                            strikeRate: player.Balls > 0 ? Math.round((safeNumber(player.Score) / safeNumber(player.Balls)) * 100 * 100) / 100 : safeValue(player.SR),
+                            wickets: safeNumber(player.Wickets),
+                            economy: safeValue(player.ER),
+                            catches: Math.floor(safeNumber(player.Catch) / 8) + safeNumber(player.Runout), // Catches + Runouts
+                            fantasyPoints: safeNumber(player.Total)
+                        });
+                        
                         if (!playerStats[playerName]) {
                             playerStats[playerName] = {
                                 player: playerName,
                                 team: teamName,
                                 totalPoints: 0,
                                 runs: 0,
-                    wickets: 0,
-                    catches: 0,
+                                wickets: 0,
+                                catches: 0,
                                 balls: 0,
                                 dotBalls: 0,
                                 fours: 0,
@@ -176,7 +193,6 @@ class DashboardApp {
                         }
 
                         const stats = playerStats[playerName];
-                        const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
                         
                         stats.totalPoints += safeNumber(player.Total);
                         stats.runs += safeNumber(player.Score);
@@ -601,40 +617,40 @@ class DashboardApp {
                         <div class="comp-stat">
                             <span class="comp-label">Total Investment</span>
                             <span class="comp-value">₹${comp.totalInvestment.toFixed(1)}Cr</span>
-                        </div>
+                </div>
                         <div class="comp-stat">
                             <span class="comp-label">Avg Price</span>
                             <span class="comp-value">₹${comp.avgPrice.toFixed(1)}Cr</span>
-                        </div>
-                    </div>
+                </div>
+                </div>
                     <div class="player-breakdown">
                         <div class="breakdown-item">
                             <span class="type-icon">🏏</span>
                             <span class="type-label">Batsmen</span>
                             <span class="type-count">${comp.playerTypes.BAT}</span>
-                        </div>
+                </div>
                         <div class="breakdown-item">
                             <span class="type-icon">⚡</span>
                             <span class="type-label">Bowlers</span>
                             <span class="type-count">${comp.playerTypes.BOWL}</span>
-                        </div>
+                </div>
                         <div class="breakdown-item">
                             <span class="type-icon">🌟</span>
                             <span class="type-label">All-rounders</span>
                             <span class="type-count">${comp.playerTypes.AR}</span>
-                        </div>
+            </div>
                         <div class="breakdown-item">
                             <span class="type-icon">🧤</span>
                             <span class="type-label">Wicket-keepers</span>
                             <span class="type-count">${comp.playerTypes.WK || 0}</span>
-                        </div>
-                    </div>
+                </div>
+                </div>
                     <div class="experience-breakdown">
                         <div class="exp-item">
                             <span class="exp-label">Overseas</span>
                             <span class="exp-count">${comp.overseas}</span>
-                        </div>
-                    </div>
+                </div>
+                </div>
                 </div>
             `).join('');
     }
@@ -677,7 +693,7 @@ class DashboardApp {
                             <div class="rule-item">
                                 <span class="rule-action">${action}</span>
                                 <span class="rule-points">${points > 0 ? '+' : ''}${points}</span>
-                            </div>
+            </div>
                         `).join('')}
                     </div>
                 </div>
@@ -826,8 +842,8 @@ class DashboardApp {
                         `).join('')}
                 </div>
                 `).join('')}
-            </div>
-        `;
+                </div>
+            `;
     }
 
     switchTab(tabId) {
@@ -1048,9 +1064,9 @@ class DashboardApp {
         const topScorersContainer = document.getElementById('topScorers');
         if (topScorersContainer) {
             const topScorers = this.data.players
-                .sort((a, b) => b.totalPoints - a.totalPoints)
-                .slice(0, 5);
-            
+            .sort((a, b) => b.totalPoints - a.totalPoints)
+            .slice(0, 5);
+
             topScorersContainer.innerHTML = topScorers.map((player, index) => `
                 <div class="leaderboard-item">
                     <span class="leaderboard-rank">#${index + 1}</span>
@@ -1121,23 +1137,236 @@ class DashboardApp {
         
         if (!scorecardContainer) return;
         
-        // Create scorecard HTML
-        const scorecardHTML = `
-            <div class="match-info">
-                <h4>${match.matchName}</h4>
-                <div class="teams-scores">
-                    ${Object.entries(match.teamTotals).map(([teamName, total]) => `
-                        <div class="team-score">
-                            <span class="team-name">${teamName}</span>
-                            <span class="team-total">${total.toFixed(1)} pts</span>
+        // Team colors for consistency
+        const teamColors = {
+            'Royal Smashers': 'rgba(255, 99, 132, 0.1)',
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.1)',
+            'Silly Pointers': 'rgba(54, 162, 235, 0.1)',
+            'The Kingsmen': 'rgba(75, 192, 192, 0.1)'
+        };
+
+        const teamBorderColors = {
+            'Royal Smashers': 'rgba(255, 99, 132, 0.8)',
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)',
+            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
+            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
+        };
+        
+        // Find the winning team
+        const winningTeam = Object.entries(match.teamTotals)
+            .sort(([,a], [,b]) => b - a)[0][0];
+        
+        // Create team performance cards
+        const teamCardsHTML = Object.entries(match.teamTotals)
+            .sort(([,a], [,b]) => b - a)
+            .map(([teamName, total]) => {
+                const bgColor = teamColors[teamName] || 'rgba(128, 128, 128, 0.1)';
+                const borderColor = teamBorderColors[teamName] || 'rgba(128, 128, 128, 0.8)';
+                const isWinner = teamName === winningTeam;
+                
+                return `
+                    <div class="match-team-card" style="background: ${bgColor}; border: 2px solid ${borderColor};">
+                        <div class="team-header">
+                            <h4>${teamName}</h4>
+                            ${isWinner ? '<span class="winner-badge">🏆 Winner</span>' : ''}
                         </div>
-                    `).join('')}
+                        <div class="team-match-points">${total.toFixed(1)} pts</div>
+                    </div>
+                `;
+            }).join('');
+        
+        // Group players by team and sort within teams
+        const playersByTeam = {};
+        match.players.forEach(player => {
+            if (!playersByTeam[player.team]) {
+                playersByTeam[player.team] = [];
+            }
+            playersByTeam[player.team].push(player);
+        });
+        
+        // Sort players within each team by fantasy points
+        Object.keys(playersByTeam).forEach(team => {
+            playersByTeam[team].sort((a, b) => b.fantasyPoints - a.fantasyPoints);
+        });
+        
+        // Create detailed player table
+        const playerTableHTML = `
+            <div class="match-details-section">
+                <div class="details-header">
+                    <h4>Player Performance Details</h4>
+                    <button class="btn btn--outline btn--sm" id="toggleMatchDetails">Collapse Details</button>
+                </div>
+                <div class="match-player-table" id="matchPlayerTable">
+                    ${Object.entries(playersByTeam).map(([teamName, players]) => {
+                        const bgColor = teamColors[teamName] || 'rgba(128, 128, 128, 0.1)';
+                        const borderColor = teamBorderColors[teamName] || 'rgba(128, 128, 128, 0.8)';
+                        
+                        return `
+                            <div class="team-section" style="border-left: 4px solid ${borderColor};">
+                                <div class="team-section-header" style="background: ${bgColor};">
+                                    <h5>${teamName}</h5>
+                                    <span class="team-section-total">${match.teamTotals[teamName].toFixed(1)} pts</span>
+                                </div>
+                                <div class="team-players-table">
+                                    <table class="players-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Player</th>
+                                                <th>Runs</th>
+                                                <th>Balls</th>
+                                                <th>SR</th>
+                                                <th>Wickets</th>
+                                                <th>Economy</th>
+                                                <th>C/RO</th>
+                                                <th>Points</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${players.map(player => `
+                                                <tr>
+                                                    <td><strong>${player.name}</strong></td>
+                                                    <td>${player.runs}</td>
+                                                    <td>${player.balls}</td>
+                                                    <td>${player.strikeRate}</td>
+                                                    <td>${player.wickets}</td>
+                                                    <td>${player.economy}</td>
+                                                    <td>${player.catches}</td>
+                                                    <td><strong>${player.fantasyPoints}</strong></td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             </div>
         `;
         
+        // Create scorecard HTML
+        const scorecardHTML = `
+            <div class="match-info">
+                <h3>${match.matchName}</h3>
+                <div class="team-cards-container">
+                    ${teamCardsHTML}
+                </div>
+                ${playerTableHTML}
+            </div>
+        `;
+        
         scorecardContainer.innerHTML = scorecardHTML;
+        
+        // Add toggle functionality for details
+        const toggleButton = document.getElementById('toggleMatchDetails');
+        const playerTable = document.getElementById('matchPlayerTable');
+        let isExpanded = true;
+        
+        if (toggleButton && playerTable) {
+            toggleButton.addEventListener('click', () => {
+                isExpanded = !isExpanded;
+                playerTable.style.display = isExpanded ? 'block' : 'none';
+                toggleButton.textContent = isExpanded ? 'Collapse Details' : 'Show Details';
+            });
+        }
+        
+        // Update the points breakdown chart
+        this.createMatchPointsChart(match);
+        
         console.log('✅ Match details updated for:', match.matchName);
+    }
+
+    createMatchPointsChart(match) {
+        const ctx = document.getElementById('matchPointsChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        // Team colors
+        const teamColors = {
+            'Royal Smashers': 'rgba(255, 99, 132, 0.8)',
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)',
+            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
+            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
+        };
+
+        // Prepare data for pie chart
+        const chartData = [];
+        const chartLabels = [];
+        const chartColors = [];
+        
+        // Group players by team and handle "Others"
+        const playersByTeam = {};
+        match.players.forEach(player => {
+            if (!playersByTeam[player.team]) {
+                playersByTeam[player.team] = [];
+            }
+            playersByTeam[player.team].push(player);
+        });
+        
+        Object.entries(playersByTeam).forEach(([teamName, players]) => {
+            const teamColor = teamColors[teamName] || 'rgba(128, 128, 128, 0.8)';
+            
+            // Individual players with >= 25 points
+            const significantPlayers = players.filter(p => p.fantasyPoints >= 25);
+            const otherPlayers = players.filter(p => p.fantasyPoints < 25);
+            
+            // Add significant players
+            significantPlayers.forEach(player => {
+                chartData.push(player.fantasyPoints);
+                chartLabels.push(player.name);
+                chartColors.push(teamColor);
+            });
+            
+            // Add "Others" group if there are any
+            if (otherPlayers.length > 0) {
+                const othersTotal = otherPlayers.reduce((sum, p) => sum + p.fantasyPoints, 0);
+                if (othersTotal > 0) {
+                    chartData.push(othersTotal);
+                    chartLabels.push(`Others - ${teamName}`);
+                    chartColors.push(teamColor.replace('0.8', '0.4')); // Lighter shade for others
+                }
+            }
+        });
+
+        // Destroy existing chart if it exists
+        if (this.charts.matchPoints) {
+            this.charts.matchPoints.destroy();
+        }
+
+        this.charts.matchPoints = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: chartColors,
+                    borderColor: chartColors.map(color => color.replace('0.8', '1')),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `Points Distribution - ${match.matchName}`
+                    },
+                    legend: {
+                        display: false // Hide legend as it would be too crowded
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label;
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} pts (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 }
 
