@@ -292,18 +292,18 @@
                         
                         <!-- Basic Filters -->
                         <div class="basic-filters">
-                            <div class="search-controls flex gap-16">
+                        <div class="search-controls flex gap-16">
                                 <div class="search-input-wrapper">
                                     <input type="text" class="form-control" id="playerSearch" placeholder="🔍 Search players...">
                                     <span class="search-results-count" id="searchResultsCount"></span>
                                 </div>
                                 
-                                <select class="form-control" id="teamFilter">
-                                    <option value="">All Teams</option>
-                                </select>
+                            <select class="form-control" id="teamFilter">
+                                <option value="">All Teams</option>
+                            </select>
                                 
-                                <select class="form-control" id="positionFilter">
-                                    <option value="">All Positions</option>
+                            <select class="form-control" id="positionFilter">
+                                <option value="">All Positions</option>
                                     <option value="Batsman">🏏 Batsman</option>
                                     <option value="Bowler">⚡ Bowler</option>
                                     <option value="All-rounder">🌟 All-rounder</option>
@@ -376,7 +376,7 @@
                                         <option value="cold">🧊 Cold Form</option>
                                         <option value="improving">📈 Improving</option>
                                         <option value="declining">📉 Declining</option>
-                                    </select>
+                            </select>
                                 </div>
                                 
                                 <!-- Match Type Filter -->
@@ -571,7 +571,8 @@
 
     <!-- Floating Theme Toggle -->
     <button class="floating-theme-toggle" id="themeToggle" title="Toggle Light/Dark Theme">
-        <span class="theme-icon">💡</span>
+        <span class="theme-icon light-icon">💡</span>
+        <span class="theme-icon dark-icon" style="display: none;">🌙</span>
     </button>
 
     <script src="app.js"></script>

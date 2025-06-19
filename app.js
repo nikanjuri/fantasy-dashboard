@@ -160,8 +160,8 @@ class DashboardApp {
                                 team: teamName,
                                 totalPoints: 0,
                                 runs: 0,
-                                wickets: 0,
-                                catches: 0,
+                    wickets: 0,
+                    catches: 0,
                                 balls: 0,
                                 dotBalls: 0,
                                 fours: 0,
@@ -234,9 +234,9 @@ class DashboardApp {
                     fantasyTeam: teamName,
                     performance: fantasyPlayer || {
                         totalPoints: 0,
-                        runs: 0,
-                        wickets: 0,
-                        catches: 0,
+                    runs: 0,
+                    wickets: 0,
+                    catches: 0,
                         matchesPlayed: 0
                     },
                     valueForMoney: this.calculateValueForMoney(fantasyPlayer?.totalPoints || 0, player.Sold || 0),
@@ -1074,7 +1074,7 @@ class DashboardApp {
             <div class="xi-summary">
                 <h4>Best XI (${criteria} optimized)</h4>
                 <p>Total Cost: ₹${totalCost.toFixed(1)}Cr</p>
-            </div>
+                </div>
             <div class="xi-formation">
                 ${Object.entries(xi).map(([type, players]) => `
                     <div class="xi-section">
@@ -1083,9 +1083,9 @@ class DashboardApp {
                             <div class="xi-player">
                                 <strong>${player.Player}</strong>
                                 <small>₹${player.Sold}Cr • ${player.performance.totalPoints}pts</small>
-                            </div>
+                </div>
                         `).join('')}
-                    </div>
+                </div>
                 `).join('')}
             </div>
         `;
@@ -1112,11 +1112,22 @@ class DashboardApp {
         const html = document.documentElement;
         const currentTheme = html.getAttribute('data-color-scheme') || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        const toggleButton = document.getElementById('themeToggle');
+        
+        // Add switching animation
+        if (toggleButton) {
+            toggleButton.classList.add('switching');
+            setTimeout(() => {
+                toggleButton.classList.remove('switching');
+            }, 300);
+        }
         
         html.setAttribute('data-color-scheme', newTheme);
         this.currentTheme = newTheme;
         
         localStorage.setItem('theme', newTheme);
+        
+        console.log(`🎨 Theme switched to: ${newTheme}`);
     }
 
     showLoading() {
