@@ -36,13 +36,12 @@
             <div class="container">
                 <div class="tab-list flex">
                     <button class="tab-button active" data-tab="team-overview">🏆 Overview</button>
+                    <button class="tab-button" data-tab="match-analysis">🎯 Matches</button>
+                    <button class="tab-button" data-tab="team-composition">🏏 Teams</button>
                     <button class="tab-button" data-tab="player-analytics">📊 Players</button>
                     <button class="tab-button" data-tab="auction-analysis">💰 Auction</button>
-                    <button class="tab-button" data-tab="team-composition">🏏 Teams</button>
-                    <button class="tab-button" data-tab="scoring-rules">📋 Rules</button>
-                    <button class="tab-button" data-tab="match-analysis">🎯 Matches</button>
                     <button class="tab-button" data-tab="statistics">📈 Stats</button>
-                    <button class="tab-button" data-tab="leaderboards">🥇 Leaders</button>
+                    <button class="tab-button" data-tab="scoring-rules">📋 Scoring System</button>
                 </div>
             </div>
         </nav>
@@ -465,45 +464,6 @@
                             <div class="card__body">
                                 <h3>Team Comparison Radar</h3>
                                 <canvas id="radarChart" width="400" height="300"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Leaderboards Tab -->
-                <div class="tab-content" id="leaderboards">
-                    <div class="section-header">
-                        <h2>Leaderboards</h2>
-                        <p>Top performers across all categories</p>
-                    </div>
-
-                    <div class="leaderboard-controls">
-                        <select class="form-control" id="leaderboardCategory">
-                            <option value="points">Overall Points</option>
-                            <option value="runs">Most Runs</option>
-                            <option value="wickets">Most Wickets</option>
-                            <option value="strikeRate">Best Strike Rate</option>
-                            <option value="economy">Best Economy</option>
-                        </select>
-                    </div>
-
-                    <div class="leaderboards-grid">
-                        <div class="card">
-                            <div class="card__body">
-                                <h3>Overall Leaders</h3>
-                                <div id="overallLeaderboard" class="leaderboard-list"></div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card__body">
-                                <h3>Batting Leaders</h3>
-                                <div id="battingLeaderboard" class="leaderboard-list"></div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card__body">
-                                <h3>Bowling Leaders</h3>
-                                <div id="bowlingLeaderboard" class="leaderboard-list"></div>
                             </div>
                         </div>
                     </div>
