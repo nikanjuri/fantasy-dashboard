@@ -2056,3 +2056,45 @@ select.form-control {
         gap: var(--space-12);
     }
 }
+
+/* Theme toggle button styling */
+.theme-toggle {
+    padding: 8px 12px !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.theme-icon {
+    font-size: 18px;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+/* Light theme - bulb is on (yellow) */
+[data-theme="light"] .theme-icon {
+    filter: hue-rotate(0deg) brightness(1.2);
+}
+
+/* Dark theme - bulb is dimmed (gray) */
+[data-theme="dark"] .theme-icon {
+    filter: grayscale(0.8) brightness(0.7);
+}
+
+.theme-toggle:hover .theme-icon {
+    transform: rotate(15deg) scale(1.1);
+}
+
+/* Add a subtle glow effect on hover */
+.theme-toggle:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 0, 0.1), rgba(255, 165, 0, 0.1));
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1));
+}
