@@ -49,19 +49,19 @@
                     <div class="stats-grid">
                         <div class="stat-card">
                             <h3>Total Teams</h3>
-                            <div class="stat-value">4</div>
+                            <div class="stat-value" id="totalTeams">4</div>
                         </div>
                         <div class="stat-card">
                             <h3>Matches Played</h3>
-                            <div class="stat-value">74</div>
+                            <div class="stat-value" id="matchesPlayed">0</div>
                         </div>
                         <div class="stat-card">
                             <h3>Leading Team</h3>
-                            <div class="stat-value">Royals</div>
+                            <div class="stat-value" id="leadingTeam">Loading...</div>
                         </div>
                         <div class="stat-card">
                             <h3>Point Difference</h3>
-                            <div class="stat-value">1,633.5</div>
+                            <div class="stat-value" id="pointDifference">0</div>
                         </div>
                     </div>
 
@@ -80,27 +80,8 @@
                         </div>
                     </div>
 
-                    <div class="team-cards-grid">
-                        <div class="team-card" data-team="Royals">
-                            <h4>Royals</h4>
-                            <div class="team-points">11,128.5 pts</div>
-                            <div class="team-rank">#1</div>
-                        </div>
-                        <div class="team-card" data-team="Sher">
-                            <h4>Sher</h4>
-                            <div class="team-points">10,862.5 pts</div>
-                            <div class="team-rank">#2</div>
-                        </div>
-                        <div class="team-card" data-team="Silly">
-                            <h4>Silly</h4>
-                            <div class="team-points">9,642.0 pts</div>
-                            <div class="team-rank">#3</div>
-                        </div>
-                        <div class="team-card" data-team="Kingsmen">
-                            <h4>Kingsmen</h4>
-                            <div class="team-points">9,495.0 pts</div>
-                            <div class="team-rank">#4</div>
-                        </div>
+                    <div class="team-cards-grid" id="teamCardsContainer">
+                        <!-- Team cards will be dynamically populated -->
                     </div>
                 </div>
 
@@ -116,10 +97,7 @@
                             <input type="text" class="form-control" id="playerSearch" placeholder="Search players...">
                             <select class="form-control" id="teamFilter">
                                 <option value="">All Teams</option>
-                                <option value="Royals">Royals</option>
-                                <option value="Sher">Sher</option>
-                                <option value="Silly">Silly</option>
-                                <option value="Kingsmen">Kingsmen</option>
+                                <!-- Will be populated dynamically -->
                             </select>
                             <select class="form-control" id="positionFilter">
                                 <option value="">All Positions</option>
@@ -230,19 +208,19 @@
                     <div class="kpi-grid">
                         <div class="kpi-card">
                             <h4>Total Runs</h4>
-                            <div class="kpi-value" id="totalRuns">329</div>
+                            <div class="kpi-value" id="totalRuns">0</div>
                         </div>
                         <div class="kpi-card">
                             <h4>Total Wickets</h4>
-                            <div class="kpi-value" id="totalWickets">4</div>
+                            <div class="kpi-value" id="totalWickets">0</div>
                         </div>
                         <div class="kpi-card">
                             <h4>Total Catches</h4>
-                            <div class="kpi-value" id="totalCatches">1</div>
+                            <div class="kpi-value" id="totalCatches">0</div>
                         </div>
                         <div class="kpi-card">
                             <h4>Highest Score</h4>
-                            <div class="kpi-value" id="highestScore">428</div>
+                            <div class="kpi-value" id="highestScore">0</div>
                         </div>
                     </div>
 
