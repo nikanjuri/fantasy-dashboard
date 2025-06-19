@@ -234,9 +234,9 @@ class DashboardApp {
                     fantasyTeam: teamName,
                     performance: fantasyPlayer || {
                         totalPoints: 0,
-                        runs: 0,
-                        wickets: 0,
-                        catches: 0,
+                    runs: 0,
+                    wickets: 0,
+                    catches: 0,
                         matchesPlayed: 0
                     },
                     valueForMoney: this.calculateValueForMoney(fantasyPlayer?.totalPoints || 0, player.Price || 0),
@@ -632,6 +632,31 @@ class DashboardApp {
             `).join('');
     }
 
+    updateStats() {
+        // Update KPI values in the statistics tab
+        if (!this.data.players || this.data.players.length === 0) return;
+        
+        const totalRuns = this.data.players.reduce((sum, p) => sum + (p.runs || 0), 0);
+        const totalWickets = this.data.players.reduce((sum, p) => sum + (p.wickets || 0), 0);
+        const totalCatches = this.data.players.reduce((sum, p) => sum + (p.catches || 0), 0);
+        const highestScore = Math.max(...this.data.players.map(p => p.runs || 0));
+
+        // Update DOM elements if they exist
+        const totalRunsEl = document.getElementById('totalRuns');
+        if (totalRunsEl) totalRunsEl.textContent = totalRuns.toLocaleString();
+
+        const totalWicketsEl = document.getElementById('totalWickets');
+        if (totalWicketsEl) totalWicketsEl.textContent = totalWickets.toLocaleString();
+
+        const totalCatchesEl = document.getElementById('totalCatches');
+        if (totalCatchesEl) totalCatchesEl.textContent = totalCatches.toLocaleString();
+
+        const highestScoreEl = document.getElementById('highestScore');
+        if (highestScoreEl) highestScoreEl.textContent = highestScore.toLocaleString();
+
+        console.log('✅ Stats updated:', { totalRuns, totalWickets, totalCatches, highestScore });
+    }
+
     updateScoringRules() {
         const grid = document.getElementById('scoringRulesGrid');
         if (!grid) return;
@@ -644,61 +669,12 @@ class DashboardApp {
                         ${Object.entries(rules).map(([action, points]) => `
                             <div class="rule-item">
                                 <span class="rule-action">${action}</span>
-                                <span class="rule-points">${points}</span>
+                                <span class="rule-points">${points > 0 ? '+' : ''}${points}</span>
                             </div>
                         `).join('')}
                     </div>
                 </div>
             `).join('');
-
-        // Setup calculator
-        this.setupPointsCalculator();
-    }
-
-    setupPointsCalculator() {
-        const calculateBtn = document.getElementById('calculatePoints');
-        if (calculateBtn) {
-            calculateBtn.addEventListener('click', () => {
-                const runs = parseInt(document.getElementById('calcRuns').value) || 0;
-                const fours = parseInt(document.getElementById('calcFours').value) || 0;
-                const sixes = parseInt(document.getElementById('calcSixes').value) || 0;
-                const wickets = parseInt(document.getElementById('calcWickets').value) || 0;
-                const dots = parseInt(document.getElementById('calcDots').value) || 0;
-                const catches = parseInt(document.getElementById('calcCatches').value) || 0;
-                const sr = parseFloat(document.getElementById('calcSR').value) || 100;
-                const econ = parseFloat(document.getElementById('calcEcon').value) || 7;
-
-                let total = 0;
-                
-                // Batting points
-                total += runs * this.scoringSystemData['Batting Points']['Run'];
-                total += fours * this.scoringSystemData['Batting Points']['Boundary Bonus'];
-                total += sixes * this.scoringSystemData['Batting Points']['Six Bonus'];
-                
-                // Bowling points
-                total += wickets * this.scoringSystemData['Bowling Points']['Wicket'];
-                total += dots * this.scoringSystemData['Bowling Points']['Dot Ball'];
-                
-                // Fielding points
-                total += catches * this.scoringSystemData['Fielding Points']['Catch'];
-                
-                // Strike rate bonus/penalty
-                if (runs >= 10) {
-                    if (sr > 170) total += this.scoringSystemData['Strike Rate Points (Min 10 Balls To Be Played)']['Above 170'];
-                    else if (sr >= 150) total += this.scoringSystemData['Strike Rate Points (Min 10 Balls To Be Played)']['Between 150 - 170'];
-                    else if (sr >= 130) total += this.scoringSystemData['Strike Rate Points (Min 10 Balls To Be Played)']['Between 130 - 150'];
-                }
-                
-                // Economy rate bonus/penalty
-                if (wickets > 0 || dots > 12) {
-                    if (econ < 5) total += this.scoringSystemData['Economy Rate Points (Min 2 Overs To Be Bowled)']['Less than 5'];
-                    else if (econ < 6) total += this.scoringSystemData['Economy Rate Points (Min 2 Overs To Be Bowled)']['Between 5 - 5.99'];
-                    else if (econ <= 7) total += this.scoringSystemData['Economy Rate Points (Min 2 Overs To Be Bowled)']['Between 6 - 7'];
-                }
-
-                document.getElementById('calcTotal').textContent = total;
-            });
-        }
     }
 
     // Enhanced Chart Methods
