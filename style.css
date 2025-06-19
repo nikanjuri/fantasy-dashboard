@@ -2184,3 +2184,53 @@ select.form-control {
 [data-color-scheme="light"] .floating-theme-toggle .dark-icon {
     display: none !important;
 }
+
+/* Update the .stat-item CSS to make icon and number side-by-side */
+
+.stat-item {
+    display: flex;
+    flex-direction: row;  /* Changed from column to row */
+    align-items: center;
+    gap: var(--space-4);
+    flex: 1;
+    min-width: 0;
+    justify-content: center;  /* Center each icon-number pair */
+}
+
+.stat-item .icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.stat-item .count {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    line-height: 1;
+}
+
+/* Keep the team-stats container as horizontal */
+.team-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--space-16);
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+    gap: var(--space-8);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stat-item .icon {
+        font-size: 16px;
+    }
+    
+    .stat-item .count {
+        font-size: 12px;
+    }
+    
+    .stat-item {
+        gap: var(--space-2);  /* Smaller gap on mobile */
+    }
+}
