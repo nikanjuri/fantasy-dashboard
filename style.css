@@ -1256,7 +1256,6 @@ select.form-control {
   height: 300px !important;
 }
 
-#teamStandingsChart,
 #pointDistributionChart {
   height: 200px !important;
   max-height: 200px !important;
@@ -1962,4 +1961,11 @@ select.form-control {
     .stat-item {
         gap: var(--space-2);  /* Smaller gap on mobile */
     }
+}
+
+#pricePointsChart,
+#investmentChart,
+#playerTypeChart,
+#experienceChart {
+    max-height: 400px;
 }

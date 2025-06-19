@@ -686,84 +686,14 @@ class DashboardApp {
     // Enhanced Chart Methods
     setupCharts() {
         if (typeof Chart === 'undefined') {
-            this.hideChartContainers();
+            console.warn('Chart.js not loaded, skipping chart creation');
             return;
         }
 
-        this.createTeamStandingsChart();
         this.createPricePointsChart();
         this.createInvestmentChart();
         this.createPlayerTypeChart();
         this.createExperienceChart();
-    }
-
-    createTeamStandingsChart() {
-        const ctx = document.getElementById('teamStandingsChart');
-        if (!ctx) return;
-
-        // Get teams sorted by points (same order as cards)
-        const sortedTeams = Object.entries(this.data.teamStandings)
-            .sort(([,a], [,b]) => b - a);
-        
-        const teams = sortedTeams.map(([team]) => team);
-        const points = sortedTeams.map(([,points]) => points);
-
-        // Colors that match the visual order: Royal Smashers, Sher-e-Punjab, Silly Pointers, The Kingsmen
-        const teamColors = {
-            'Royal Smashers': 'rgba(255, 99, 132, 0.8)',   // Pink/Red
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)',    // Yellow
-            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',   // Blue  
-            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'      // Teal
-        };
-
-        const teamBorderColors = {
-            'Royal Smashers': 'rgba(255, 99, 132, 1)',
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 1)', 
-            'Silly Pointers': 'rgba(54, 162, 235, 1)',
-            'The Kingsmen': 'rgba(75, 192, 192, 1)'
-        };
-
-        const backgroundColors = teams.map(team => teamColors[team] || 'rgba(128, 128, 128, 0.8)');
-        const borderColors = teams.map(team => teamBorderColors[team] || 'rgba(128, 128, 128, 1)');
-
-        if (this.charts.teamStandings) {
-            this.charts.teamStandings.destroy();
-        }
-
-        this.charts.teamStandings = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: teams,
-                datasets: [{
-                    label: 'Total Points',
-                    data: points,
-                    backgroundColor: backgroundColors,
-                    borderColor: borderColors,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: '📊 Team Standings'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Total Points'
-                        }
-                    }
-                }
-            }
-        });
     }
 
     createPricePointsChart() {
@@ -969,7 +899,7 @@ class DashboardApp {
 
     hideChartContainers() {
         const chartIds = [
-            'teamStandingsChart', 'valuePerformanceChart', 'pricePointsChart',
+            'valuePerformanceChart', 'pricePointsChart',
             'investmentChart', 'playerTypeChart', 'experienceChart'
         ];
         chartIds.forEach(id => {
