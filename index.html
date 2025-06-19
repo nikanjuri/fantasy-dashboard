@@ -93,19 +93,115 @@
                     </div>
 
                     <div class="controls-section">
-                        <div class="search-controls flex gap-16">
-                            <input type="text" class="form-control" id="playerSearch" placeholder="Search players...">
-                            <select class="form-control" id="teamFilter">
-                                <option value="">All Teams</option>
-                                <!-- Will be populated dynamically -->
-                            </select>
-                            <select class="form-control" id="positionFilter">
-                                <option value="">All Positions</option>
-                                <option value="Batsman">Batsman</option>
-                                <option value="Bowler">Bowler</option>
-                                <option value="All-rounder">All-rounder</option>
-                            </select>
+                        <div class="filter-header">
+                            <h3>🔍 Advanced Filters</h3>
+                            <button class="btn btn--outline btn--sm" id="clearFilters">Clear All</button>
+                            <button class="btn btn--secondary btn--sm" id="toggleAdvanced">Advanced ⚙️</button>
                         </div>
+                        
+                        <!-- Basic Filters -->
+                        <div class="basic-filters">
+                            <div class="search-controls flex gap-16">
+                                <div class="search-input-wrapper">
+                                    <input type="text" class="form-control" id="playerSearch" placeholder="🔍 Search players...">
+                                    <span class="search-results-count" id="searchResultsCount"></span>
+                                </div>
+                                
+                                <select class="form-control" id="teamFilter">
+                                    <option value="">All Teams</option>
+                                </select>
+                                
+                                <select class="form-control" id="positionFilter">
+                                    <option value="">All Positions</option>
+                                    <option value="Batsman">🏏 Batsman</option>
+                                    <option value="Bowler">⚡ Bowler</option>
+                                    <option value="All-rounder">🌟 All-rounder</option>
+                                    <option value="Wicket-keeper">🧤 Wicket-keeper</option>
+                                </select>
+                                
+                                <select class="form-control" id="performanceFilter">
+                                    <option value="">All Performance</option>
+                                    <option value="top">🏆 Top Performers</option>
+                                    <option value="rising">📈 Rising Stars</option>
+                                    <option value="consistent">📊 Consistent</option>
+                                    <option value="value">💰 Value Picks</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Filters (Initially Hidden) -->
+                        <div class="advanced-filters" id="advancedFilters" style="display: none;">
+                            <div class="filter-grid">
+                                <!-- Points Range Filter -->
+                                <div class="filter-group">
+                                    <label>Points Range</label>
+                                    <div class="range-slider-container">
+                                        <input type="range" id="pointsMin" min="0" max="1000" value="0" class="range-slider">
+                                        <input type="range" id="pointsMax" min="0" max="1000" value="1000" class="range-slider">
+                                        <div class="range-values">
+                                            <span id="pointsMinValue">0</span> - <span id="pointsMaxValue">1000</span> points
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Runs Range Filter -->
+                                <div class="filter-group">
+                                    <label>Runs Range</label>
+                                    <div class="range-slider-container">
+                                        <input type="range" id="runsMin" min="0" max="500" value="0" class="range-slider">
+                                        <input type="range" id="runsMax" min="0" max="500" value="500" class="range-slider">
+                                        <div class="range-values">
+                                            <span id="runsMinValue">0</span> - <span id="runsMaxValue">500</span> runs
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Strike Rate Filter -->
+                                <div class="filter-group">
+                                    <label>Strike Rate</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" name="strikeRate" value="explosive"> �� Explosive (>180)</label>
+                                        <label><input type="checkbox" name="strikeRate" value="aggressive"> 💥 Aggressive (150-180)</label>
+                                        <label><input type="checkbox" name="strikeRate" value="steady"> 📈 Steady (120-150)</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bowling Performance -->
+                                <div class="filter-group">
+                                    <label>Bowling Stats</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" name="bowling" value="economical"> 🛡️ Economical (ER < 7)</label>
+                                        <label><input type="checkbox" name="bowling" value="wicketTaker"> 🎯 Wicket Taker (>5 wickets)</label>
+                                        <label><input type="checkbox" name="bowling" value="dotBall"> ⏸️ Dot Ball Specialist</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Form Filter -->
+                                <div class="filter-group">
+                                    <label>Recent Form</label>
+                                    <select class="form-control" id="formFilter">
+                                        <option value="">All Forms</option>
+                                        <option value="hot">🔥 Hot Form</option>
+                                        <option value="cold">🧊 Cold Form</option>
+                                        <option value="improving">📈 Improving</option>
+                                        <option value="declining">📉 Declining</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Match Type Filter -->
+                                <div class="filter-group">
+                                    <label>Match Context</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" name="matchType" value="highPressure"> 🎪 High Pressure</label>
+                                        <label><input type="checkbox" name="matchType" value="chasing"> 🏃 Chasing Games</label>
+                                        <label><input type="checkbox" name="matchType" value="defending"> 🛡️ Defending Games</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Active Filters Display -->
+                        <div class="active-filters" id="activeFilters"></div>
                     </div>
 
                     <div class="charts-grid">

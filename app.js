@@ -13,6 +13,7 @@ class DashboardApp {
         this.currentTheme = 'light';
         this.sortColumn = null;
         this.sortDirection = 'asc';
+        this.enhancedFilters = null;
         
         this.init();
     }
@@ -42,6 +43,9 @@ class DashboardApp {
             this.renderTopPerformers();
             this.renderMatchTimeline();
             this.updateTeamCards();
+            
+            // Initialize enhanced filters after everything else is set up
+            this.enhancedFilters = new EnhancedFilters(this);
             
             this.hideLoading();
         } catch (error) {
@@ -612,6 +616,15 @@ class DashboardApp {
     }
 
     filterPlayers() {
+        if (this.enhancedFilters) {
+            this.enhancedFilters.applyFilters();
+        } else {
+            // Fallback to basic filtering if enhanced filters not initialized
+            this.basicFilterPlayers();
+        }
+    }
+
+    basicFilterPlayers() {
         const searchTerm = document.getElementById('playerSearch')?.value.toLowerCase() || '';
         const teamFilter = document.getElementById('teamFilter')?.value || '';
         const positionFilter = document.getElementById('positionFilter')?.value || '';
@@ -1048,3 +1061,330 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// Enhanced filtering functionality
+class EnhancedFilters {
+    constructor(app) {
+        this.app = app;
+        this.activeFilters = {};
+        this.setupAdvancedFilters();
+    }
+
+    setupAdvancedFilters() {
+        // Toggle advanced filters
+        const toggleBtn = document.getElementById('toggleAdvanced');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => this.toggleAdvancedFilters());
+        }
+
+        // Clear all filters
+        const clearBtn = document.getElementById('clearFilters');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => this.clearAllFilters());
+        }
+
+        // Range sliders
+        this.setupRangeSliders();
+        
+        // Checkbox filters
+        this.setupCheckboxFilters();
+        
+        // Performance filter
+        const perfFilter = document.getElementById('performanceFilter');
+        if (perfFilter) {
+            perfFilter.addEventListener('change', () => this.applyFilters());
+        }
+
+        // Form filter
+        const formFilter = document.getElementById('formFilter');
+        if (formFilter) {
+            formFilter.addEventListener('change', () => this.applyFilters());
+        }
+    }
+
+    setupRangeSliders() {
+        // Points range
+        const pointsMin = document.getElementById('pointsMin');
+        const pointsMax = document.getElementById('pointsMax');
+        const pointsMinValue = document.getElementById('pointsMinValue');
+        const pointsMaxValue = document.getElementById('pointsMaxValue');
+
+        if (pointsMin && pointsMax) {
+            pointsMin.addEventListener('input', (e) => {
+                pointsMinValue.textContent = e.target.value;
+                this.activeFilters.pointsMin = parseInt(e.target.value);
+                this.applyFilters();
+            });
+
+            pointsMax.addEventListener('input', (e) => {
+                pointsMaxValue.textContent = e.target.value;
+                this.activeFilters.pointsMax = parseInt(e.target.value);
+                this.applyFilters();
+            });
+        }
+
+        // Runs range
+        const runsMin = document.getElementById('runsMin');
+        const runsMax = document.getElementById('runsMax');
+        const runsMinValue = document.getElementById('runsMinValue');
+        const runsMaxValue = document.getElementById('runsMaxValue');
+
+        if (runsMin && runsMax) {
+            runsMin.addEventListener('input', (e) => {
+                runsMinValue.textContent = e.target.value;
+                this.activeFilters.runsMin = parseInt(e.target.value);
+                this.applyFilters();
+            });
+
+            runsMax.addEventListener('input', (e) => {
+                runsMaxValue.textContent = e.target.value;
+                this.activeFilters.runsMax = parseInt(e.target.value);
+                this.applyFilters();
+            });
+        }
+    }
+
+    setupCheckboxFilters() {
+        // Strike rate checkboxes
+        document.querySelectorAll('input[name="strikeRate"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => this.applyFilters());
+        });
+
+        // Bowling checkboxes
+        document.querySelectorAll('input[name="bowling"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => this.applyFilters());
+        });
+
+        // Match type checkboxes
+        document.querySelectorAll('input[name="matchType"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => this.applyFilters());
+        });
+    }
+
+    toggleAdvancedFilters() {
+        const advancedFilters = document.getElementById('advancedFilters');
+        const toggleBtn = document.getElementById('toggleAdvanced');
+        
+        if (advancedFilters.style.display === 'none') {
+            advancedFilters.style.display = 'block';
+            toggleBtn.textContent = 'Basic ⚙️';
+        } else {
+            advancedFilters.style.display = 'none';
+            toggleBtn.textContent = 'Advanced ⚙️';
+        }
+    }
+
+    clearAllFilters() {
+        // Reset all form controls
+        document.getElementById('playerSearch').value = '';
+        document.getElementById('teamFilter').value = '';
+        document.getElementById('positionFilter').value = '';
+        document.getElementById('performanceFilter').value = '';
+        document.getElementById('formFilter').value = '';
+        
+        // Reset range sliders
+        document.getElementById('pointsMin').value = 0;
+        document.getElementById('pointsMax').value = 1000;
+        document.getElementById('runsMin').value = 0;
+        document.getElementById('runsMax').value = 500;
+        
+        // Reset checkboxes
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        
+        // Clear active filters
+        this.activeFilters = {};
+        this.updateActiveFiltersDisplay();
+        
+        // Apply filters (which will show all players)
+        this.applyFilters();
+    }
+
+    applyFilters() {
+        const tableContainer = document.querySelector('.table-container');
+        if (tableContainer) {
+            tableContainer.classList.add('filtering');
+        }
+
+        setTimeout(() => {
+            this.app.filteredPlayers = this.app.data.players.filter(player => {
+                return this.matchesAllFilters(player);
+            });
+
+            // Update results count
+            this.updateResultsCount();
+            
+            // Update active filters display
+            this.updateActiveFiltersDisplay();
+            
+            // Re-render table and charts
+            this.app.renderPlayersTable();
+            if (typeof Chart !== 'undefined') {
+                this.app.createStrikeRateChart();
+            }
+
+            if (tableContainer) {
+                tableContainer.classList.remove('filtering');
+            }
+        }, 100);
+    }
+
+    matchesAllFilters(player) {
+        // Basic search
+        const searchTerm = document.getElementById('playerSearch')?.value.toLowerCase() || '';
+        if (searchTerm && !player.player.toLowerCase().includes(searchTerm)) {
+            return false;
+        }
+
+        // Team filter
+        const teamFilter = document.getElementById('teamFilter')?.value || '';
+        if (teamFilter && player.team !== teamFilter) {
+            return false;
+        }
+
+        // Position filter
+        const positionFilter = document.getElementById('positionFilter')?.value || '';
+        if (positionFilter) {
+            const isPosition = this.checkPosition(player, positionFilter);
+            if (!isPosition) return false;
+        }
+
+        // Performance filter
+        const performanceFilter = document.getElementById('performanceFilter')?.value || '';
+        if (performanceFilter) {
+            const isPerformance = this.checkPerformance(player, performanceFilter);
+            if (!isPerformance) return false;
+        }
+
+        // Points range
+        if (this.activeFilters.pointsMin !== undefined || this.activeFilters.pointsMax !== undefined) {
+            const min = this.activeFilters.pointsMin || 0;
+            const max = this.activeFilters.pointsMax || 1000;
+            if (player.totalPoints < min || player.totalPoints > max) {
+                return false;
+            }
+        }
+
+        // Runs range
+        if (this.activeFilters.runsMin !== undefined || this.activeFilters.runsMax !== undefined) {
+            const min = this.activeFilters.runsMin || 0;
+            const max = this.activeFilters.runsMax || 500;
+            if (player.runs < min || player.runs > max) {
+                return false;
+            }
+        }
+
+        // Strike rate filters
+        const strikeRateFilters = Array.from(document.querySelectorAll('input[name="strikeRate"]:checked'))
+            .map(cb => cb.value);
+        if (strikeRateFilters.length > 0) {
+            const matchesStrikeRate = strikeRateFilters.some(filter => {
+                switch (filter) {
+                    case 'explosive': return player.strikeRate && player.strikeRate > 180;
+                    case 'aggressive': return player.strikeRate && player.strikeRate >= 150 && player.strikeRate <= 180;
+                    case 'steady': return player.strikeRate && player.strikeRate >= 120 && player.strikeRate < 150;
+                    default: return false;
+                }
+            });
+            if (!matchesStrikeRate) return false;
+        }
+
+        // Bowling filters
+        const bowlingFilters = Array.from(document.querySelectorAll('input[name="bowling"]:checked'))
+            .map(cb => cb.value);
+        if (bowlingFilters.length > 0) {
+            const matchesBowling = bowlingFilters.some(filter => {
+                switch (filter) {
+                    case 'economical': return player.economyRate && player.economyRate < 7;
+                    case 'wicketTaker': return player.wickets > 5;
+                    case 'dotBall': return player.dotBalls > 20;
+                    default: return false;
+                }
+            });
+            if (!matchesBowling) return false;
+        }
+
+        return true;
+    }
+
+    checkPosition(player, position) {
+        switch (position) {
+            case 'Batsman':
+                return player.strikeRate !== null && player.runs > 0 && player.wickets === 0;
+            case 'Bowler':
+                return player.economyRate !== null && player.wickets > 0;
+            case 'All-rounder':
+                return player.strikeRate !== null && player.economyRate !== null && 
+                       player.runs > 0 && player.wickets > 0;
+            case 'Wicket-keeper':
+                return player.catches > 2; // Assuming keepers have more catches
+            default:
+                return true;
+        }
+    }
+
+    checkPerformance(player, performance) {
+        const avgPoints = this.app.data.players.reduce((sum, p) => sum + p.totalPoints, 0) / this.app.data.players.length;
+        
+        switch (performance) {
+            case 'top':
+                return player.totalPoints > avgPoints * 1.5;
+            case 'rising':
+                // You can implement more complex logic here based on recent matches
+                return player.totalPoints > avgPoints * 1.2;
+            case 'consistent':
+                return player.matchesPlayed > 5 && player.totalPoints > avgPoints * 0.8;
+            case 'value':
+                return player.totalPoints > avgPoints && player.totalPoints < avgPoints * 1.3;
+            default:
+                return true;
+        }
+    }
+
+    updateResultsCount() {
+        const countElement = document.getElementById('searchResultsCount');
+        if (countElement) {
+            const count = this.app.filteredPlayers.length;
+            countElement.textContent = `${count} found`;
+            countElement.style.display = count < this.app.data.players.length ? 'block' : 'none';
+        }
+    }
+
+    updateActiveFiltersDisplay() {
+        const container = document.getElementById('activeFilters');
+        if (!container) return;
+
+        const activeTags = [];
+
+        // Add search term
+        const searchTerm = document.getElementById('playerSearch')?.value;
+        if (searchTerm) {
+            activeTags.push({ label: `🔍 "${searchTerm}"`, key: 'search' });
+        }
+
+        // Add team filter
+        const teamFilter = document.getElementById('teamFilter')?.value;
+        if (teamFilter) {
+            activeTags.push({ label: `👥 ${teamFilter}`, key: 'team' });
+        }
+
+        // Add position filter
+        const positionFilter = document.getElementById('positionFilter')?.value;
+        if (positionFilter) {
+            activeTags.push({ label: `🏏 ${positionFilter}`, key: 'position' });
+        }
+
+        // Add range filters
+        if (this.activeFilters.pointsMin || this.activeFilters.pointsMax) {
+            const min = this.activeFilters.pointsMin || 0;
+            const max = this.activeFilters.pointsMax || 1000;
+            activeTags.push({ label: `📊 ${min}-${max} points`, key: 'points' });
+        }
+
+        container.innerHTML = activeTags.map(tag => `
+            <div class="filter-tag">
+                ${tag.label}
+                <button class="filter-tag-remove" onclick="this.parentElement.remove()">×</button>
+            </div>
+        `).join('');
+    }
+}
