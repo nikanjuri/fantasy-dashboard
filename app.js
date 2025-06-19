@@ -269,7 +269,7 @@ class DashboardApp {
                     capped: players.filter(p => p['Cap/Un'] === 'Capped').length,
                     uncapped: players.filter(p => p['Cap/Un'] === 'Uncapped').length
                 },
-                totalPoints: this.data.teamStandings[teamName] || 0,
+                totalPoints: this.findTeamPoints(teamName),
                 balanceScore: this.calculateTeamBalance(players)
             };
 
@@ -348,6 +348,22 @@ class DashboardApp {
         return Math.max(0, balanceScore);
     }
 
+    findTeamPoints(playerListTeamName) {
+        // Try exact match first
+        if (this.data.teamStandings[playerListTeamName]) {
+            return this.data.teamStandings[playerListTeamName];
+        }
+        
+        // Try reverse mapping for team names
+        const reverseMap = {
+            'Sher-E-Punjab': 'Sher-e-Punjab',
+            'Kingsmen': 'The Kingsmen'
+        };
+        
+        const fantasyTeamName = reverseMap[playerListTeamName] || playerListTeamName;
+        return this.data.teamStandings[fantasyTeamName] || 0;
+    }
+
     // Enhanced UI Update Methods
     updateAllDashboards() {
         this.updateTeamOverview();
@@ -421,12 +437,23 @@ class DashboardApp {
         const container = document.getElementById('teamCardsContainer');
         if (!container) return;
 
+        // Create a mapping for consistent team display
+        const teamDisplayMap = {
+            'Sher-e-Punjab': 'Sher-e-Punjab',
+            'The Kingsmen': 'The Kingsmen',
+            'Royal Smashers': 'Royal Smashers',
+            'Silly Pointers': 'Silly Pointers'
+        };
+
         const sortedTeams = Object.entries(this.data.teamStandings)
             .sort(([,a], [,b]) => b - a)
             .map(([team, points], index) => {
-                const composition = this.data.teamCompositions[team];
+                // Find composition data using team name mapping
+                const compositionKey = this.findCompositionKey(team);
+                const composition = this.data.teamCompositions[compositionKey];
+                
                 return {
-                    team,
+                    team: teamDisplayMap[team] || team,
                     points,
                     rank: index + 1,
                     composition
@@ -443,22 +470,34 @@ class DashboardApp {
                 <div class="team-details">
                     <div class="detail-item">
                         <span class="label">Investment:</span>
-                        <span class="value">₹${composition?.totalInvestment.toFixed(1)}Cr</span>
+                        <span class="value">₹${composition?.totalInvestment?.toFixed(1) || 0}Cr</span>
                     </div>
                     <div class="detail-item">
                         <span class="label">Players:</span>
-                        <span class="value">${composition?.totalPlayers}</span>
+                        <span class="value">${composition?.totalPlayers || 'undefined'}</span>
                     </div>
                     <div class="detail-item">
                         <span class="label">Balance:</span>
-                        <span class="value">${composition?.balanceScore}/100</span>
+                        <span class="value">${composition?.balanceScore || 'undefined'}/100</span>
                     </div>
                 </div>
-                <div class="team-composition-mini">
-                    <span class="comp-item">🏏${composition?.playerTypes.BAT || 0}</span>
-                    <span class="comp-item">⚡${composition?.playerTypes.BOWL || 0}</span>
-                    <span class="comp-item">🌟${composition?.playerTypes.AR || 0}</span>
-                    <span class="comp-item">🧤${composition?.playerTypes.WK || 0}</span>
+                <div class="team-stats">
+                    <div class="stat-item">
+                        <span class="icon">🏏</span>
+                        <span class="count">${composition?.playerTypes?.BAT || 0}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="icon">⚡</span>
+                        <span class="count">${composition?.playerTypes?.BOWL || 0}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="icon">🌟</span>
+                        <span class="count">${composition?.playerTypes?.AR || 0}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="icon">🧤</span>
+                        <span class="count">${composition?.playerTypes?.WK || 0}</span>
+                    </div>
                 </div>
             </div>
         `).join('');
@@ -466,6 +505,18 @@ class DashboardApp {
         container.querySelectorAll('.enhanced-team-card').forEach(card => {
             card.addEventListener('click', (e) => this.filterByTeam(e.currentTarget.dataset.team));
         });
+    }
+
+    findCompositionKey(fantasyTeamName) {
+        // Direct mapping from fantasy team names to player list team names
+        const mapping = {
+            'Sher-e-Punjab': 'Sher-E-Punjab',
+            'The Kingsmen': 'Kingsmen',
+            'Royal Smashers': 'Royal Smashers',
+            'Silly Pointers': 'Silly Pointers'
+        };
+        
+        return mapping[fantasyTeamName] || fantasyTeamName;
     }
 
     updateAuctionAnalysis() {
