@@ -100,33 +100,33 @@
   --container-xl: 1280px;
 }
 
-/* Dark mode colors */
+/* Dark mode colors - updated to true black */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: rgba(31, 33, 33, 1);
-    --color-surface: rgba(38, 40, 40, 1);
-    --color-text: rgba(245, 245, 245, 1);
-    --color-text-secondary: rgba(167, 169, 169, 0.7);
+    --color-background: rgba(0, 0, 0, 1);
+    --color-surface: rgba(15, 15, 15, 1);
+    --color-text: rgba(255, 255, 255, 1);
+    --color-text-secondary: rgba(180, 180, 180, 0.8);
     --color-primary: rgba(50, 184, 198, 1);
     --color-primary-hover: rgba(45, 166, 178, 1);
     --color-primary-active: rgba(41, 150, 161, 1);
-    --color-secondary: rgba(119, 124, 124, 0.15);
-    --color-secondary-hover: rgba(119, 124, 124, 0.25);
-    --color-secondary-active: rgba(119, 124, 124, 0.3);
-    --color-border: rgba(119, 124, 124, 0.3);
+    --color-secondary: rgba(40, 40, 40, 0.4);
+    --color-secondary-hover: rgba(60, 60, 60, 0.6);
+    --color-secondary-active: rgba(80, 80, 80, 0.8);
+    --color-border: rgba(60, 60, 60, 0.5);
     --color-error: rgba(255, 84, 89, 1);
     --color-success: rgba(50, 184, 198, 1);
     --color-warning: rgba(230, 129, 97, 1);
-    --color-info: rgba(167, 169, 169, 1);
+    --color-info: rgba(200, 200, 200, 1);
     --color-focus-ring: rgba(50, 184, 198, 0.4);
-    --color-btn-primary-text: rgba(19, 52, 59, 1);
-    --color-card-border: rgba(119, 124, 124, 0.2);
-    --color-card-border-inner: rgba(119, 124, 124, 0.15);
-    --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.1),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-    --button-border-secondary: rgba(119, 124, 124, 0.2);
-    --color-border-secondary: rgba(119, 124, 124, 0.2);
-    --color-select-caret: rgba(245, 245, 245, 0.8);
+    --color-btn-primary-text: rgba(0, 0, 0, 1);
+    --color-card-border: rgba(40, 40, 40, 0.3);
+    --color-card-border-inner: rgba(30, 30, 30, 0.3);
+    --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+    --button-border-secondary: rgba(60, 60, 60, 0.4);
+    --color-border-secondary: rgba(50, 50, 50, 0.4);
+    --color-select-caret: rgba(255, 255, 255, 0.9);
 
     /* Common style patterns - updated for dark mode */
     --focus-ring: 0 0 0 3px var(--color-focus-ring);
@@ -134,41 +134,41 @@
     --status-bg-opacity: 0.15;
     --status-border-opacity: 0.25;
     --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23134252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 
     /* RGB versions for dark mode */
     --color-success-rgb: 50, 184, 198;
     --color-error-rgb: 255, 84, 89;
     --color-warning-rgb: 230, 129, 97;
-    --color-info-rgb: 167, 169, 169;
+    --color-info-rgb: 200, 200, 200;
   }
 }
 
-/* Data attribute for manual theme switching */
+/* Data attribute for manual theme switching - true black version */
 [data-color-scheme="dark"] {
-  --color-background: rgba(31, 33, 33, 1);
-  --color-surface: rgba(38, 40, 40, 1);
-  --color-text: rgba(245, 245, 245, 1);
-  --color-text-secondary: rgba(167, 169, 169, 0.7);
+  --color-background: rgba(0, 0, 0, 1);
+  --color-surface: rgba(15, 15, 15, 1);
+  --color-text: rgba(255, 255, 255, 1);
+  --color-text-secondary: rgba(180, 180, 180, 0.8);
   --color-primary: rgba(50, 184, 198, 1);
   --color-primary-hover: rgba(45, 166, 178, 1);
   --color-primary-active: rgba(41, 150, 161, 1);
-  --color-secondary: rgba(119, 124, 124, 0.15);
-  --color-secondary-hover: rgba(119, 124, 124, 0.25);
-  --color-secondary-active: rgba(119, 124, 124, 0.3);
-  --color-border: rgba(119, 124, 124, 0.3);
+  --color-secondary: rgba(40, 40, 40, 0.4);
+  --color-secondary-hover: rgba(60, 60, 60, 0.6);
+  --color-secondary-active: rgba(80, 80, 80, 0.8);
+  --color-border: rgba(60, 60, 60, 0.5);
   --color-error: rgba(255, 84, 89, 1);
   --color-success: rgba(50, 184, 198, 1);
   --color-warning: rgba(230, 129, 97, 1);
-  --color-info: rgba(167, 169, 169, 1);
+  --color-info: rgba(200, 200, 200, 1);
   --color-focus-ring: rgba(50, 184, 198, 0.4);
-  --color-btn-primary-text: rgba(19, 52, 59, 1);
-  --color-card-border: rgba(119, 124, 124, 0.15);
-  --color-card-border-inner: rgba(119, 124, 124, 0.15);
-  --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-  --color-border-secondary: rgba(119, 124, 124, 0.2);
-  --color-select-caret: rgba(245, 245, 245, 0.8);
+  --color-btn-primary-text: rgba(0, 0, 0, 1);
+  --color-card-border: rgba(40, 40, 40, 0.3);
+  --color-card-border-inner: rgba(30, 30, 30, 0.3);
+  --shadow-inset-sm: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+  --color-border-secondary: rgba(50, 50, 50, 0.4);
+  --color-select-caret: rgba(255, 255, 255, 0.9);
 
   /* Common style patterns - updated for dark mode */
   --focus-ring: 0 0 0 3px var(--color-focus-ring);
@@ -176,13 +176,13 @@
   --status-bg-opacity: 0.15;
   --status-border-opacity: 0.25;
   --select-caret-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23134252' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  --select-caret-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 
   /* RGB versions for dark mode */
   --color-success-rgb: 50, 184, 198;
   --color-error-rgb: 255, 84, 89;
   --color-warning-rgb: 230, 129, 97;
-  --color-info-rgb: 167, 169, 169;
+  --color-info-rgb: 200, 200, 200;
 }
 
 [data-color-scheme="light"] {
