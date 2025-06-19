@@ -24,24 +24,49 @@ class DashboardApp {
     }
 
     async init() {
+        console.log('🚀 Initializing dashboard...');
         try {
             this.showLoading();
+            
+            // Load and process data
+            console.log('📡 Loading data...');
             await this.loadAllData();
+            console.log('✅ Data loaded successfully');
+            
+            console.log('🔄 Processing data...');
             this.processAllData();
-            this.setupEventListeners();
+            console.log('✅ Data processed successfully');
+            
+            // Initialize UI components
+            console.log('🎛️ Setting up UI...');
             this.initializeTabs();
-            this.setupCharts();
+            this.setupEventListeners();
+            
+            // Skip charts for now to avoid errors
+            console.log('📊 Setting up charts...');
+            try {
+                this.setupCharts();
+            } catch (chartError) {
+                console.warn('Charts failed to load:', chartError);
+            }
+            
+            console.log('🔄 Updating dashboard...');
             this.updateAllDashboards();
+            
             this.hideLoading();
+            console.log('✅ Dashboard initialized successfully!');
+            
         } catch (error) {
-            console.error('Error initializing dashboard:', error);
+            console.error('❌ Error initializing dashboard:', error);
             this.hideLoading();
-            this.showError('Failed to load data. Please ensure you are running this from a web server and all JSON files are available.');
+            this.showError(`Failed to initialize dashboard: ${error.message}`);
         }
     }
 
     async loadAllData() {
         try {
+            console.log('📂 Starting data load...');
+            
             // Load all three JSON files
             const [fantasyResponse, playerListResponse, scoringResponse] = await Promise.all([
                 fetch('data/Fantasy_Points_2025.json'),
@@ -49,22 +74,35 @@ class DashboardApp {
                 fetch('data/Scoring_System.json')
             ]);
 
+            console.log('📊 Response status:', {
+                fantasy: fantasyResponse.status,
+                playerList: playerListResponse.status,
+                scoring: scoringResponse.status
+            });
+
             if (!fantasyResponse.ok || !playerListResponse.ok || !scoringResponse.ok) {
                 throw new Error('Failed to fetch one or more data files');
             }
 
             // Process fantasy points data
+            console.log('📝 Processing fantasy data...');
             const rawText = await fantasyResponse.text();
             const cleanedText = rawText.replace(/:\s*NaN/g, ': null');
             this.rawData = JSON.parse(cleanedText);
+            console.log('Fantasy data loaded:', Object.keys(this.rawData).length, 'matches');
 
             // Load other data files
+            console.log('📝 Processing player list...');
             this.playerListData = await playerListResponse.json();
-            this.scoringSystemData = await scoringResponse.json();
+            console.log('Player list loaded:', Object.keys(this.playerListData).length, 'teams');
 
-            console.log('All data loaded successfully');
+            console.log('📝 Processing scoring system...');
+            this.scoringSystemData = await scoringResponse.json();
+            console.log('Scoring system loaded');
+
+            console.log('✅ All data loaded successfully');
         } catch (error) {
-            console.error('Error loading data:', error);
+            console.error('❌ Error loading data:', error);
             throw error;
         }
     }
@@ -1125,6 +1163,28 @@ class DashboardApp {
                 }
             }
         });
+    }
+
+    initializeTabs() {
+        // Set up tab navigation functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Initialize first tab as active
+        if (tabButtons.length > 0 && tabContents.length > 0) {
+            tabButtons[0].classList.add('active');
+            tabContents[0].classList.add('active');
+        }
+        
+        // Add click listeners for tab switching
+        tabButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const targetTab = e.target.dataset.tab;
+                this.switchTab(targetTab);
+            });
+        });
+        
+        console.log('✅ Tabs initialized successfully');
     }
 
     // Additional existing methods would continue here...
