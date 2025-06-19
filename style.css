@@ -812,18 +812,36 @@ select.form-control {
 /* Charts Grid */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: var(--space-24);
-  margin-bottom: var(--space-32);
+  margin-top: var(--space-24);
 }
 
-.charts-grid .card {
-  height: fit-content;
+.chart-container {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-standard);
 }
 
-.charts-grid canvas {
-  max-height: 300px !important;
-  height: 300px !important;
+.chart-container:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.chart-container h3 {
+  margin-bottom: var(--space-16);
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+.chart-container canvas {
+  max-width: 100%;
+  height: auto !important;
 }
 
 /* Team Cards */

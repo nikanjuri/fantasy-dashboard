@@ -639,7 +639,11 @@ class DashboardApp {
         }
 
         this.createTeamStandingsChart();
-        this.createValuePerformanceChart();
+        this.createTopPerformersByRoleChart();
+        this.createPointsProgressionChart();
+        this.createPriceEfficiencyChart();
+        this.createMatchImpactChart();
+        this.createPlayerCategoryChart();
         this.createPricePointsChart();
         this.createInvestmentChart();
         this.createPlayerTypeChart();
@@ -699,54 +703,254 @@ class DashboardApp {
         });
     }
 
-    createValuePerformanceChart() {
-        const ctx = document.getElementById('valuePerformanceChart');
+    createTopPerformersByRoleChart() {
+        const ctx = document.getElementById('topPerformersChart');
         if (!ctx) return;
 
-        const teams = Object.entries(this.data.teamCompositions).map(([name, comp]) => ({
-            name,
-            points: this.data.teamStandings[name] || 0,
-            investment: comp.totalInvestment,
-            efficiency: (this.data.teamStandings[name] || 0) / comp.totalInvestment
+        // Get players by role and sort by points
+        const roleData = {
+            'Batsmen': this.data.players.filter(p => p.role === 'BAT' || p.type === 'BAT').sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 3),
+            'Bowlers': this.data.players.filter(p => p.role === 'BOWL' || p.type === 'BOWL').sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 3),
+            'All-Rounders': this.data.players.filter(p => p.role === 'AR' || p.type === 'AR').sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 3),
+            'Wicket-Keepers': this.data.players.filter(p => p.role === 'WK' || p.type === 'WK').sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 3)
+        };
+
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+        const datasets = Object.entries(roleData).map(([role, players], index) => ({
+            label: role,
+            data: players.map(p => p.totalPoints),
+            backgroundColor: colors[index],
+            borderColor: colors[index],
+            borderWidth: 2,
+            playerNames: players.map(p => p.player || p.name)
         }));
 
-        this.charts.valuePerformance = new Chart(ctx, {
-            type: 'scatter',
+        new Chart(ctx, {
+            type: 'bar',
             data: {
-                datasets: [{
-                    label: 'Team Efficiency',
-                    data: teams.map(team => ({
-                        x: team.investment,
-                        y: team.points,
-                        label: team.name
-                    })),
-                    backgroundColor: 'rgba(50, 184, 198, 0.6)',
-                    borderColor: 'rgba(50, 184, 198, 1)',
-                    borderWidth: 2
-                }]
+                labels: ['1st', '2nd', '3rd'],
+                datasets
             },
             options: {
                 responsive: true,
                 plugins: {
+                    title: { display: true, text: '🏆 Top 3 Performers by Role' },
+                    legend: { position: 'top' },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `${context.raw.label}: ₹${context.raw.x}Cr → ${context.raw.y} pts`;
+                                const playerName = context.dataset.playerNames[context.dataIndex];
+                                return `${context.dataset.label}: ${playerName} (${context.raw} pts)`;
                             }
                         }
                     }
                 },
                 scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Investment (₹Cr)'
+                    y: { beginAtZero: true, title: { display: true, text: 'Fantasy Points' } }
+                }
+            }
+        });
+    }
+
+    createPointsProgressionChart() {
+        const ctx = document.getElementById('pointsProgressionChart');
+        if (!ctx) return;
+
+        // Get cumulative points for each team over matches
+        const teamProgression = {};
+        const matchNames = Object.keys(this.rawData).sort();
+        
+        matchNames.forEach((matchName, index) => {
+            Object.entries(this.rawData[matchName]).forEach(([teamName, teamData]) => {
+                if (!teamProgression[teamName]) teamProgression[teamName] = [];
+                const previousTotal = index > 0 ? (teamProgression[teamName][index - 1] || 0) : 0;
+                teamProgression[teamName][index] = previousTotal + (teamData['Team Total'] || 0);
+            });
+        });
+
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+        const datasets = Object.entries(teamProgression).map(([team, points], index) => ({
+            label: team,
+            data: points,
+            borderColor: colors[index % colors.length],
+            backgroundColor: `${colors[index % colors.length]}20`,
+            tension: 0.4,
+            fill: false,
+            pointRadius: 4,
+            pointHoverRadius: 6
+        }));
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: matchNames.map((_, i) => `Match ${i + 1}`),
+                datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: '📈 Cumulative Points Progression' },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Cumulative Points' } },
+                    x: { title: { display: true, text: 'Matches' } }
+                }
+            }
+        });
+    }
+
+    createPriceEfficiencyChart() {
+        const ctx = document.getElementById('priceEfficiencyChart');
+        if (!ctx) return;
+
+        // Get player efficiency data
+        const playerData = [];
+        
+        // Combine data from both sources
+        Object.entries(this.playerListData || {}).forEach(([teamName, players]) => {
+            players.forEach(player => {
+                const fantasyPlayer = this.data.players.find(p => 
+                    p.player === player.Player || p.name === player.Player
+                );
+                
+                if (fantasyPlayer && player.Price > 0) {
+                    const efficiency = fantasyPlayer.totalPoints / player.Price;
+                    playerData.push({
+                        x: player.Price,
+                        y: efficiency,
+                        player: player.Player,
+                        team: teamName,
+                        points: fantasyPlayer.totalPoints
+                    });
+                }
+            });
+        });
+
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Points per Cr Spent',
+                    data: playerData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: '💰 Price Efficiency Analysis' },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const point = context.raw;
+                                return [
+                                    `${point.player}`,
+                                    `Price: ₹${point.x}Cr`,
+                                    `Points: ${point.points}`,
+                                    `Efficiency: ${point.y.toFixed(1)} pts/Cr`
+                                ];
+                            }
                         }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Fantasy Points'
+                    }
+                },
+                scales: {
+                    x: { title: { display: true, text: 'Price (₹Cr)' } },
+                    y: { title: { display: true, text: 'Points per Cr' } }
+                }
+            }
+        });
+    }
+
+    createMatchImpactChart() {
+        const ctx = document.getElementById('matchImpactChart');
+        if (!ctx) return;
+
+        // Calculate performance statistics for each team
+        const teamStats = {};
+        Object.entries(this.rawData).forEach(([matchName, matchData]) => {
+            Object.entries(matchData).forEach(([teamName, teamData]) => {
+                if (!teamStats[teamName]) teamStats[teamName] = [];
+                teamStats[teamName].push(teamData['Team Total'] || 0);
+            });
+        });
+
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+        const datasets = Object.entries(teamStats).map(([team, scores], index) => ({
+            label: team,
+            data: [
+                Math.max(...scores), // Best performance
+                Math.min(...scores), // Worst performance
+                scores.reduce((a, b) => a + b) / scores.length // Average
+            ],
+            backgroundColor: colors[index % colors.length],
+            borderColor: colors[index % colors.length],
+            borderWidth: 2
+        }));
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Best Match', 'Worst Match', 'Average'],
+                datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: '🎯 Team Performance Range Analysis' },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Fantasy Points' } }
+                }
+            }
+        });
+    }
+
+    createPlayerCategoryChart() {
+        const ctx = document.getElementById('playerCategoryChart');
+        if (!ctx) return;
+
+        // Categorize players by performance level
+        const categories = {
+            'Star Players (300+ pts)': this.data.players.filter(p => p.totalPoints >= 300).length,
+            'Solid Contributors (150-299 pts)': this.data.players.filter(p => p.totalPoints >= 150 && p.totalPoints < 300).length,
+            'Role Players (50-149 pts)': this.data.players.filter(p => p.totalPoints >= 50 && p.totalPoints < 150).length,
+            'Underperformers (<50 pts)': this.data.players.filter(p => p.totalPoints < 50).length
+        };
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(categories),
+                datasets: [{
+                    data: Object.values(categories),
+                    backgroundColor: [
+                        '#FF6B6B', // Star Players - Red
+                        '#4ECDC4', // Solid Contributors - Teal
+                        '#45B7D1', // Role Players - Blue
+                        '#96CEB4'  // Underperformers - Green
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#fff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: '🌟 Player Performance Distribution' },
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.raw / total) * 100).toFixed(1);
+                                return `${context.label}: ${context.raw} players (${percentage}%)`;
+                            }
                         }
                     }
                 }
