@@ -330,22 +330,157 @@ class DashboardApp {
     }
 
     calculateTeamBalance(players) {
-        // Calculate team balance score based on player types, experience, overseas players
+        // Enhanced team balance calculation emphasizing consistent performers
         const types = players.reduce((acc, p) => {
             acc[p.Type] = (acc[p.Type] || 0) + 1;
             return acc;
         }, {});
 
-        const idealBalance = { BAT: 6, BOWL: 6, AR: 4, WK: 2 };
+        // Fantasy-focused ideal composition (emphasizes top-order batsmen)
+        const fantasyIdeal = { 
+            BAT: 8,    // More batsmen for consistent scoring
+            BOWL: 5,   // Quality bowlers
+            AR: 4,     // Valuable all-rounders
+            WK: 2      // Essential wicket-keepers
+        };
+        
         let balanceScore = 100;
 
-        Object.entries(idealBalance).forEach(([type, ideal]) => {
+        // 1. Team composition balance (40% weight)
+        Object.entries(fantasyIdeal).forEach(([type, ideal]) => {
             const actual = types[type] || 0;
             const deviation = Math.abs(actual - ideal);
-            balanceScore -= deviation * 5;
+            balanceScore -= deviation * 2; // Reduced penalty for flexibility
         });
 
-        return Math.max(0, balanceScore);
+        // 2. Consistent performers bonus (30% weight)
+        const consistencyBonus = this.calculateConsistencyBonus(players);
+        balanceScore += consistencyBonus;
+
+        // 3. Experience mix bonus (20% weight)
+        const experienceBonus = this.calculateExperienceBonus(players);
+        balanceScore += experienceBonus;
+
+        // 4. Value for money bonus (10% weight)
+        const valueBonus = this.calculateValueBonus(players);
+        balanceScore += valueBonus;
+
+        return Math.max(0, Math.min(100, balanceScore));
+    }
+
+    calculateConsistencyBonus(players) {
+        // Reward teams with consistent performers over flashy players
+        if (!players || players.length === 0) return 0;
+
+        let consistencyScore = 0;
+        const playerPerformances = [];
+
+        players.forEach(player => {
+            // Get player's match-by-match performance from fantasy data
+            const playerStats = this.getPlayerConsistencyStats(player.Player);
+            if (playerStats) {
+                playerPerformances.push(playerStats);
+            }
+        });
+
+        if (playerPerformances.length === 0) return 0;
+
+        // Calculate team consistency metrics
+        const avgConsistency = playerPerformances.reduce((sum, p) => sum + p.consistency, 0) / playerPerformances.length;
+        const reliablePlayersCount = playerPerformances.filter(p => p.consistency > 0.7).length;
+        const reliablePlayersRatio = reliablePlayersCount / playerPerformances.length;
+
+        // Bonus for high consistency
+        consistencyScore += avgConsistency * 15; // Up to 15 points for avg consistency
+        consistencyScore += reliablePlayersRatio * 15; // Up to 15 points for reliable players ratio
+
+        return Math.min(30, consistencyScore); // Cap at 30 points
+    }
+
+    calculateExperienceBonus(players) {
+        // Reward balanced mix of experienced and young players
+        if (!players || players.length === 0) return 0;
+
+        const experienced = players.filter(p => (p.Caps || 0) > 50).length;
+        const emerging = players.filter(p => (p.Caps || 0) < 10 && (p.Caps || 0) > 0).length;
+        const total = players.length;
+
+        // Ideal mix: 40% experienced, 30% emerging, 30% middle
+        const experiencedRatio = experienced / total;
+        const emergingRatio = emerging / total;
+
+        let bonus = 0;
+        
+        // Bonus for having experienced players (stability)
+        if (experiencedRatio >= 0.3 && experiencedRatio <= 0.5) bonus += 10;
+        
+        // Bonus for having emerging talent (value)
+        if (emergingRatio >= 0.2 && emergingRatio <= 0.4) bonus += 10;
+
+        return bonus;
+    }
+
+    calculateValueBonus(players) {
+        // Reward teams that get good value for money
+        if (!players || players.length === 0) return 0;
+
+        const avgPrice = players.reduce((sum, p) => sum + (p.Price || 0), 0) / players.length;
+        const totalInvestment = players.reduce((sum, p) => sum + (p.Price || 0), 0);
+        
+        let bonus = 0;
+        
+        // Bonus for reasonable average price (not overspending)
+        if (avgPrice >= 3 && avgPrice <= 8) bonus += 5;
+        
+        // Bonus for not exceeding typical budget constraints
+        if (totalInvestment <= 200) bonus += 5; // Assuming 200Cr typical budget
+        
+        return bonus;
+    }
+
+    getPlayerConsistencyStats(playerName) {
+        // Calculate consistency stats for a player across all matches
+        if (!this.rawData || !playerName) return null;
+
+        const performances = [];
+        
+        // Collect all performances for this player
+        Object.entries(this.rawData).forEach(([matchName, matchData]) => {
+            Object.entries(matchData).forEach(([teamName, teamData]) => {
+                if (teamData.Players) {
+                    const playerPerf = teamData.Players.find(p => p.Player === playerName);
+                    if (playerPerf) {
+                        const totalPoints = (playerPerf.Batting || 0) + (playerPerf.Bowling || 0) + 
+                                          (playerPerf.Fielding || 0) + (playerPerf.Bonus || 0);
+                        performances.push(totalPoints);
+                    }
+                }
+            });
+        });
+
+        if (performances.length === 0) return null;
+
+        // Calculate consistency metrics
+        const avgPoints = performances.reduce((sum, p) => sum + p, 0) / performances.length;
+        const variance = performances.reduce((sum, p) => sum + Math.pow(p - avgPoints, 2), 0) / performances.length;
+        const stdDev = Math.sqrt(variance);
+        
+        // Consistency score: higher is better (low variance relative to mean)
+        const consistency = avgPoints > 0 ? Math.max(0, 1 - (stdDev / avgPoints)) : 0;
+        
+        // Count reliable performances (within 1 std dev of mean, and above certain threshold)
+        const reliablePerfs = performances.filter(p => 
+            Math.abs(p - avgPoints) <= stdDev && p >= Math.max(5, avgPoints * 0.5)
+        ).length;
+        
+        const reliabilityRatio = reliablePerfs / performances.length;
+
+        return {
+            avgPoints,
+            consistency: Math.min(1, consistency),
+            reliability: reliabilityRatio,
+            matchesPlayed: performances.length
+        };
     }
 
     findTeamPoints(playerListTeamName) {
