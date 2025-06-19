@@ -681,8 +681,30 @@ class DashboardApp {
         const ctx = document.getElementById('teamStandingsChart');
         if (!ctx) return;
 
-        const teams = Object.keys(this.data.teamStandings);
-        const points = Object.values(this.data.teamStandings);
+        // Get teams sorted by points (same order as cards)
+        const sortedTeams = Object.entries(this.data.teamStandings)
+            .sort(([,a], [,b]) => b - a);
+        
+        const teams = sortedTeams.map(([team]) => team);
+        const points = sortedTeams.map(([,points]) => points);
+
+        // Colors that match the visual order: Royal Smashers, Sher-e-Punjab, Silly Pointers, The Kingsmen
+        const teamColors = {
+            'Royal Smashers': 'rgba(255, 99, 132, 0.8)',   // Pink/Red
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)',    // Yellow
+            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',   // Blue  
+            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'      // Teal
+        };
+
+        const teamBorderColors = {
+            'Royal Smashers': 'rgba(255, 99, 132, 1)',
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 1)', 
+            'Silly Pointers': 'rgba(54, 162, 235, 1)',
+            'The Kingsmen': 'rgba(75, 192, 192, 1)'
+        };
+
+        const backgroundColors = teams.map(team => teamColors[team] || 'rgba(128, 128, 128, 0.8)');
+        const borderColors = teams.map(team => teamBorderColors[team] || 'rgba(128, 128, 128, 1)');
 
         if (this.charts.teamStandings) {
             this.charts.teamStandings.destroy();
@@ -695,18 +717,8 @@ class DashboardApp {
                 datasets: [{
                     label: 'Total Points',
                     data: points,
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.8)',
-                        'rgba(255, 99, 132, 0.8)',
-                        'rgba(255, 206, 86, 0.8)',
-                        'rgba(75, 192, 192, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
                     borderWidth: 2
                 }]
             },
@@ -715,6 +727,10 @@ class DashboardApp {
                 plugins: {
                     legend: {
                         display: false
+                    },
+                    title: {
+                        display: true,
+                        text: '📊 Team Standings'
                     }
                 },
                 scales: {
@@ -1038,8 +1054,84 @@ class DashboardApp {
         // Add team filtering functionality here if needed
     }
 
-    // Additional existing methods would continue here...
-    // (renderPlayersTable, updateStats, renderLeaderboards, etc.)
+    renderPlayersTable() {
+        console.log('📊 Rendering players table...');
+        const tableBody = document.getElementById('playersTableBody');
+        if (!tableBody) {
+            console.log('❌ playersTableBody not found, skipping table render');
+            return;
+        }
+
+        // Simple player table rendering
+        const topPlayers = this.data.players.slice(0, 20);
+        tableBody.innerHTML = topPlayers.map(player => `
+            <tr>
+                <td><strong>${player.player}</strong></td>
+                <td>${player.team}</td>
+                <td>${player.totalPoints}</td>
+                <td>${player.runs}</td>
+                <td>${player.wickets}</td>
+                <td>${player.catches}</td>
+                <td>${player.matchesPlayed}</td>
+            </tr>
+        `).join('');
+        
+        console.log('✅ Players table rendered with', topPlayers.length, 'players');
+    }
+
+    renderLeaderboards() {
+        console.log('🏆 Rendering leaderboards...');
+        
+        // Top Scorers
+        const topScorersContainer = document.getElementById('topScorers');
+        if (topScorersContainer) {
+            const topScorers = this.data.players
+                .sort((a, b) => b.totalPoints - a.totalPoints)
+                .slice(0, 5);
+            
+            topScorersContainer.innerHTML = topScorers.map((player, index) => `
+                <div class="leaderboard-item">
+                    <span class="leaderboard-rank">#${index + 1}</span>
+                    <span class="leaderboard-player">${player.player}</span>
+                    <span class="leaderboard-value">${player.totalPoints} pts</span>
+                </div>
+            `).join('');
+        }
+        
+        // Top Batsmen
+        const topBatsmenContainer = document.getElementById('topBatsmen');
+        if (topBatsmenContainer) {
+            const topBatsmen = this.data.players
+                .sort((a, b) => b.runs - a.runs)
+                .slice(0, 5);
+            
+            topBatsmenContainer.innerHTML = topBatsmen.map((player, index) => `
+                <div class="leaderboard-item">
+                    <span class="leaderboard-rank">#${index + 1}</span>
+                    <span class="leaderboard-player">${player.player}</span>
+                    <span class="leaderboard-value">${player.runs} runs</span>
+                </div>
+            `).join('');
+        }
+        
+        // Top Bowlers
+        const topBowlersContainer = document.getElementById('topBowlers');
+        if (topBowlersContainer) {
+            const topBowlers = this.data.players
+                .sort((a, b) => b.wickets - a.wickets)
+                .slice(0, 5);
+            
+            topBowlersContainer.innerHTML = topBowlers.map((player, index) => `
+                <div class="leaderboard-item">
+                    <span class="leaderboard-rank">#${index + 1}</span>
+                    <span class="leaderboard-player">${player.player}</span>
+                    <span class="leaderboard-value">${player.wickets} wickets</span>
+                </div>
+            `).join('');
+        }
+        
+        console.log('✅ Leaderboards rendered');
+    }
 }
 
 // Enhanced Filters Class
