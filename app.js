@@ -970,6 +970,74 @@ class DashboardApp {
         console.log('✅ Tabs initialized successfully');
     }
 
+    setupEventListeners() {
+        console.log('🎧 Setting up event listeners...');
+        
+        // Theme toggle button
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+            console.log('✅ Theme toggle listener added');
+        }
+        
+        // Tab navigation
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const tabId = e.target.getAttribute('data-tab');
+                if (tabId) {
+                    this.switchTab(tabId);
+                }
+            });
+        });
+        console.log('✅ Tab navigation listeners added:', tabButtons.length);
+        
+        // Generate Best XI button
+        const generateXIBtn = document.getElementById('generateXI');
+        if (generateXIBtn) {
+            generateXIBtn.addEventListener('click', () => this.generateBestXI());
+            console.log('✅ Generate XI button listener added');
+        }
+        
+        // Search and filter controls
+        const playerSearch = document.getElementById('playerSearch');
+        if (playerSearch) {
+            playerSearch.addEventListener('input', (e) => this.handlePlayerSearch(e.target.value));
+        }
+        
+        const teamFilter = document.getElementById('teamFilter');
+        if (teamFilter) {
+            teamFilter.addEventListener('change', (e) => this.handleTeamFilter(e.target.value));
+        }
+        
+        const positionFilter = document.getElementById('positionFilter');
+        if (positionFilter) {
+            positionFilter.addEventListener('change', (e) => this.handlePositionFilter(e.target.value));
+        }
+        
+        console.log('✅ All event listeners setup complete');
+    }
+
+    handlePlayerSearch(searchTerm) {
+        console.log('🔍 Player search:', searchTerm);
+        // Add search functionality here if needed
+    }
+
+    handleTeamFilter(team) {
+        console.log('🏏 Team filter:', team);
+        // Add team filtering functionality here if needed
+    }
+
+    handlePositionFilter(position) {
+        console.log('📍 Position filter:', position);
+        // Add position filtering functionality here if needed
+    }
+
+    filterByTeam(teamName) {
+        console.log('🎯 Filter by team:', teamName);
+        // Add team filtering functionality here if needed
+    }
+
     // Additional existing methods would continue here...
     // (renderPlayersTable, updateStats, renderLeaderboards, etc.)
 }
