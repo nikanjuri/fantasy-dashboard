@@ -1477,16 +1477,20 @@ select.form-control {
 
 .detail-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--space-8);
 }
 
 .detail-item .label {
     color: var(--color-text-secondary);
+    min-width: fit-content;
 }
 
 .detail-item .value {
     font-weight: var(--font-weight-semibold);
     color: var(--color-text);
+    margin-left: auto;
 }
 
 .team-composition-mini {
