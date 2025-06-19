@@ -2057,44 +2057,114 @@ select.form-control {
     }
 }
 
-/* Theme toggle button styling */
-.theme-toggle {
-    padding: 8px 12px !important;
-    border-radius: 8px;
+/* Floating Theme Toggle Button */
+.floating-theme-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
-    position: relative;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
 }
 
-.theme-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.floating-theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    background: var(--color-primary-hover);
 }
 
-.theme-icon {
-    font-size: 18px;
+.floating-theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.floating-theme-toggle .theme-icon {
+    font-size: 24px;
     display: inline-block;
     transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-/* Light theme - bulb is on (yellow) */
-[data-theme="light"] .theme-icon {
-    filter: hue-rotate(0deg) brightness(1.2);
+/* Light theme - bulb is bright */
+[data-color-scheme="light"] .floating-theme-toggle .theme-icon,
+:root .floating-theme-toggle .theme-icon {
+    filter: brightness(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-/* Dark theme - bulb is dimmed (gray) */
-[data-theme="dark"] .theme-icon {
-    filter: grayscale(0.8) brightness(0.7);
+/* Dark theme - bulb is dimmed */
+[data-color-scheme="dark"] .floating-theme-toggle .theme-icon {
+    filter: grayscale(0.3) brightness(0.9) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
-.theme-toggle:hover .theme-icon {
+.floating-theme-toggle:hover .theme-icon {
     transform: rotate(15deg) scale(1.1);
 }
 
-/* Add a subtle glow effect on hover */
-.theme-toggle:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 0, 0.1), rgba(255, 165, 0, 0.1));
+/* Dark theme button styling */
+[data-color-scheme="dark"] .floating-theme-toggle {
+    background: var(--color-primary);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="dark"] .theme-toggle:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1));
+[data-color-scheme="dark"] .floating-theme-toggle:hover {
+    box-shadow: 0 12px 32px rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .floating-theme-toggle {
+        width: 48px;
+        height: 48px;
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .floating-theme-toggle .theme-icon {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .floating-theme-toggle {
+        width: 44px;
+        height: 44px;
+        bottom: 16px;
+        right: 16px;
+    }
+    
+    .floating-theme-toggle .theme-icon {
+        font-size: 18px;
+    }
+}
+
+/* Add a subtle pulse animation for better visibility */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    50% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 0 8px rgba(33, 128, 141, 0.1);
+    }
+    100% {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.floating-theme-toggle:focus-visible {
+    outline: none;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Remove the old theme toggle styles */
+.theme-toggle {
+    display: none; /* Hide the old header theme toggle */
 }
