@@ -264,13 +264,7 @@ class DashboardApp {
                     AR: players.filter(p => p.Type === 'AR').length,
                     WK: players.filter(p => p.Type === 'WK').length
                 },
-                overseas: players.filter(p => p.Overseas).length,
-                experience: {
-                    capped: players.filter(p => p['Cap/Un'] === 'Capped').length,
-                    uncapped: players.filter(p => p['Cap/Un'] === 'Uncapped').length
-                },
-                totalPoints: this.findTeamPoints(teamName),
-                balanceScore: this.calculateTeamBalance(players)
+                overseas: players.filter(p => p.Overseas === 'Yes').length,
             };
 
             compositions[teamName] = composition;
@@ -329,160 +323,6 @@ class DashboardApp {
         return 'Rookie';
     }
 
-    calculateTeamBalance(players) {
-        // Enhanced team balance calculation emphasizing consistent performers
-        const types = players.reduce((acc, p) => {
-            acc[p.Type] = (acc[p.Type] || 0) + 1;
-            return acc;
-        }, {});
-
-        // Fantasy-focused ideal composition (emphasizes top-order batsmen)
-        const fantasyIdeal = { 
-            BAT: 8,    // More batsmen for consistent scoring
-            BOWL: 5,   // Quality bowlers
-            AR: 4,     // Valuable all-rounders
-            WK: 2      // Essential wicket-keepers
-        };
-        
-        let balanceScore = 100;
-
-        // 1. Team composition balance (40% weight)
-        Object.entries(fantasyIdeal).forEach(([type, ideal]) => {
-            const actual = types[type] || 0;
-            const deviation = Math.abs(actual - ideal);
-            balanceScore -= deviation * 2; // Reduced penalty for flexibility
-        });
-
-        // 2. Consistent performers bonus (30% weight)
-        const consistencyBonus = this.calculateConsistencyBonus(players);
-        balanceScore += consistencyBonus;
-
-        // 3. Experience mix bonus (20% weight)
-        const experienceBonus = this.calculateExperienceBonus(players);
-        balanceScore += experienceBonus;
-
-        // 4. Value for money bonus (10% weight)
-        const valueBonus = this.calculateValueBonus(players);
-        balanceScore += valueBonus;
-
-        return Math.max(0, Math.min(100, balanceScore));
-    }
-
-    calculateConsistencyBonus(players) {
-        // Reward teams with consistent performers over flashy players
-        if (!players || players.length === 0) return 0;
-
-        let consistencyScore = 0;
-        const playerPerformances = [];
-
-        players.forEach(player => {
-            // Get player's match-by-match performance from fantasy data
-            const playerStats = this.getPlayerConsistencyStats(player.Player);
-            if (playerStats) {
-                playerPerformances.push(playerStats);
-            }
-        });
-
-        if (playerPerformances.length === 0) return 0;
-
-        // Calculate team consistency metrics
-        const avgConsistency = playerPerformances.reduce((sum, p) => sum + p.consistency, 0) / playerPerformances.length;
-        const reliablePlayersCount = playerPerformances.filter(p => p.consistency > 0.7).length;
-        const reliablePlayersRatio = reliablePlayersCount / playerPerformances.length;
-
-        // Bonus for high consistency
-        consistencyScore += avgConsistency * 15; // Up to 15 points for avg consistency
-        consistencyScore += reliablePlayersRatio * 15; // Up to 15 points for reliable players ratio
-
-        return Math.min(30, consistencyScore); // Cap at 30 points
-    }
-
-    calculateExperienceBonus(players) {
-        // Reward balanced mix of experienced and young players
-        if (!players || players.length === 0) return 0;
-
-        const experienced = players.filter(p => (p.Caps || 0) > 50).length;
-        const emerging = players.filter(p => (p.Caps || 0) < 10 && (p.Caps || 0) > 0).length;
-        const total = players.length;
-
-        // Ideal mix: 40% experienced, 30% emerging, 30% middle
-        const experiencedRatio = experienced / total;
-        const emergingRatio = emerging / total;
-
-        let bonus = 0;
-        
-        // Bonus for having experienced players (stability)
-        if (experiencedRatio >= 0.3 && experiencedRatio <= 0.5) bonus += 10;
-        
-        // Bonus for having emerging talent (value)
-        if (emergingRatio >= 0.2 && emergingRatio <= 0.4) bonus += 10;
-
-        return bonus;
-    }
-
-    calculateValueBonus(players) {
-        // Reward teams that get good value for money
-        if (!players || players.length === 0) return 0;
-
-        const avgPrice = players.reduce((sum, p) => sum + (p.Price || 0), 0) / players.length;
-        const totalInvestment = players.reduce((sum, p) => sum + (p.Price || 0), 0);
-        
-        let bonus = 0;
-        
-        // Bonus for reasonable average price (not overspending)
-        if (avgPrice >= 3 && avgPrice <= 8) bonus += 5;
-        
-        // Bonus for not exceeding typical budget constraints
-        if (totalInvestment <= 200) bonus += 5; // Assuming 200Cr typical budget
-        
-        return bonus;
-    }
-
-    getPlayerConsistencyStats(playerName) {
-        // Calculate consistency stats for a player across all matches
-        if (!this.rawData || !playerName) return null;
-
-        const performances = [];
-        
-        // Collect all performances for this player
-        Object.entries(this.rawData).forEach(([matchName, matchData]) => {
-            Object.entries(matchData).forEach(([teamName, teamData]) => {
-                if (teamData.Players) {
-                    const playerPerf = teamData.Players.find(p => p.Player === playerName);
-                    if (playerPerf) {
-                        const totalPoints = (playerPerf.Batting || 0) + (playerPerf.Bowling || 0) + 
-                                          (playerPerf.Fielding || 0) + (playerPerf.Bonus || 0);
-                        performances.push(totalPoints);
-                    }
-                }
-            });
-        });
-
-        if (performances.length === 0) return null;
-
-        // Calculate consistency metrics
-        const avgPoints = performances.reduce((sum, p) => sum + p, 0) / performances.length;
-        const variance = performances.reduce((sum, p) => sum + Math.pow(p - avgPoints, 2), 0) / performances.length;
-        const stdDev = Math.sqrt(variance);
-        
-        // Consistency score: higher is better (low variance relative to mean)
-        const consistency = avgPoints > 0 ? Math.max(0, 1 - (stdDev / avgPoints)) : 0;
-        
-        // Count reliable performances (within 1 std dev of mean, and above certain threshold)
-        const reliablePerfs = performances.filter(p => 
-            Math.abs(p - avgPoints) <= stdDev && p >= Math.max(5, avgPoints * 0.5)
-        ).length;
-        
-        const reliabilityRatio = reliablePerfs / performances.length;
-
-        return {
-            avgPoints,
-            consistency: Math.min(1, consistency),
-            reliability: reliabilityRatio,
-            matchesPlayed: performances.length
-        };
-    }
-
     findTeamPoints(playerListTeamName) {
         // Try exact match first
         if (this.data.teamStandings[playerListTeamName]) {
@@ -536,8 +376,6 @@ class DashboardApp {
             .filter(p => (p.Price || 0) < 2 && p.performance.totalPoints > 100)[0];
         const formPlayer = this.data.players
             .sort((a, b) => (b.totalPoints / b.matchesPlayed) - (a.totalPoints / a.matchesPlayed))[0];
-        const balancedTeam = Object.entries(this.data.teamCompositions)
-            .sort(([,a], [,b]) => b.balanceScore - a.balanceScore)[0];
 
         if (bestValue) {
             document.getElementById('bestValuePlayer').innerHTML = `
@@ -557,13 +395,6 @@ class DashboardApp {
             document.getElementById('formPlayer').innerHTML = `
                 <strong>${formPlayer.player}</strong><br>
                 <small>${(formPlayer.totalPoints / formPlayer.matchesPlayed).toFixed(1)} pts/match</small>
-            `;
-        }
-
-        if (balancedTeam) {
-            document.getElementById('balancedTeam').innerHTML = `
-                <strong>${balancedTeam[0]}</strong><br>
-                <small>Balance Score: ${balancedTeam[1].balanceScore}/100</small>
             `;
         }
     }
@@ -610,10 +441,6 @@ class DashboardApp {
                     <div class="detail-item">
                         <span class="label">Players:</span>
                         <span class="value">${composition?.totalPlayers || 'undefined'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Balance:</span>
-                        <span class="value">${composition?.balanceScore || 'undefined'}/100</span>
                     </div>
                 </div>
                 <div class="team-stats">
@@ -719,16 +546,12 @@ class DashboardApp {
                     <h4>${teamName}</h4>
                     <div class="comp-stats">
                         <div class="comp-stat">
-                            <span class="comp-label">Players</span>
-                            <span class="comp-value">${comp.totalPlayers}</span>
-                        </div>
-                        <div class="comp-stat">
-                            <span class="comp-label">Investment</span>
+                            <span class="comp-label">Total Investment</span>
                             <span class="comp-value">₹${comp.totalInvestment.toFixed(1)}Cr</span>
                         </div>
                         <div class="comp-stat">
-                            <span class="comp-label">Balance Score</span>
-                            <span class="comp-value">${comp.balanceScore}/100</span>
+                            <span class="comp-label">Avg Price</span>
+                            <span class="comp-value">₹${comp.avgPrice.toFixed(1)}Cr</span>
                         </div>
                     </div>
                     <div class="player-breakdown">
@@ -757,10 +580,6 @@ class DashboardApp {
                         <div class="exp-item">
                             <span class="exp-label">Overseas</span>
                             <span class="exp-count">${comp.overseas}</span>
-                        </div>
-                        <div class="exp-item">
-                            <span class="exp-label">Capped</span>
-                            <span class="exp-count">${comp.experience.capped}</span>
                         </div>
                     </div>
                 </div>
@@ -1214,13 +1033,8 @@ class DashboardApp {
             case 'value':
                 players.sort((a, b) => b.pointsPerCrore - a.pointsPerCrore);
                 break;
-            case 'balanced':
-                players.sort((a, b) => {
-                    const aScore = b.performance.totalPoints * 0.7 + b.pointsPerCrore * 0.3;
-                    const bScore = a.performance.totalPoints * 0.7 + a.pointsPerCrore * 0.3;
-                    return aScore - bScore;
-                });
-                break;
+            default:
+                // Default selection
         }
 
         // Select balanced XI
