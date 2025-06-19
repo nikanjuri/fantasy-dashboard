@@ -427,6 +427,21 @@ class DashboardApp {
             'Silly Pointers': 'Silly Pointers'
         };
 
+        // Team colors matching the chart
+        const teamColors = {
+            'Royal Smashers': 'rgba(255, 99, 132, 0.1)',   // Light Pink/Red
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.1)',    // Light Yellow
+            'Silly Pointers': 'rgba(54, 162, 235, 0.1)',   // Light Blue  
+            'The Kingsmen': 'rgba(75, 192, 192, 0.1)'      // Light Teal
+        };
+
+        const teamBorderColors = {
+            'Royal Smashers': 'rgba(255, 99, 132, 0.8)',
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)', 
+            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
+            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
+        };
+
         const sortedTeams = Object.entries(this.data.teamStandings)
             .sort(([,a], [,b]) => b - a)
             .map(([team, points], index) => {
@@ -448,43 +463,48 @@ class DashboardApp {
 
         console.log('🎯 Sorted teams for display:', sortedTeams);
 
-        const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => `
-            <div class="enhanced-team-card" data-team="${team}" style="border: 2px solid #ccc; margin: 10px; padding: 15px; background: white;">
-                <div class="team-header">
-                    <h4>${team}</h4>
-                    <div class="team-rank">#${rank}</div>
+        const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => {
+            const bgColor = teamColors[team] || 'rgba(128, 128, 128, 0.1)';
+            const borderColor = teamBorderColors[team] || 'rgba(128, 128, 128, 0.8)';
+            
+            return `
+                <div class="enhanced-team-card" data-team="${team}" style="border: 2px solid ${borderColor}; margin: 10px; padding: 15px; background: ${bgColor};">
+                    <div class="team-header">
+                        <h4>${team}</h4>
+                        <div class="team-rank">#${rank}</div>
+                    </div>
+                    <div class="team-points" style="font-size: 24px; font-weight: bold; color: #007bff;">${points.toLocaleString()} pts</div>
+                    <div class="team-details">
+                        <div class="detail-item">
+                            <span class="label">Investment:</span>
+                            <span class="value">₹${composition?.totalInvestment?.toFixed(1) || 0}Cr</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="label">Players:</span>
+                            <span class="value">${composition?.totalPlayers || 0}</span>
+                        </div>
+                    </div>
+                    <div class="team-stats">
+                        <div class="stat-item">
+                            <span class="icon">🏏</span>
+                            <span class="count">${composition?.playerTypes?.BAT || 0}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="icon">⚡</span>
+                            <span class="count">${composition?.playerTypes?.BOWL || 0}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="icon">🌟</span>
+                            <span class="count">${composition?.playerTypes?.AR || 0}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="icon">🧤</span>
+                            <span class="count">${composition?.playerTypes?.WK || 0}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="team-points" style="font-size: 24px; font-weight: bold; color: #007bff;">${points.toLocaleString()} pts</div>
-                <div class="team-details">
-                    <div class="detail-item">
-                        <span class="label">Investment:</span>
-                        <span class="value">₹${composition?.totalInvestment?.toFixed(1) || 0}Cr</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="label">Players:</span>
-                        <span class="value">${composition?.totalPlayers || 0}</span>
-                    </div>
-                </div>
-                <div class="team-stats">
-                    <div class="stat-item">
-                        <span class="icon">🏏</span>
-                        <span class="count">${composition?.playerTypes?.BAT || 0}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="icon">⚡</span>
-                        <span class="count">${composition?.playerTypes?.BOWL || 0}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="icon">🌟</span>
-                        <span class="count">${composition?.playerTypes?.AR || 0}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="icon">🧤</span>
-                        <span class="count">${composition?.playerTypes?.WK || 0}</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
         console.log('🎨 Generated HTML length:', cardsHTML.length);
         console.log('🎨 Generated HTML preview:', cardsHTML.substring(0, 200) + '...');
