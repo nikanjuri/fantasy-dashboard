@@ -1033,6 +1033,31 @@ class DashboardApp {
             }
         }, 5000);
     }
+
+    // Add this method to verify calculations
+    verifyTeamTotals() {
+        console.log("=== TEAM TOTALS VERIFICATION ===");
+        
+        Object.entries(this.data.teamStandings).forEach(([team, total]) => {
+            console.log(`\n${team}: ${total.toLocaleString()} points`);
+            
+            let matchCount = 0;
+            let calculatedTotal = 0;
+            
+            Object.entries(this.rawData).forEach(([matchName, matchData]) => {
+                if (matchData[team]) {
+                    const matchTotal = matchData[team]['Team Total'] || 0;
+                    calculatedTotal += matchTotal;
+                    matchCount++;
+                    console.log(`  ${matchName}: ${matchTotal} pts`);
+                }
+            });
+            
+            console.log(`  → Matches played: ${matchCount}`);
+            console.log(`  → Calculated total: ${calculatedTotal}`);
+            console.log(`  → Match: ${calculatedTotal === total ? '✅' : '❌'}`);
+        });
+    }
 }
 
 // Initialize the dashboard when the page loads
