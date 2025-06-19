@@ -342,12 +342,13 @@ class DashboardApp {
     // Enhanced UI Update Methods
     updateAllDashboards() {
         this.updateTeamOverview();
+        this.updateSmartInsights();
         this.updateAuctionAnalysis();
         this.updateTeamComposition();
-        this.updateScoringRules();
         this.updateStats();
-        this.renderPlayersTable();
-        this.renderLeaderboards();
+        this.updateScoringRules();
+        this.updateMatchSelector();
+        this.setupCharts();
     }
 
     updateTeamOverview() {
@@ -965,6 +966,17 @@ class DashboardApp {
             console.log('✅ Generate XI button listener added');
         }
         
+        // Match selector
+        const matchSelector = document.getElementById('matchSelector');
+        if (matchSelector) {
+            matchSelector.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    this.updateMatchDetails(parseInt(e.target.value));
+                }
+            });
+            console.log('✅ Match selector listener added');
+        }
+        
         // Search and filter controls
         const playerSearch = document.getElementById('playerSearch');
         if (playerSearch) {
@@ -1081,6 +1093,51 @@ class DashboardApp {
         }
         
         console.log('✅ Leaderboards rendered');
+    }
+
+    updateMatchSelector() {
+        const matchSelector = document.getElementById('matchSelector');
+        if (!matchSelector || !this.data.matches) return;
+
+        // Clear existing options except the first one
+        matchSelector.innerHTML = '<option value="">Select a match</option>';
+        
+        // Add match options
+        this.data.matches.forEach((match, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = match.matchName;
+            matchSelector.appendChild(option);
+        });
+        
+        console.log('✅ Match selector updated with', this.data.matches.length, 'matches');
+    }
+
+    updateMatchDetails(matchIndex) {
+        if (!this.data.matches || !this.data.matches[matchIndex]) return;
+        
+        const match = this.data.matches[matchIndex];
+        const scorecardContainer = document.getElementById('matchScorecard');
+        
+        if (!scorecardContainer) return;
+        
+        // Create scorecard HTML
+        const scorecardHTML = `
+            <div class="match-info">
+                <h4>${match.matchName}</h4>
+                <div class="teams-scores">
+                    ${Object.entries(match.teamTotals).map(([teamName, total]) => `
+                        <div class="team-score">
+                            <span class="team-name">${teamName}</span>
+                            <span class="team-total">${total.toFixed(1)} pts</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        scorecardContainer.innerHTML = scorecardHTML;
+        console.log('✅ Match details updated for:', match.matchName);
     }
 }
 
