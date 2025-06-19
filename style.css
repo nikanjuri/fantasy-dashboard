@@ -1471,28 +1471,25 @@ select.form-control {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-8);
-    margin: var(--space-16) 0;
+    margin: var(--space-12) 0;
     font-size: var(--font-size-sm);
 }
 
 .detail-item {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: var(--space-2);
-    white-space: nowrap;
+    gap: var(--space-4);
 }
 
 .detail-item .label {
     color: var(--color-text-secondary);
-}
-
-.detail-item .label::after {
-    content: ":";
+    font-size: var(--font-size-sm);
 }
 
 .detail-item .value {
     font-weight: var(--font-weight-semibold);
     color: var(--color-text);
+    font-size: var(--font-size-sm);
 }
 
 .team-composition-mini {
