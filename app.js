@@ -638,12 +638,12 @@ class DashboardApp {
         const visiblePlayers = allPlayers.slice(0, 15);
         const hiddenPlayers = allPlayers.slice(15, 30);
 
-        // Team colors for styling
+        // Enhanced team colors for better visibility on dark background
         const teamColors = {
-            'Royal Smashers': '#ff6384',
-            'Sher-e-Punjab': '#ffce56', 
-            'Silly Pointers': '#36a2eb',
-            'The Kingsmen': '#4bc0c0'
+            'Royal Smashers': '#ff6384',      // Pink/Red - good visibility
+            'Sher-e-Punjab': '#fbbf24',       // Darker yellow/amber - much better visibility
+            'Silly Pointers': '#36a2eb',      // Blue - good visibility  
+            'The Kingsmen': '#06d6a0'         // Darker teal/green - much better visibility
         };
 
         // Function to create table row with colors
