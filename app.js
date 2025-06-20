@@ -1427,7 +1427,6 @@ class DashboardApp {
         // Create scorecard HTML (without player table)
         const scorecardHTML = `
             <div class="match-info">
-                <h3>${match.matchName}</h3>
                 <div class="team-cards-container">
                     ${teamCardsHTML}
                 </div>
@@ -1618,18 +1617,7 @@ class DashboardApp {
                 responsive: true,
                 plugins: {
                     title: {
-                        display: true,
-                        text: `Points Distribution - ${match.matchName}`,
-                        position: 'bottom',
-                        padding: {
-                            top: 20,
-                            bottom: 10
-                        },
-                        font: {
-                            size: 14,
-                            weight: 'normal'
-                        },
-                        color: '#666'
+                        display: false
                     },
                     legend: {
                         display: false
