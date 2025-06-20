@@ -1664,3 +1664,355 @@ select.form-control {
 .enhanced-table td:first-child {
   text-align: left;
 }
+
+/* Auction Analysis Tab Styling */
+.auction-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-24);
+  margin-bottom: var(--space-32);
+}
+
+.highlight-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-fast) var(--ease-standard);
+  border: 1px solid var(--color-border);
+}
+
+.highlight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.highlight-card h3 {
+  margin: 0 0 var(--space-16) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+/* Best Value Player & Hidden Gem Cards */
+.best-value-player,
+.hidden-gem {
+  background: linear-gradient(135deg, var(--color-success) 0%, rgba(16, 185, 129, 0.1) 100%);
+  border-left: 4px solid var(--color-success);
+}
+
+.form-player {
+  background: linear-gradient(135deg, var(--color-primary) 0%, rgba(59, 130, 246, 0.1) 100%);
+  border-left: 4px solid var(--color-primary);
+}
+
+.player-highlight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.player-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.player-stats {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Auction Stats Grid */
+.auction-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-20);
+  margin-bottom: var(--space-32);
+}
+
+.auction-stat-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+.auction-stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-8);
+  font-weight: var(--font-weight-medium);
+}
+
+.auction-stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin: 0;
+}
+
+/* Best Bargains & Expensive Picks Lists */
+.bargain-list,
+.expensive-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.bargain-item,
+.expensive-item {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+
+.bargain-item:hover,
+.expensive-item:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+.bargain-item {
+  border-left: 4px solid var(--color-success);
+}
+
+.expensive-item {
+  border-left: 4px solid var(--color-error);
+}
+
+.bargain-details,
+.expensive-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-8);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.value-ratio {
+  background: var(--color-primary);
+  color: white;
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+}
+
+.bargain-item .value-ratio {
+  background: var(--color-success);
+}
+
+.expensive-item .value-ratio {
+  background: var(--color-error);
+}
+
+/* Value for Money Table */
+.vfm-table-container {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+
+.value-badge {
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.value-badge.excellent {
+  background: var(--color-success);
+  color: white;
+}
+
+.value-badge.good {
+  background: #10b981;
+  color: white;
+}
+
+.value-badge.average {
+  background: var(--color-warning);
+  color: white;
+}
+
+.value-badge.poor {
+  background: var(--color-error);
+  color: white;
+}
+
+/* Team Composition Grid */
+.composition-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-20);
+  margin-top: var(--space-24);
+}
+
+.composition-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.composition-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.composition-card h4 {
+  margin: 0 0 var(--space-16) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  text-align: center;
+  padding-bottom: var(--space-12);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.comp-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+  margin-bottom: var(--space-16);
+}
+
+.comp-stat {
+  text-align: center;
+  padding: var(--space-12);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+}
+
+.comp-label {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-4);
+}
+
+.comp-value {
+  display: block;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.player-breakdown,
+.experience-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin-bottom: var(--space-16);
+}
+
+.breakdown-item,
+.exp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-8) var(--space-12);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.type-icon {
+  font-size: var(--font-size-lg);
+  margin-right: var(--space-8);
+}
+
+.type-label,
+.exp-label {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.type-count,
+.exp-count {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  background: var(--color-surface);
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-sm);
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Dark mode adjustments */
+[data-color-scheme="dark"] .highlight-card,
+[data-color-scheme="dark"] .auction-stat-card,
+[data-color-scheme="dark"] .composition-card,
+[data-color-scheme="dark"] .vfm-table-container {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-color-scheme="dark"] .bargain-item,
+[data-color-scheme="dark"] .expensive-item {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-color-scheme="dark"] .comp-stat,
+[data-color-scheme="dark"] .breakdown-item,
+[data-color-scheme="dark"] .exp-item {
+  background: var(--color-background);
+  border-color: var(--color-border);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .auction-highlights {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  
+  .auction-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-12);
+  }
+  
+  .composition-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  
+  .comp-stats {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  
+  .bargain-details,
+  .expensive-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+}
