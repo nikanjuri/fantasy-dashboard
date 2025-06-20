@@ -1110,6 +1110,7 @@ select.form-control {
   gap: var(--space-8);
   width: 100%;
   max-width: 300px;
+  height: 220px;
   margin: 0 auto;
   background: transparent;
 }
@@ -1475,6 +1476,7 @@ select.form-control {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, auto);
     max-width: 220px;
+    height: 200px;
     gap: var(--space-6);
   }
   
