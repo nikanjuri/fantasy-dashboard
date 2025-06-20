@@ -458,9 +458,9 @@ class DashboardApp {
         // Team colors for styling
         const teamColors = {
             'Royal Smashers': '#ff6384',
-            'Sher-e-Punjab': '#f59e0b',       // Changed from #ffce56 - bright orange/amber
-            'Silly Pointers': '#3b82f6',      // Changed from #36a2eb - bright blue
-            'The Kingsmen': '#10b981'         // Changed from #4bc0c0 - bright emerald green
+            'Sher-e-Punjab': '#f59e0b',       
+            'Silly Pointers': '#3b82f6',      
+            'The Kingsmen': '#10b981'         
         };
 
         const teamBorderColors = {
@@ -468,13 +468,6 @@ class DashboardApp {
             'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)', 
             'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
             'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
-        };
-
-        const teamPointsColors = {
-            'Royal Smashers': '#ff6384',
-            'Sher-e-Punjab': '#f59e0b',       // Changed from #ffce56 - bright orange/amber
-            'Silly Pointers': '#3b82f6',      // Changed from #36a2eb - bright blue
-            'The Kingsmen': '#10b981'         // Changed from #4bc0c0 - bright emerald green
         };
 
         const sortedTeams = Object.entries(this.data.teamStandings)
@@ -501,7 +494,6 @@ class DashboardApp {
         const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => {
             const bgColor = teamColors[team] || 'rgba(128, 128, 128, 0.1)';
             const borderColor = teamBorderColors[team] || 'rgba(128, 128, 128, 0.8)';
-            const pointsColor = teamPointsColors[team] || '#007bff';
             
             return `
                 <div class="enhanced-team-card" data-team="${team}" style="background: ${bgColor}; border: 2px solid ${borderColor};">
@@ -509,7 +501,7 @@ class DashboardApp {
                         <h4>${team}</h4>
                         <div class="team-rank">#${rank}</div>
                     </div>
-                    <div class="team-points" style="color: ${pointsColor};">${points.toLocaleString()} pts</div>
+                    <div class="team-points" style="color: #ffffff; font-weight: bold; font-size: 1.5rem;">${points.toLocaleString()} pts</div>
                     <div class="team-details">
                         <div class="detail-item">
                             <span class="label">Investment:</span>
@@ -1001,7 +993,7 @@ class DashboardApp {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: themeColors.subtleTextColor,
+                            color: themeColors.textColor,
                             usePointStyle: false,
                             font: {
                                 size: 12,
