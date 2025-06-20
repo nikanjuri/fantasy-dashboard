@@ -746,8 +746,8 @@ class DashboardApp {
                         ${Object.entries(rules).map(([action, points]) => `
                             <div class="rule-item">
                                 <span class="rule-action">${action}</span>
-                                <span class="rule-points">${points > 0 ? '+' : ''}${points}</span>
-            </div>
+                                <span class="rule-points" ${points < 0 ? 'data-negative="true"' : ''}>${points > 0 ? '+' : ''}${points}</span>
+                            </div>
                         `).join('')}
                     </div>
                 </div>

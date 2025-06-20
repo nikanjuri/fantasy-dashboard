@@ -1496,3 +1496,128 @@ select.form-control {
 [data-color-scheme="dark"] .data-table tbody tr:hover {
   background: var(--color-hover);
 }
+
+/* Scoring System Cards */
+.scoring-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-20);
+  margin-top: var(--space-24);
+}
+
+.scoring-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-fast) var(--ease-standard);
+  border: 1px solid var(--color-border);
+}
+
+.scoring-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.scoring-card h4 {
+  margin: 0 0 var(--space-16) 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  text-align: center;
+  padding-bottom: var(--space-12);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.rule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-8) var(--space-12);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.rule-item:hover {
+  background: var(--color-hover);
+}
+
+.rule-action {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+  flex: 1;
+}
+
+.rule-points {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-sm);
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Color coding for points */
+.rule-points {
+  background: var(--color-success);
+  color: white;
+}
+
+.rule-item:has(.rule-points:contains("-")) .rule-points,
+.rule-points[data-negative="true"] {
+  background: var(--color-error);
+  color: white;
+}
+
+/* Category-specific styling */
+.scoring-card:nth-child(1) h4 {
+  color: #4ade80; /* Green for Batting */
+}
+
+.scoring-card:nth-child(2) h4 {
+  color: #f59e0b; /* Orange for Bowling */
+}
+
+.scoring-card:nth-child(3) h4 {
+  color: #06b6d4; /* Cyan for Fielding */
+}
+
+/* Dark mode adjustments */
+[data-color-scheme="dark"] .scoring-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-color-scheme="dark"] .rule-item {
+  background: var(--color-background);
+  border-color: var(--color-border);
+}
+
+[data-color-scheme="dark"] .rule-item:hover {
+  background: var(--color-hover);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .scoring-rules-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  
+  .scoring-card {
+    padding: var(--space-16);
+  }
+  
+  .rule-item {
+    padding: var(--space-6) var(--space-10);
+  }
+}
