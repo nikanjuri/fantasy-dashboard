@@ -934,7 +934,7 @@ class DashboardApp {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: 'var(--color-text-secondary)',
+                            color: '#ffffff',
                             font: {
                                 size: 12
                             },
@@ -952,6 +952,11 @@ class DashboardApp {
                         }
                     },
                     tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        borderWidth: 1,
                         callbacks: {
                             label: function(context) {
                                 const label = context.label || '';
