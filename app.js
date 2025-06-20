@@ -286,7 +286,7 @@ class DashboardApp {
             totalMatches: matches.length
         };
 
-        console.log('✅ Fantasy data processed:', this.data);
+        console.log('✅ Fantasy data processed. Team standings keys:', Object.keys(this.data.teamStandings));
     }
 
     processPlayerProfiles() {
@@ -450,29 +450,28 @@ class DashboardApp {
             document.getElementById('mostExpensivePlayer').textContent = '-';
         }
 
-        // Update enhanced team cards
-        this.updateEnhancedTeamCards();
+        // Note: updateEnhancedTeamCards() is called separately in updateAllDashboards()
     }
 
     updateEnhancedTeamCards() {
-        console.log('🎯 Starting updateEnhancedTeamCards...');
+        console.log('🎯 Updating team cards...');
         
         const container = document.getElementById('teamCardsContainer');
         if (!container) {
             console.error('❌ teamCardsContainer not found!');
             return;
         }
-        console.log('✅ Container found:', container);
 
-        // Debug: Check if data exists
-        console.log('📊 Team standings data:', this.data.teamStandings);
-        console.log('📊 Team compositions data:', Object.keys(this.data.teamCompositions || {}));
-
+        // Check if data exists
         if (!this.data.teamStandings || Object.keys(this.data.teamStandings).length === 0) {
             console.error('❌ No team standings data available!');
+            console.log('Available data keys:', Object.keys(this.data || {}));
             container.innerHTML = '<p style="color: red;">No team data available. Check console for errors.</p>';
             return;
         }
+
+        // Show what teams we have
+        console.log('🏏 Available teams:', Object.keys(this.data.teamStandings));
 
         // Create a mapping for consistent team display
         const teamDisplayMap = {
@@ -509,13 +508,9 @@ class DashboardApp {
         const sortedTeams = Object.entries(this.data.teamStandings)
             .sort(([,a], [,b]) => b - a)
             .map(([team, points], index) => {
-                console.log(`🏏 Processing team: ${team}, Points: ${points}`);
-                
                 // Find composition data using team name mapping
                 const compositionKey = this.findCompositionKey(team);
                 const composition = this.data.teamCompositions[compositionKey];
-                
-                console.log(`📝 Composition for ${team}:`, composition);
                 
                 return {
                     team: teamDisplayMap[team] || team,
@@ -524,8 +519,6 @@ class DashboardApp {
                     composition
                 };
             });
-
-        console.log('🎯 Sorted teams for display:', sortedTeams);
 
         const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => {
             const bgColor = teamBackgrounds[team] || 'rgba(128, 128, 128, 0.1)';
@@ -571,19 +564,14 @@ class DashboardApp {
             `;
         }).join('');
 
-        console.log('🎨 Generated HTML length:', cardsHTML.length);
-        console.log('🎨 Generated HTML preview:', cardsHTML.substring(0, 200) + '...');
-
         container.innerHTML = cardsHTML;
         
-        console.log('✅ Team cards updated! Container innerHTML length:', container.innerHTML.length);
+        console.log('✅ Team cards updated! Generated', sortedTeams.length, 'cards');
 
         // Add click listeners
         container.querySelectorAll('.enhanced-team-card').forEach(card => {
             card.addEventListener('click', (e) => this.filterByTeam(e.currentTarget.dataset.team));
         });
-        
-        console.log('✅ Click listeners added to', container.querySelectorAll('.enhanced-team-card').length, 'cards');
     }
 
     findCompositionKey(fantasyTeamName) {
