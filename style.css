@@ -1365,3 +1365,20 @@ select.form-control {
     font-weight: var(--font-weight-bold);
     color: var(--color-text);
 }
+
+/* Icon visibility based on theme - CORRECTED LOGIC */
+[data-color-scheme="dark"] .floating-theme-toggle .light-icon {
+    display: block !important; /* Show bulb in dark mode to switch to light */
+}
+
+[data-color-scheme="dark"] .floating-theme-toggle .dark-icon {
+    display: none !important;
+}
+
+[data-color-scheme="light"] .floating-theme-toggle .light-icon {
+    display: none !important;
+}
+
+[data-color-scheme="light"] .floating-theme-toggle .dark-icon {
+    display: block !important; /* Show moon in light mode to switch to dark */
+}

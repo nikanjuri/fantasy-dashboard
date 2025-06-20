@@ -43,15 +43,18 @@ class DashboardApp {
         const toggleButton = document.getElementById('themeToggle');
         if (!toggleButton) return;
         
-        const lightIcon = toggleButton.querySelector('.light-icon');
-        const darkIcon = toggleButton.querySelector('.dark-icon');
+        const lightIcon = toggleButton.querySelector('.light-icon'); // 💡 bulb
+        const darkIcon = toggleButton.querySelector('.dark-icon');   // 🌙 moon
         
+        // Correct logic: Show the icon for what you want to switch TO
         if (this.currentTheme === 'dark') {
-            if (lightIcon) lightIcon.style.display = 'none';
-            if (darkIcon) darkIcon.style.display = 'block';
-        } else {
+            // In dark mode, show bulb (💡) to switch to light mode
             if (lightIcon) lightIcon.style.display = 'block';
             if (darkIcon) darkIcon.style.display = 'none';
+        } else {
+            // In light mode, show moon (🌙) to switch to dark mode
+            if (lightIcon) lightIcon.style.display = 'none';
+            if (darkIcon) darkIcon.style.display = 'block';
         }
     }
 
