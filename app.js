@@ -916,6 +916,9 @@ class DashboardApp {
             this.charts.investment.destroy();
         }
 
+        // Set Chart.js defaults for better text visibility
+        Chart.defaults.color = '#ffffff';
+
         this.charts.investment = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -930,13 +933,16 @@ class DashboardApp {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                color: '#ffffff',
                 plugins: {
                     legend: {
                         position: 'bottom',
                         labels: {
                             color: '#ffffff',
+                            usePointStyle: false,
                             font: {
-                                size: 12
+                                size: 12,
+                                family: 'Arial, sans-serif'
                             },
                             generateLabels: function(chart) {
                                 const data = chart.data;
@@ -946,16 +952,17 @@ class DashboardApp {
                                     strokeStyle: data.datasets[0].borderColor[i],
                                     lineWidth: 2,
                                     hidden: false,
-                                    index: i
+                                    index: i,
+                                    fontColor: '#ffffff'
                                 }));
                             }
                         }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
                         titleColor: '#ffffff',
                         bodyColor: '#ffffff',
-                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        borderColor: '#ffffff',
                         borderWidth: 1,
                         callbacks: {
                             label: function(context) {
