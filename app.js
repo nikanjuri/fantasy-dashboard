@@ -353,7 +353,7 @@ class DashboardApp {
         this.data.auctionData = {
             allPlayers,
             bestBargains: allPlayers.slice(0, 5),
-            expensivePicks: allPlayers.filter(p => (p.Price || 0) > 10 && p.pointsPerCrore < 50),
+            expensivePicks: allPlayers.filter(p => (p.Price || 0) > 10 && p.pointsPerCrore < 45),
             highRiskReward: allPlayers.filter(p => p.Price >= 15 && p.pointsPerCrore >= 45)
         };
     }
