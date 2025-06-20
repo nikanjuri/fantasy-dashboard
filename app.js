@@ -629,20 +629,78 @@ class DashboardApp {
 
     updateVFMTable() {
         const tableBody = document.getElementById('vfmTableBody');
+        const hiddenTableBody = document.getElementById('vfmTableBodyHidden');
+        const expandControls = document.getElementById('vfmExpandControls');
+        
         if (!tableBody) return;
 
-        tableBody.innerHTML = this.data.auctionData.allPlayers
-            .slice(0, 20)
-            .map(player => `
+        const allPlayers = this.data.auctionData.allPlayers;
+        const visiblePlayers = allPlayers.slice(0, 15);
+        const hiddenPlayers = allPlayers.slice(15, 30);
+
+        // Team colors for styling
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#ffce56', 
+            'Silly Pointers': '#36a2eb',
+            'The Kingsmen': '#4bc0c0'
+        };
+
+        // Function to create table row with colors
+        const createTableRow = (player, index) => {
+            const teamColor = teamColors[player.fantasyTeam] || '#ffffff';
+            const rankColor = index < 5 ? '#4ade80' : index < 10 ? '#fbbf24' : '#94a3b8';
+            
+            return `
                 <tr>
-                    <td><strong>${player.Player}</strong></td>
-                    <td>${player.fantasyTeam}</td>
-                    <td>₹${player.Price.toFixed(1)}</td>
-                    <td>${player.performance.totalPoints}</td>
-                    <td>${player.pointsPerCrore.toFixed(1)}</td>
+                    <td>
+                        <div class="vfm-player-cell">
+                            <span class="vfm-rank" style="background: ${rankColor}">${index + 1}</span>
+                            <strong style="color: ${teamColor}">${player.Player}</strong>
+                        </div>
+                    </td>
+                    <td style="color: ${teamColor}; font-weight: 500">${player.fantasyTeam}</td>
+                    <td style="color: #cccccc">₹${player.Price.toFixed(1)}</td>
+                    <td style="color: #ffffff; font-weight: 600">${player.performance.totalPoints}</td>
+                    <td style="color: #4ade80; font-weight: 600">${player.pointsPerCrore.toFixed(1)}</td>
                     <td><span class="value-badge ${player.valueForMoney.toLowerCase()}">${player.valueForMoney}</span></td>
                 </tr>
-            `).join('');
+            `;
+        };
+
+        // Populate visible rows
+        tableBody.innerHTML = visiblePlayers.map((player, index) => createTableRow(player, index)).join('');
+
+        // Populate hidden rows if they exist
+        if (hiddenTableBody && hiddenPlayers.length > 0) {
+            hiddenTableBody.innerHTML = hiddenPlayers.map((player, index) => createTableRow(player, index + 15)).join('');
+            
+            // Show expand controls if there are hidden rows
+            if (expandControls) {
+                expandControls.style.display = 'flex';
+            }
+        }
+
+        // Add global toggle function for VFM table
+        window.toggleVFMRows = function() {
+            const hiddenRows = document.getElementById('vfmTableBodyHidden');
+            const button = document.querySelector('.vfm-expand-btn');
+            const expandText = button.querySelector('.vfm-expand-text');
+            const collapseText = button.querySelector('.vfm-collapse-text');
+            const expandIcon = button.querySelector('.vfm-expand-icon');
+            
+            if (hiddenRows.style.display === 'none') {
+                hiddenRows.style.display = 'table-row-group';
+                expandText.style.display = 'none';
+                collapseText.style.display = 'inline';
+                expandIcon.textContent = '▲';
+            } else {
+                hiddenRows.style.display = 'none';
+                expandText.style.display = 'inline';
+                collapseText.style.display = 'none';
+                expandIcon.textContent = '▼';
+            }
+        };
     }
 
     updateTeamComposition() {

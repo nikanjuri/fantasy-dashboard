@@ -65,7 +65,7 @@
                 <!-- Auction Analysis Tab (NEW) -->
                 <div class="tab-content" id="auction-analysis">
                     <div class="section-header">
-                        <h2>💰 Auction Analysis</h2>
+                        <h2>Auction Analysis</h2>
                         <p>Comprehensive auction insights and value analysis</p>
                     </div>
 
@@ -92,15 +92,15 @@
                     <div class="auction-insights">
                         <div class="insight-row">
                             <div class="insight-card success">
-                                <h4>🏆 Best Bargains</h4>
+                                <h4>Best Bargains</h4>
                                 <div id="bestBargains" class="bargain-list"></div>
                             </div>
                             <div class="insight-card warning">
-                                <h4>💸 Expensive Picks</h4>
+                                <h4>Expensive Picks</h4>
                                 <div id="expensivePicks" class="expensive-list"></div>
                             </div>
                             <div class="insight-card info">
-                                <h4>🎪 High-Risk, High-Reward</h4>
+                                <h4>High-Risk, High-Reward</h4>
                                 <div id="highRiskReward" class="highrisk-list"></div>
                             </div>
                         </div>
@@ -125,7 +125,7 @@
                     <!-- Team Auction Tables -->
                     <div class="section-divider">
                         <h3>Team Lists</h3>
-                        <p>Complete auction breakdown for each fantasy team</p>
+                        <p>Price Details for each Fantasy Team</p>
                     </div>
                     <div id="teamAuctionTables" class="team-auction-tables-container">
                         <!-- Team auction tables will be populated here -->
@@ -136,7 +136,7 @@
                         <div class="card__body">
                             <h3>Value-for-Money Rankings</h3>
                             <div class="table-container">
-                                <table class="data-table" id="vfmTable">
+                                <table class="data-table vfm-table" id="vfmTable">
                                     <thead>
                                         <tr>
                                             <th>Player</th>
@@ -148,7 +148,15 @@
                                         </tr>
                                     </thead>
                                     <tbody id="vfmTableBody"></tbody>
+                                    <tbody id="vfmTableBodyHidden" class="vfm-hidden-rows" style="display: none;"></tbody>
                                 </table>
+                                <div class="vfm-expand-controls" id="vfmExpandControls" style="display: none;">
+                                    <button class="vfm-expand-btn" onclick="toggleVFMRows()">
+                                        <span class="vfm-expand-text">Show More (30 total)</span>
+                                        <span class="vfm-collapse-text" style="display: none">Show Less</span>
+                                        <span class="vfm-expand-icon">▼</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
