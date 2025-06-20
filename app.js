@@ -245,8 +245,8 @@ class DashboardApp {
                                 totalPoints: 0,
                                 matches: 0,
                                 runs: 0,
-                                wickets: 0,
-                                catches: 0,
+                    wickets: 0,
+                    catches: 0,
                                 averagePoints: 0
                             };
                         }
@@ -293,9 +293,9 @@ class DashboardApp {
                     fantasyTeam: teamName,
                     performance: fantasyPlayer || {
                         totalPoints: 0,
-                        runs: 0,
-                        wickets: 0,
-                        catches: 0,
+                    runs: 0,
+                    wickets: 0,
+                    catches: 0,
                         matchesPlayed: 0
                     },
                     valueForMoney: this.calculateValueForMoney(fantasyPlayer?.totalPoints || 0, player.Price || 0),
@@ -964,7 +964,7 @@ class DashboardApp {
 
         const chartData = {
             labels: Object.keys(priceRanges),
-            datasets: [{
+                datasets: [{
                 data: Object.values(priceRanges).map(range => range.count),
                 backgroundColor: ['#4ade80', '#3b82f6', '#f59e0b', '#ef4444'],
                 borderColor: themeColors.borderColor,
@@ -1410,7 +1410,7 @@ class DashboardApp {
                 <div class="team-cards-container">
                     ${teamCardsHTML}
                 </div>
-            </div>
+                </div>
         `;
         
         scorecardContainer.innerHTML = scorecardHTML;
@@ -1476,9 +1476,9 @@ class DashboardApp {
                                     `).join('')}
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                `;
+                </div>
+            </div>
+        `;
             }).join('')}
         `;
         
@@ -1651,7 +1651,7 @@ class DashboardApp {
                         <h4 style="color: ${teamColor}">${teamName}</h4>
                         <div class="team-total">
                             Total: <span style="color: ${teamColor}">₹${totalPurchase.toFixed(1)}Cr</span>
-                        </div>
+                </div>
                     </div>
                     <div class="auction-table-container">
                         <table class="auction-table">
@@ -1712,12 +1712,12 @@ class DashboardApp {
                             <span class="collapse-text" style="display: none">Show Less</span>
                             <span class="expand-icon">▼</span>
                         </button>
-                    </div>
+                </div>
                 `;
             }
 
             tablesHTML += `
-                    </div>
+                </div>
                 </div>
             `;
         });
