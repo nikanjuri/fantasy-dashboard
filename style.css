@@ -457,6 +457,15 @@ select.form-control {
   border-bottom: 1px solid var(--color-card-border-inner);
 }
 
+/* Center align card titles including Match Scorecard */
+.card .card__body h3 {
+  text-align: center;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin: 0 0 var(--space-16) 0;
+}
+
 /* Status indicators */
 .status {
   display: inline-flex;
