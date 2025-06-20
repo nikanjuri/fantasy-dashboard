@@ -1257,6 +1257,19 @@ class DashboardApp {
             positionFilter.addEventListener('change', (e) => this.handlePositionFilter(e.target.value));
         }
         
+        // Master table control buttons
+        const expandAllBtn = document.getElementById('expandAllTables');
+        if (expandAllBtn) {
+            expandAllBtn.addEventListener('click', () => this.expandAllTables());
+            console.log('✅ Expand all tables listener added');
+        }
+        
+        const collapseAllBtn = document.getElementById('collapseAllTables');
+        if (collapseAllBtn) {
+            collapseAllBtn.addEventListener('click', () => this.collapseAllTables());
+            console.log('✅ Collapse all tables listener added');
+        }
+        
         console.log('✅ All event listeners setup complete');
     }
 
@@ -1278,6 +1291,68 @@ class DashboardApp {
     filterByTeam(teamName) {
         console.log('🎯 Filter by team:', teamName);
         // Add team filtering functionality here if needed
+    }
+
+    expandAllTables() {
+        console.log('📈 Expanding all tables...');
+        
+        // Check if we're on mobile (where this feature should be disabled)
+        if (window.innerWidth <= 768) {
+            console.log('📱 Mobile detected, ignoring expand all command');
+            return;
+        }
+
+        // Expand VFM table
+        const vfmHiddenRows = document.getElementById('vfmTableBodyHidden');
+        const vfmButton = document.querySelector('.vfm-expand-btn');
+        if (vfmHiddenRows && vfmButton && vfmHiddenRows.style.display === 'none') {
+            window.toggleVFMRows();
+        }
+
+        // Expand all team auction tables
+        const expandButtons = document.querySelectorAll('.expand-btn');
+        expandButtons.forEach(button => {
+            const tableId = button.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
+            if (tableId) {
+                const hiddenRows = document.getElementById(`${tableId}-hidden`);
+                if (hiddenRows && hiddenRows.style.display === 'none') {
+                    window.toggleTableRows(tableId);
+                }
+            }
+        });
+        
+        console.log('✅ All tables expanded');
+    }
+
+    collapseAllTables() {
+        console.log('📉 Collapsing all tables...');
+        
+        // Check if we're on mobile (where this feature should be disabled)
+        if (window.innerWidth <= 768) {
+            console.log('📱 Mobile detected, ignoring collapse all command');
+            return;
+        }
+
+        // Collapse VFM table
+        const vfmHiddenRows = document.getElementById('vfmTableBodyHidden');
+        const vfmButton = document.querySelector('.vfm-expand-btn');
+        if (vfmHiddenRows && vfmButton && vfmHiddenRows.style.display !== 'none') {
+            window.toggleVFMRows();
+        }
+
+        // Collapse all team auction tables
+        const expandButtons = document.querySelectorAll('.expand-btn');
+        expandButtons.forEach(button => {
+            const tableId = button.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
+            if (tableId) {
+                const hiddenRows = document.getElementById(`${tableId}-hidden`);
+                if (hiddenRows && hiddenRows.style.display !== 'none') {
+                    window.toggleTableRows(tableId);
+                }
+            }
+        });
+        
+        console.log('✅ All tables collapsed');
     }
 
     renderPlayersTable() {
