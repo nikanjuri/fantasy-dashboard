@@ -1318,28 +1318,27 @@ select.form-control {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-16);
-  padding: var(--space-12) var(--space-20);
+  margin-bottom: var(--space-12);
+  padding: var(--space-8) var(--space-20) var(--space-12) var(--space-20);
   border-bottom: 1px solid var(--color-border);
   background: transparent;
 }
 
 .details-header h3 {
-  margin: 0;
+  margin: 0 !important;
   font-size: var(--font-size-xl);
   color: var(--color-text);
-  line-height: 1.4;
-  text-align: left;
+  line-height: 1.2;
+  text-align: left !important;
   flex: 1;
   font-weight: var(--font-weight-semibold);
 }
 
 .details-header .btn {
   margin: 0;
-  padding: var(--space-8) var(--space-16);
+  padding: var(--space-6) var(--space-12);
   flex-shrink: 0;
-  height: auto;
-  min-height: 36px;
+  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
