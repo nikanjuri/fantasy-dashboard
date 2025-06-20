@@ -448,7 +448,7 @@ select.form-control {
 }
 
 .card__body {
-  padding: var(--space-20);
+  padding: var(--space-16);
 }
 
 .card__header,
@@ -1328,8 +1328,8 @@ select.form-control {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-12);
-  padding: var(--space-8) var(--space-20) var(--space-12) var(--space-20);
+  margin-bottom: var(--space-8);
+  padding: var(--space-6) var(--space-16) var(--space-8) var(--space-16);
   border-bottom: 1px solid var(--color-border);
   background: transparent;
 }

@@ -1236,6 +1236,9 @@ class DashboardApp {
             matchSelector.addEventListener('change', (e) => {
                 if (e.target.value) {
                     this.updateMatchDetails(parseInt(e.target.value));
+                } else {
+                    // Clear match details when "Select a match" is chosen
+                    this.clearMatchDetails();
                 }
             });
             console.log('✅ Match selector listener added');
@@ -1519,6 +1522,29 @@ class DashboardApp {
         this.createMatchPointsChart(match);
         
         console.log('✅ Match details updated for:', match.matchName);
+    }
+
+    clearMatchDetails() {
+        // Clear match scorecard container
+        const scorecardContainer = document.getElementById('matchScorecard');
+        if (scorecardContainer) {
+            scorecardContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Please select a match to view details</p>';
+        }
+        
+        // Clear player performance details container
+        const playerDetailsContainer = document.getElementById('playerPerformanceDetails');
+        if (playerDetailsContainer) {
+            playerDetailsContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Match player details will appear here</p>';
+        }
+        
+        // Clear the match points chart
+        const ctx = document.getElementById('matchPointsChart');
+        if (ctx && this.charts.matchPoints) {
+            this.charts.matchPoints.destroy();
+            this.charts.matchPoints = null;
+        }
+        
+        console.log('✅ Match details cleared');
     }
 
     createMatchPointsChart(match) {
