@@ -203,8 +203,16 @@ class DashboardApp {
 
             Object.entries(matchData).forEach(([teamName, teamData]) => {
                 if (teamName === 'Team Total') return;
+                
+                // Add null check for teamData
+                if (!teamData || typeof teamData !== 'object') {
+                    console.warn(`⚠️ Skipping invalid team data for ${teamName} in ${matchName}`);
+                    return;
+                }
 
-                const teamTotal = teamData['Team Total'] || 0;
+                // Handle nested Players structure
+                const playersData = teamData.Players || teamData;
+                const teamTotal = playersData['Team Total'] || 0;
                 matchInfo.teamTotals[teamName] = teamTotal;
 
                 if (!teamTotals[teamName]) {
@@ -213,8 +221,9 @@ class DashboardApp {
                 teamTotals[teamName] += teamTotal;
 
                 // Process individual players for this match
-                if (teamData.Players && Array.isArray(teamData.Players)) {
-                    teamData.Players.forEach(player => {
+                const playersList = playersData.Players || teamData.Players;
+                if (playersList && Array.isArray(playersList)) {
+                    playersList.forEach(player => {
                         const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
                         const safeValue = (val) => (val !== null && val !== undefined && !isNaN(val)) ? val : '-';
                         
