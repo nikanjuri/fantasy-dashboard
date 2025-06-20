@@ -1237,7 +1237,7 @@ class DashboardApp {
                 if (e.target.value) {
                     this.updateMatchDetails(parseInt(e.target.value));
                 } else {
-                    // Clear match details when "Select a match" is chosen
+                    // Clear match details when "Select Match" is chosen
                     this.clearMatchDetails();
                 }
             });
@@ -1367,7 +1367,7 @@ class DashboardApp {
         if (!matchSelector || !this.data.matches) return;
 
         // Clear existing options except the first one
-        matchSelector.innerHTML = '<option value="">Select a match</option>';
+        matchSelector.innerHTML = '<option value="">Select Match</option>';
         
         // Add match options
         this.data.matches.forEach((match, index) => {
