@@ -1185,12 +1185,14 @@ select.form-control {
   font-weight: var(--font-weight-bold);
 }
 
+/* Fix the team points color override */
 .enhanced-team-card .team-points {
   font-size: 2.5rem;
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+  color: #ffffff !important;  /* Force white color with !important */
   text-align: center;
   margin: var(--space-16) 0;
+  pointer-events: none;  /* Remove click interactivity */
 }
 
 /* Alternative: Single Line Layout */

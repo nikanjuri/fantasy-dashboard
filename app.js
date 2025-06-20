@@ -455,7 +455,7 @@ class DashboardApp {
             'Silly Pointers': 'Silly Pointers'
         };
 
-        // Team colors for styling
+        // Team colors for subtle tints and accents
         const teamColors = {
             'Royal Smashers': '#ff6384',
             'Sher-e-Punjab': '#f59e0b',       
@@ -463,11 +463,20 @@ class DashboardApp {
             'The Kingsmen': '#10b981'         
         };
 
+        // Dark backgrounds with subtle color tints
+        const teamBackgrounds = {
+            'Royal Smashers': 'rgba(255, 99, 132, 0.1)',     // Subtle pink tint
+            'Sher-e-Punjab': 'rgba(245, 158, 11, 0.1)',      // Subtle orange tint
+            'Silly Pointers': 'rgba(59, 130, 246, 0.1)',     // Subtle blue tint
+            'The Kingsmen': 'rgba(16, 185, 129, 0.1)'        // Subtle green tint
+        };
+
+        // Subtle border colors
         const teamBorderColors = {
-            'Royal Smashers': 'rgba(255, 99, 132, 0.8)',
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)', 
-            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
-            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
+            'Royal Smashers': 'rgba(255, 99, 132, 0.3)',
+            'Sher-e-Punjab': 'rgba(245, 158, 11, 0.3)', 
+            'Silly Pointers': 'rgba(59, 130, 246, 0.3)',
+            'The Kingsmen': 'rgba(16, 185, 129, 0.3)'
         };
 
         const sortedTeams = Object.entries(this.data.teamStandings)
@@ -492,16 +501,17 @@ class DashboardApp {
         console.log('🎯 Sorted teams for display:', sortedTeams);
 
         const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => {
-            const bgColor = teamColors[team] || 'rgba(128, 128, 128, 0.1)';
-            const borderColor = teamBorderColors[team] || 'rgba(128, 128, 128, 0.8)';
+            const bgColor = teamBackgrounds[team] || 'rgba(128, 128, 128, 0.1)';
+            const borderColor = teamBorderColors[team] || 'rgba(128, 128, 128, 0.3)';
+            const accentColor = teamColors[team] || '#007bff';
             
             return `
-                <div class="enhanced-team-card" data-team="${team}" style="background: ${bgColor}; border: 2px solid ${borderColor};">
+                <div class="enhanced-team-card" data-team="${team}" style="background: ${bgColor}; border: 1px solid ${borderColor};">
                     <div class="team-header">
                         <h4>${team}</h4>
-                        <div class="team-rank">#${rank}</div>
+                        <div class="team-rank" style="background: ${accentColor};">#${rank}</div>
                     </div>
-                    <div class="team-points" style="color: #ffffff; font-weight: bold; font-size: 1.5rem;">${points.toLocaleString()} pts</div>
+                    <div class="team-points">${points.toLocaleString()} pts</div>
                     <div class="team-details">
                         <div class="detail-item">
                             <span class="label">Investment:</span>
