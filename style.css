@@ -768,12 +768,16 @@ select.form-control {
   display: block;
 }
 
-/* Stats grid */
+/* Stats grid - 2x2 layout with uniform card sizes */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
   gap: var(--space-20);
   margin-bottom: var(--space-32);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .stat-card {
@@ -783,6 +787,18 @@ select.form-control {
   padding: var(--space-20);
   text-align: center;
   transition: all var(--duration-fast) var(--ease-standard);
+  aspect-ratio: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
+}
+
+/* Special handling for the 5th card to span both columns in the third row */
+.stat-card:nth-child(5) {
+  grid-column: 1 / -1;
+  aspect-ratio: 2.5;
 }
 
 .stat-card:hover {
@@ -1521,7 +1537,14 @@ select.form-control {
   }
 
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, auto);
+    max-width: 400px;
+  }
+  
+  .stat-card:nth-child(5) {
+    grid-column: 1;
+    aspect-ratio: 1.2;
   }
 
   .team-cards-grid {
