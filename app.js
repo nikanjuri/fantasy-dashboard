@@ -638,12 +638,12 @@ class DashboardApp {
         const visiblePlayers = allPlayers.slice(0, 15);
         const hiddenPlayers = allPlayers.slice(15, 30);
 
-        // Enhanced team colors for better visibility on dark background
+        // Enhanced team colors with maximum visibility on dark background
         const teamColors = {
             'Royal Smashers': '#ff6384',      // Pink/Red - good visibility
-            'Sher-e-Punjab': '#fbbf24',       // Darker yellow/amber - much better visibility
-            'Silly Pointers': '#36a2eb',      // Blue - good visibility  
-            'The Kingsmen': '#06d6a0'         // Darker teal/green - much better visibility
+            'Sher-e-Punjab': '#f59e0b',       // Bright orange/amber - very visible
+            'Silly Pointers': '#3b82f6',      // Bright blue - good visibility  
+            'The Kingsmen': '#10b981'         // Bright emerald green - very visible
         };
 
         // Function to create table row with colors

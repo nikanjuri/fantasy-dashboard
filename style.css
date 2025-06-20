@@ -1540,114 +1540,137 @@ select.form-control {
   background: var(--color-hover);
 }
 
-/* Scoring System Cards */
+/* Minimalist Scoring System Cards */
 .scoring-rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-20);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-24);
   margin-top: var(--space-24);
 }
 
 .scoring-card {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--duration-fast) var(--ease-standard);
+  background: transparent;
   border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  padding: var(--space-20);
+  transition: border-color var(--duration-fast) var(--ease-standard);
 }
 
 .scoring-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
 }
 
 .scoring-card h4 {
-  margin: 0 0 var(--space-16) 0;
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
-  text-align: center;
-  padding-bottom: var(--space-12);
-  border-bottom: 2px solid var(--color-border);
+  margin: 0 0 var(--space-20) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  text-align: left;
+  padding: 0;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
 }
 
 .rules-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-1);
 }
 
 .rule-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 12px;
-  background: var(--color-background);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
+  padding: var(--space-8) 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   transition: background-color var(--duration-fast) var(--ease-standard);
 }
 
+.rule-item:last-child {
+  border-bottom: none;
+}
+
 .rule-item:hover {
-  background: var(--color-hover);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .rule-action {
   font-size: var(--font-size-sm);
-  color: var(--color-text);
-  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-normal);
   flex: 1;
 }
 
 .rule-points {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   padding: var(--space-2) var(--space-8);
   border-radius: var(--radius-sm);
-  min-width: 50px;
+  min-width: 48px;
   text-align: center;
+  color: var(--color-text);
 }
 
-/* Fix 1: Better color coding */
+/* Minimalist color coding */
 .rule-points[data-negative="true"] {
-  background: #ef4444; /* Red for negative */
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
+
 .rule-points:not([data-negative]) {
-  background: #10b981; /* Green for positive */
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
-/* Fix 3: Category icons */
+/* Remove category icons - keep it minimal */
 .scoring-card h4::before {
-  content: "🏏"; /* Different icon per category */
+  content: none;
 }
 
-/* Category-specific styling */
+/* Subtle category differentiation */
 .scoring-card:nth-child(1) h4 {
-  color: #4ade80; /* Green for Batting */
+  color: var(--color-text);
 }
 
 .scoring-card:nth-child(2) h4 {
-  color: #f59e0b; /* Orange for Bowling */
+  color: var(--color-text);
 }
 
 .scoring-card:nth-child(3) h4 {
-  color: #06b6d4; /* Cyan for Fielding */
+  color: var(--color-text);
+}
+
+.scoring-card:nth-child(4) h4 {
+  color: var(--color-text);
+}
+
+.scoring-card:nth-child(5) h4 {
+  color: var(--color-text);
+}
+
+.scoring-card:nth-child(6) h4 {
+  color: var(--color-text);
 }
 
 /* Dark mode adjustments */
 [data-color-scheme="dark"] .scoring-card {
-  background: var(--color-surface);
+  background: transparent;
   border-color: var(--color-border);
 }
 
 [data-color-scheme="dark"] .rule-item {
-  background: var(--color-background);
-  border-color: var(--color-border);
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 [data-color-scheme="dark"] .rule-item:hover {
-  background: var(--color-hover);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 /* Responsive design */
@@ -1662,20 +1685,13 @@ select.form-control {
   }
   
   .rule-item {
-    padding: var(--space-6) var(--space-10);
+    padding: var(--space-6) 0;
   }
-}
-
-/* Center align numerical data in enhanced table */
-.enhanced-table th:not(:first-child),
-.enhanced-table td:not(:first-child) {
-  text-align: center;
-}
-
-/* Keep player names left-aligned */
-.enhanced-table th:first-child,
-.enhanced-table td:first-child {
-  text-align: left;
+  
+  .rule-action,
+  .rule-points {
+    font-size: var(--font-size-xs);
+  }
 }
 
 /* Auction Analysis Tab Styling */
