@@ -388,10 +388,10 @@ class DashboardApp {
             return this.data.teamStandings[playerListTeamName];
         }
         
-        // Try reverse mapping for team names
+        // Try reverse mapping for team names - updated for consistency
         const reverseMap = {
-            'Sher-E-Punjab': 'Sher-e-Punjab',
-            'Kingsmen': 'The Kingsmen'
+            'Sher-e-Punjab': 'Sher-e-Punjab',
+            'The Kingsmen': 'The Kingsmen'
         };
         
         const fantasyTeamName = reverseMap[playerListTeamName] || playerListTeamName;
@@ -562,8 +562,8 @@ class DashboardApp {
     findCompositionKey(fantasyTeamName) {
         // Direct mapping from fantasy team names to player list team names
         const mapping = {
-            'Sher-e-Punjab': 'Sher-E-Punjab',
-            'The Kingsmen': 'Kingsmen',
+            'Sher-e-Punjab': 'Sher-e-Punjab',
+            'The Kingsmen': 'The Kingsmen',
             'Royal Smashers': 'Royal Smashers',
             'Silly Pointers': 'Silly Pointers'
         };
