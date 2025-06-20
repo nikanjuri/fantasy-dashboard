@@ -220,9 +220,32 @@ class DashboardApp {
                         return;
                     }
 
-                    // Handle nested Players structure
-                    const playersData = teamData.Players || teamData;
-                    const teamTotal = playersData['Team Total'] || 0;
+                    // Handle BOTH data structures:
+                    // Structure 1: { "Players": { "Players": [...], "Team Total": X } }
+                    // Structure 2: { "Players": [...], "Team Total": X }
+                    
+                    let teamTotal = 0;
+                    let playersList = [];
+                    
+                    if (teamData.Players) {
+                        if (Array.isArray(teamData.Players)) {
+                            // Structure 2: Direct array
+                            playersList = teamData.Players;
+                            teamTotal = teamData['Team Total'] || 0;
+                            console.log(`      Structure 2 detected - Direct Players array, Team Total: ${teamTotal}`);
+                        } else if (teamData.Players.Players && Array.isArray(teamData.Players.Players)) {
+                            // Structure 1: Nested object with Players array
+                            playersList = teamData.Players.Players;
+                            teamTotal = teamData.Players['Team Total'] || 0;
+                            console.log(`      Structure 1 detected - Nested Players object, Team Total: ${teamTotal}`);
+                        }
+                    }
+                    
+                    if (playersList.length === 0) {
+                        console.warn(`⚠️ No players found for ${fantasyTeamName} in ${matchName}`);
+                        return;
+                    }
+                    
                     matchInfo.teamTotals[fantasyTeamName] = teamTotal;
 
                     // Accumulate points for FANTASY TEAMS (not MatchWeeks!)
@@ -232,7 +255,6 @@ class DashboardApp {
                     teamTotals[fantasyTeamName] += teamTotal;
 
                     // Process individual players for this match
-                    const playersList = playersData.Players || teamData.Players;
                     if (playersList && Array.isArray(playersList)) {
                         playersList.forEach(player => {
                             const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
