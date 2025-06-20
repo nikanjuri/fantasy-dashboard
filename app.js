@@ -1381,10 +1381,20 @@ class DashboardApp {
                 plugins: {
                     title: {
                         display: true,
-                        text: `Points Distribution - ${match.matchName}`
+                        text: `Points Distribution - ${match.matchName}`,
+                        position: 'bottom',
+                        padding: {
+                            top: 20,
+                            bottom: 10
+                        },
+                        font: {
+                            size: 14,
+                            weight: 'normal'
+                        },
+                        color: '#666'
                     },
                     legend: {
-                        display: false // Hide legend as it would be too crowded
+                        display: false
                     },
                     tooltip: {
                         callbacks: {
@@ -1396,6 +1406,11 @@ class DashboardApp {
                                 return `${label}: ${value} pts (${percentage}%)`;
                             }
                         }
+                    }
+                },
+                layout: {
+                    padding: {
+                        bottom: 40
                     }
                 }
             }
