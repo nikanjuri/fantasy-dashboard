@@ -1047,7 +1047,7 @@ select.form-control {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: var(--space-12);
+  padding: var(--space-8);
 }
 
 .match-details-container .card:has(#matchScorecard) .card__body {
@@ -1062,7 +1062,7 @@ select.form-control {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-12);
+  padding: var(--space-8);
   min-height: auto;
 }
 
@@ -1081,7 +1081,7 @@ select.form-control {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--space-8);
+  padding: var(--space-4);
 }
 
 .match-info {
