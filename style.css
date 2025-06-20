@@ -1366,6 +1366,84 @@ select.form-control {
     color: var(--color-text);
 }
 
+/* Floating Theme Toggle - Fixed positioning for always visible */
+.floating-theme-toggle {
+    position: fixed !important; /* Fixed to viewport, not page */
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 9999; /* High z-index to stay on top */
+    font-size: 24px;
+    color: white;
+}
+
+.floating-theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    background: var(--color-primary-hover);
+}
+
+.floating-theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.floating-theme-toggle .theme-icon {
+    transition: all 0.2s ease;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-theme-toggle:hover .theme-icon {
+    transform: rotate(20deg);
+}
+
+/* Dark mode styling for theme toggle */
+[data-color-scheme="dark"] .floating-theme-toggle {
+    background: var(--color-surface);
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+}
+
+[data-color-scheme="dark"] .floating-theme-toggle:hover {
+    background: var(--color-secondary);
+    border-color: var(--color-primary-hover);
+    color: var(--color-primary-hover);
+}
+
+/* Responsive adjustments - smaller on mobile */
+@media (max-width: 768px) {
+    .floating-theme-toggle {
+        width: 48px;
+        height: 48px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 20px;
+    }
+}
+
+/* Animation for theme switching */
+.floating-theme-toggle.switching {
+    animation: themeSwitch 0.3s ease-in-out;
+}
+
+@keyframes themeSwitch {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
 /* Icon visibility based on theme - CORRECTED LOGIC */
 [data-color-scheme="dark"] .floating-theme-toggle .light-icon {
     display: block !important; /* Show bulb in dark mode to switch to light */
