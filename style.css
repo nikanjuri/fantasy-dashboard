@@ -1769,7 +1769,7 @@ select.form-control {
 .insight-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-24);
+  gap: var(--space-20);
   margin-bottom: var(--space-24);
 }
 
@@ -1778,97 +1778,84 @@ select.form-control {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   padding: var(--space-16);
-  box-shadow: var(--shadow-sm);
   border: 1px solid var(--color-border);
 }
 
-.insight-card.success {
-  border-left: 4px solid var(--color-success);
-}
-
-.insight-card.warning {
-  border-left: 4px solid var(--color-error);
-}
-
 .insight-card h4 {
-  margin: 0 0 var(--space-12) 0;
+  margin: 0 0 var(--space-16) 0;
   font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text);
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
+  padding-bottom: var(--space-12);
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* Compact lists for side-by-side layout */
+/* Simple, clean list items */
 .bargain-list,
 .expensive-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+  gap: var(--space-6);
 }
 
 .bargain-item,
 .expensive-item {
-  background: var(--color-background);
-  border-radius: var(--radius-md);
-  padding: var(--space-10) var(--space-12);
-  border: 1px solid var(--color-border);
-  transition: all var(--duration-fast) var(--ease-standard);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: var(--space-8) var(--space-12);
+  border-radius: var(--radius-md);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+  border-left: 2px solid transparent;
 }
 
-.bargain-item:hover,
+.bargain-item:hover {
+  background: var(--color-hover);
+  border-left-color: var(--color-success);
+}
+
 .expensive-item:hover {
   background: var(--color-hover);
-  transform: translateX(2px);
+  border-left-color: var(--color-error);
 }
 
-.bargain-item {
-  border-left: 3px solid var(--color-success);
-}
-
-.expensive-item {
-  border-left: 3px solid var(--color-error);
+/* Clean typography */
+.bargain-item strong,
+.expensive-item strong {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  flex: 1;
 }
 
 .bargain-details,
 .expensive-details {
   display: flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-12);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin: 0;
 }
 
+/* Subtle, clean badges */
 .value-ratio {
-  background: var(--color-primary);
-  color: white;
-  padding: var(--space-2) var(--space-6);
-  border-radius: var(--radius-sm);
-  font-weight: var(--font-weight-bold);
   font-size: var(--font-size-xs);
-  white-space: nowrap;
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-2) var(--space-8);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.025em;
 }
 
 .bargain-item .value-ratio {
-  background: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .expensive-item .value-ratio {
-  background: var(--color-error);
-}
-
-.bargain-item strong,
-.expensive-item strong {
-  font-size: var(--font-size-sm);
-  color: var(--color-text);
-  margin-right: var(--space-8);
-  min-width: 100px;
-  flex-shrink: 0;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 /* Dark mode adjustments */
@@ -1878,18 +1865,22 @@ select.form-control {
   border-color: var(--color-border);
 }
 
-[data-color-scheme="dark"] .bargain-item,
-[data-color-scheme="dark"] .expensive-item {
-  background: var(--color-background);
-  border-color: var(--color-border);
-}
-
 [data-color-scheme="dark"] .bargain-item:hover,
 [data-color-scheme="dark"] .expensive-item:hover {
   background: var(--color-hover);
 }
 
-/* Mobile responsiveness - Stack on small screens */
+[data-color-scheme="dark"] .bargain-item .value-ratio {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+[data-color-scheme="dark"] .expensive-item .value-ratio {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Mobile responsiveness */
 @media (max-width: 768px) {
   .insight-row {
     grid-template-columns: 1fr;
@@ -1900,20 +1891,12 @@ select.form-control {
   .expensive-item {
     flex-direction: column;
     align-items: flex-start;
-    padding: var(--space-8) var(--space-10);
+    gap: var(--space-6);
   }
   
   .bargain-details,
   .expensive-details {
-    margin-top: var(--space-4);
-    flex-wrap: wrap;
-    gap: var(--space-6);
-  }
-  
-  .bargain-item strong,
-  .expensive-item strong {
-    min-width: auto;
-    margin-right: 0;
-    margin-bottom: var(--space-4);
+    align-self: stretch;
+    justify-content: space-between;
   }
 }
