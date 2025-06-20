@@ -455,12 +455,12 @@ class DashboardApp {
             'Silly Pointers': 'Silly Pointers'
         };
 
-        // Team colors matching the chart
+        // Team colors for styling
         const teamColors = {
-            'Royal Smashers': 'rgba(255, 99, 132, 0.15)',   // Light Pink/Red
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.15)',    // Light Yellow
-            'Silly Pointers': 'rgba(54, 162, 235, 0.15)',   // Light Blue  
-            'The Kingsmen': 'rgba(75, 192, 192, 0.15)'      // Light Teal
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#f59e0b',       // Changed from #ffce56 - bright orange/amber
+            'Silly Pointers': '#3b82f6',      // Changed from #36a2eb - bright blue
+            'The Kingsmen': '#10b981'         // Changed from #4bc0c0 - bright emerald green
         };
 
         const teamBorderColors = {
@@ -472,9 +472,9 @@ class DashboardApp {
 
         const teamPointsColors = {
             'Royal Smashers': '#ff6384',
-            'Sher-e-Punjab': '#ffce56', 
-            'Silly Pointers': '#36a2eb',
-            'The Kingsmen': '#4bc0c0'
+            'Sher-e-Punjab': '#f59e0b',       // Changed from #ffce56 - bright orange/amber
+            'Silly Pointers': '#3b82f6',      // Changed from #36a2eb - bright blue
+            'The Kingsmen': '#10b981'         // Changed from #4bc0c0 - bright emerald green
         };
 
         const sortedTeams = Object.entries(this.data.teamStandings)
@@ -638,7 +638,9 @@ class DashboardApp {
         const visiblePlayers = allPlayers.slice(0, 15);
         const hiddenPlayers = allPlayers.slice(15, 30);
 
-        // Enhanced team colors with maximum visibility on dark background
+        const themeColors = this.getThemeColors();
+
+        // Enhanced team colors with maximum visibility on both backgrounds
         const teamColors = {
             'Royal Smashers': '#ff6384',      // Pink/Red - good visibility
             'Sher-e-Punjab': '#f59e0b',       // Bright orange/amber - very visible
@@ -646,9 +648,9 @@ class DashboardApp {
             'The Kingsmen': '#10b981'         // Bright emerald green - very visible
         };
 
-        // Function to create table row with colors
+        // Function to create table row with theme-aware colors
         const createTableRow = (player, index) => {
-            const teamColor = teamColors[player.fantasyTeam] || '#ffffff';
+            const teamColor = teamColors[player.fantasyTeam] || themeColors.textColor;
             const rankColor = index < 5 ? '#4ade80' : index < 10 ? '#fbbf24' : '#94a3b8';
             
             return `
@@ -660,8 +662,8 @@ class DashboardApp {
                         </div>
                     </td>
                     <td style="color: ${teamColor}; font-weight: 500">${player.fantasyTeam}</td>
-                    <td style="color: #cccccc">₹${player.Price.toFixed(1)}</td>
-                    <td style="color: #ffffff; font-weight: 600">${player.performance.totalPoints}</td>
+                    <td style="color: ${themeColors.subtleTextColor}">₹${player.Price.toFixed(1)}</td>
+                    <td style="color: ${themeColors.textColor}; font-weight: 600">${player.performance.totalPoints}</td>
                     <td style="color: #4ade80; font-weight: 600">${player.pointsPerCrore.toFixed(1)}</td>
                     <td><span class="value-badge ${player.valueForMoney.toLowerCase()}">${player.valueForMoney}</span></td>
                 </tr>
@@ -815,6 +817,8 @@ class DashboardApp {
         const ctx = document.getElementById('pricePointsChart');
         if (!ctx || typeof Chart === 'undefined') return;
 
+        const themeColors = this.getThemeColors();
+
         // Get player data for scatter plot
         const playerData = Object.values(this.data.playerProfiles)
             .filter(p => p.Price > 0 && p.performance.totalPoints > 0)
@@ -852,10 +856,10 @@ class DashboardApp {
                         display: false
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        backgroundColor: themeColors.backgroundColor,
+                        titleColor: themeColors.textColor,
+                        bodyColor: themeColors.textColor,
+                        borderColor: themeColors.subtleTextColor,
                         borderWidth: 1,
                         callbacks: {
                             label: function(context) {
@@ -875,14 +879,14 @@ class DashboardApp {
                         title: {
                             display: true,
                             text: 'Price (₹Cr)',
-                            color: '#ffffff',
+                            color: themeColors.textColor,
                             font: {
                                 size: 14,
                                 weight: 'normal'
                             }
                         },
                         ticks: {
-                            color: '#cccccc',
+                            color: themeColors.subtleTextColor,
                             font: {
                                 size: 12
                             }
@@ -891,7 +895,7 @@ class DashboardApp {
                             display: false
                         },
                         border: {
-                            color: '#ffffff',
+                            color: themeColors.borderColor,
                             width: 2
                         }
                     },
@@ -899,14 +903,14 @@ class DashboardApp {
                         title: {
                             display: true,
                             text: 'Fantasy Points',
-                            color: '#ffffff',
+                            color: themeColors.textColor,
                             font: {
                                 size: 14,
                                 weight: 'normal'
                             }
                         },
                         ticks: {
-                            color: '#cccccc',
+                            color: themeColors.subtleTextColor,
                             font: {
                                 size: 12
                             }
@@ -915,7 +919,7 @@ class DashboardApp {
                             display: false
                         },
                         border: {
-                            color: '#ffffff',
+                            color: themeColors.borderColor,
                             width: 2
                         }
                     }
@@ -935,6 +939,8 @@ class DashboardApp {
     createInvestmentChart() {
         const ctx = document.getElementById('investmentChart');
         if (!ctx || typeof Chart === 'undefined') return;
+
+        const themeColors = this.getThemeColors();
 
         // Define price brackets
         const priceRanges = {
@@ -977,9 +983,6 @@ class DashboardApp {
             this.charts.investment.destroy();
         }
 
-        // Set Chart.js defaults for better text visibility
-        Chart.defaults.color = '#ffffff';
-
         this.charts.investment = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -994,12 +997,11 @@ class DashboardApp {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                color: '#ffffff',
                 plugins: {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: '#ffffff',
+                            color: themeColors.textColor,
                             usePointStyle: false,
                             font: {
                                 size: 12,
@@ -1013,17 +1015,16 @@ class DashboardApp {
                                     strokeStyle: data.datasets[0].borderColor[i],
                                     lineWidth: 2,
                                     hidden: false,
-                                    index: i,
-                                    fontColor: '#ffffff'
+                                    index: i
                                 }));
                             }
                         }
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: '#ffffff',
+                        backgroundColor: themeColors.backgroundColor,
+                        titleColor: themeColors.textColor,
+                        bodyColor: themeColors.textColor,
+                        borderColor: themeColors.subtleTextColor,
                         borderWidth: 1,
                         callbacks: {
                             label: function(context) {
@@ -1032,14 +1033,6 @@ class DashboardApp {
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                 const percentage = ((value / total) * 100).toFixed(1);
                                 return `${label}: ${value} players (${percentage}%)`;
-                            },
-                            afterLabel: function(context) {
-                                const rangeKey = context.label;
-                                const players = priceRanges[rangeKey].players.slice(0, 3);
-                                if (players.length > 0) {
-                                    return `Top: ${players.join(', ')}${players.length === 3 ? '...' : ''}`;
-                                }
-                                return '';
                             }
                         }
                     }
@@ -1118,33 +1111,21 @@ class DashboardApp {
     }
 
     toggleTheme() {
-        console.log('🎨 Toggle theme called');
+        const currentTheme = document.documentElement.getAttribute('data-color-scheme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
-        // Add switching animation
-        const toggleButton = document.getElementById('themeToggle');
-        if (toggleButton) {
-            toggleButton.classList.add('switching');
-            setTimeout(() => {
-                toggleButton.classList.remove('switching');
-            }, 300);
-        }
+        document.documentElement.setAttribute('data-color-scheme', newTheme);
+        localStorage.setItem('theme', newTheme);
         
-        // Switch theme
-        this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        this.updateThemeIcon();
         
-        // Apply theme to document
-        const html = document.documentElement;
-        html.setAttribute('data-color-scheme', this.currentTheme);
+        // Refresh charts with new theme colors
+        this.setupCharts();
         
-        // Save theme preference
-        localStorage.setItem('theme', this.currentTheme);
+        // Refresh VFM table with new theme colors
+        this.updateVFMTable();
         
-        // Update theme icon
-        setTimeout(() => {
-            this.updateThemeIcon();
-        }, 150);
-        
-        console.log('🎨 Theme switched to:', this.currentTheme);
+        console.log(`🎨 Theme switched to: ${newTheme}`);
     }
 
     showLoading() {
@@ -1652,9 +1633,9 @@ class DashboardApp {
         // Team colors for styling
         const teamColors = {
             'Royal Smashers': '#ff6384',
-            'Sher-e-Punjab': '#ffce56', 
-            'Silly Pointers': '#36a2eb',
-            'The Kingsmen': '#4bc0c0'
+            'Sher-e-Punjab': '#f59e0b',       // Changed from #ffce56 - bright orange/amber
+            'Silly Pointers': '#3b82f6',      // Changed from #36a2eb - bright blue
+            'The Kingsmen': '#10b981'         // Changed from #4bc0c0 - bright emerald green
         };
 
         let tablesHTML = '<div class="team-auction-tables-grid">';
@@ -1776,6 +1757,17 @@ class DashboardApp {
                 collapseText.style.display = 'none';
                 expandIcon.textContent = '▼';
             }
+        };
+    }
+
+    // Add this helper method to get theme-appropriate colors
+    getThemeColors() {
+        const isDark = document.documentElement.getAttribute('data-color-scheme') === 'dark';
+        return {
+            textColor: isDark ? '#ffffff' : '#000000',
+            subtleTextColor: isDark ? '#cccccc' : '#666666',
+            borderColor: isDark ? '#ffffff' : '#000000',
+            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)'
         };
     }
 }
