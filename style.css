@@ -1067,10 +1067,10 @@ select.form-control {
 }
 
 #matchPointsChart {
-  max-height: 280px !important;
-  height: 280px !important;
+  max-height: 220px !important;
+  height: 220px !important;
   width: 100% !important;
-  max-width: 280px !important;
+  max-width: 220px !important;
   margin: 0 auto !important;
 }
 
@@ -1109,7 +1109,7 @@ select.form-control {
   grid-template-rows: 1fr 1fr;
   gap: var(--space-8);
   width: 100%;
-  max-width: 350px;
+  max-width: 300px;
   margin: 0 auto;
   background: transparent;
 }
@@ -1474,7 +1474,7 @@ select.form-control {
   .team-cards-container {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, auto);
-    max-width: 250px;
+    max-width: 220px;
     gap: var(--space-6);
   }
   
@@ -1486,9 +1486,9 @@ select.form-control {
   }
   
   #matchPointsChart {
-    max-height: 250px !important;
-    height: 250px !important;
-    max-width: 250px !important;
+    max-height: 200px !important;
+    height: 200px !important;
+    max-width: 200px !important;
   }
 
   .team-match-points {
