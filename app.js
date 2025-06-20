@@ -95,7 +95,7 @@ class DashboardApp {
             
             // Initialize UI components
             console.log('🎛️ Setting up UI...');
-            this.initializeTabs();
+        this.initializeTabs();
             this.setupEventListeners();
             
             // Initialize theme icons after DOM elements are ready
@@ -106,7 +106,7 @@ class DashboardApp {
             // Skip charts for now to avoid errors
             console.log('📊 Setting up charts...');
             try {
-                this.setupCharts();
+        this.setupCharts();
             } catch (chartError) {
                 console.warn('Charts failed to load:', chartError);
             }
@@ -772,12 +772,12 @@ class DashboardApp {
             type: 'scatter',
             data: {
                 datasets: [{
-                    label: 'Price vs Points',
+                    label: 'Players',
                     data: playerData,
                     backgroundColor: 'rgba(54, 162, 235, 0.8)',
                     borderColor: 'rgba(54, 162, 235, 1)',
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
+                    pointRadius: 6,
+                    pointHoverRadius: 10,
                     borderWidth: 2
                 }]
             },
@@ -785,16 +785,17 @@ class DashboardApp {
                 responsive: true,
                 plugins: {
                     title: {
-                        display: true,
-                        text: '💰 Price vs Performance Analysis',
-                        color: 'var(--color-text)'
+                        display: false
                     },
                     legend: {
-                        labels: {
-                            color: 'var(--color-text)'
-                        }
+                        display: false
                     },
                     tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                        borderWidth: 1,
                         callbacks: {
                             label: function(context) {
                                 const point = context.raw;
@@ -813,28 +814,48 @@ class DashboardApp {
                         title: {
                             display: true,
                             text: 'Price (₹Cr)',
-                            color: 'var(--color-text)'
+                            color: '#ffffff',
+                            font: {
+                                size: 14,
+                                weight: 'normal'
+                            }
                         },
                         ticks: {
-                            color: 'var(--color-text-secondary)'
+                            color: '#cccccc',
+                            font: {
+                                size: 12
+                            }
                         },
                         grid: {
-                            color: 'rgba(128, 128, 128, 0.3)',
-                            lineWidth: 1
+                            display: false
+                        },
+                        border: {
+                            color: '#ffffff',
+                            width: 2
                         }
                     },
                     y: {
                         title: {
                             display: true,
                             text: 'Fantasy Points',
-                            color: 'var(--color-text)'
+                            color: '#ffffff',
+                            font: {
+                                size: 14,
+                                weight: 'normal'
+                            }
                         },
                         ticks: {
-                            color: 'var(--color-text-secondary)'
+                            color: '#cccccc',
+                            font: {
+                                size: 12
+                            }
                         },
                         grid: {
-                            color: 'rgba(128, 128, 128, 0.3)',
-                            lineWidth: 1
+                            display: false
+                        },
+                        border: {
+                            color: '#ffffff',
+                            width: 2
                         }
                     }
                 }
@@ -1337,7 +1358,7 @@ class DashboardApp {
                     <div class="match-team-card" style="background: ${bgColor}; border: 2px solid ${borderColor};">
                         <h4>${isWinner ? '🏆 ' : ''}${teamName}</h4>
                         <div class="team-match-points">${total.toFixed(1)} pts</div>
-                    </div>
+                </div>
                 `;
             }).join('');
         
@@ -1378,7 +1399,7 @@ class DashboardApp {
                         <div class="team-section-header" style="background: ${bgColor};">
                             <h5>${teamName}</h5>
                             <span class="team-section-total">${match.teamTotals[teamName].toFixed(1)} pts</span>
-                        </div>
+                </div>
                         <div class="team-players-table">
                             <table class="players-table enhanced-table">
                                 <thead>
