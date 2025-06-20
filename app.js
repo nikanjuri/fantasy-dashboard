@@ -419,9 +419,32 @@ class DashboardApp {
             .reduce((sum, team) => sum + team.totalInvestment, 0);
         const avgPrice = totalInvestment / totalPlayers;
 
+        // Find most expensive player
+        let mostExpensivePlayer = null;
+        let highestPrice = 0;
+        
+        Object.values(this.data.playerProfiles).forEach(player => {
+            if (player.Price > highestPrice) {
+                highestPrice = player.Price;
+                mostExpensivePlayer = player;
+            }
+        });
+
         document.getElementById('totalPlayers').textContent = totalPlayers;
         document.getElementById('totalInvestment').textContent = `₹${totalInvestment.toFixed(1)} Cr`;
         document.getElementById('avgPrice').textContent = `₹${avgPrice.toFixed(1)} Cr`;
+        
+        // Update most expensive player display
+        if (mostExpensivePlayer) {
+            const playerDisplay = `${mostExpensivePlayer.Player} (${mostExpensivePlayer.fantasyTeam})`;
+            const priceDisplay = `₹${mostExpensivePlayer.Price} Cr`;
+            document.getElementById('mostExpensivePlayer').innerHTML = `
+                <div style="font-size: var(--font-size-lg); margin-bottom: var(--space-4);">${playerDisplay}</div>
+                <div style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold);">${priceDisplay}</div>
+            `;
+        } else {
+            document.getElementById('mostExpensivePlayer').textContent = '-';
+        }
 
         // Update enhanced team cards
         this.updateEnhancedTeamCards();
