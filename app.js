@@ -287,8 +287,8 @@ class DashboardApp {
                                     totalPoints: 0,
                                     matches: 0,
                                     runs: 0,
-                                    wickets: 0,
-                                    catches: 0,
+                    wickets: 0,
+                    catches: 0,
                                     averagePoints: 0
                                 };
                             }
