@@ -402,7 +402,6 @@ class DashboardApp {
     // Enhanced UI Update Methods
     updateAllDashboards() {
         this.updateTeamOverview();
-        this.updateSmartInsights();
         this.updateAuctionAnalysis();
         this.updateTeamComposition();
         this.updateStats();
@@ -412,9 +411,6 @@ class DashboardApp {
     }
 
     updateTeamOverview() {
-        // Update smart insights
-        this.updateSmartInsights();
-        
         // Update enhanced stats
         const totalPlayers = Object.values(this.data.playerProfiles).length;
         const totalInvestment = Object.values(this.data.teamCompositions)
@@ -427,39 +423,6 @@ class DashboardApp {
 
         // Update enhanced team cards
         this.updateEnhancedTeamCards();
-    }
-
-    updateSmartInsights() {
-        if (!this.data.auctionData || !this.data.auctionData.bestBargains) return;
-        
-        const bestValue = this.data.auctionData.bestBargains[0];
-        const hiddenGem = this.data.auctionData.allPlayers
-            .filter(p => (p.Price || 0) < 2 && p.performance.totalPoints > 100)[0];
-        
-        const formPlayer = this.data.players && this.data.players.length > 0 
-            ? this.data.players.sort((a, b) => (b.totalPoints / b.matches) - (a.totalPoints / a.matches))[0]
-            : null;
-
-        if (bestValue) {
-            document.getElementById('bestValuePlayer').innerHTML = `
-                <strong>${bestValue.Player}</strong><br>
-                <small>₹${bestValue.Price}Cr • ${bestValue.performance.totalPoints} pts</small>
-            `;
-        }
-
-        if (hiddenGem) {
-            document.getElementById('hiddenGem').innerHTML = `
-                <strong>${hiddenGem.Player}</strong><br>
-                <small>₹${hiddenGem.Price}Cr • ${hiddenGem.performance.totalPoints} pts</small>
-            `;
-        }
-
-        if (formPlayer) {
-            document.getElementById('formPlayer').innerHTML = `
-                <strong>${formPlayer.player}</strong><br>
-                <small>${(formPlayer.totalPoints / formPlayer.matches).toFixed(1)} pts/match</small>
-            `;
-        }
     }
 
     updateEnhancedTeamCards() {
