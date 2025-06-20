@@ -1104,7 +1104,7 @@ select.form-control {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100px;
+  min-height: 120px;
   flex: 1;
   min-width: 180px;
   max-width: 220px;
@@ -1117,38 +1117,21 @@ select.form-control {
   box-shadow: var(--shadow-md);
 }
 
-.match-team-card .team-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: var(--space-12);
-}
-
 .match-team-card h4 {
-  margin: 0;
+  margin: 0 0 var(--space-12) 0;
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
-}
-
-.winner-badge {
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: #1a202c;
-  padding: var(--space-4) var(--space-8);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-bold);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+  text-align: center;
+  width: 100%;
 }
 
 .team-match-points {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
-  margin: var(--space-8) 0;
+  margin: 0;
+  text-align: center;
 }
 
 /* Enhanced Team Cards */

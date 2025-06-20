@@ -1229,10 +1229,7 @@ class DashboardApp {
                 
                 return `
                     <div class="match-team-card" style="background: ${bgColor}; border: 2px solid ${borderColor};">
-                        <div class="team-header">
-                            <h4>${teamName}</h4>
-                            ${isWinner ? '<span class="winner-badge">🏆 Winner</span>' : ''}
-                        </div>
+                        <h4>${isWinner ? '🏆 ' : ''}${teamName}</h4>
                         <div class="team-match-points">${total.toFixed(1)} pts</div>
                     </div>
                 `;
