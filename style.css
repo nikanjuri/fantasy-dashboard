@@ -1184,27 +1184,31 @@ select.form-control {
   margin: var(--space-16) 0;
 }
 
+/* Alternative: Single Line Layout */
 .enhanced-team-card .team-details {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-12);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-20);
   margin-bottom: var(--space-16);
+  font-size: var(--font-size-sm);
 }
 
 .enhanced-team-card .detail-item {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  white-space: nowrap;
 }
 
 .enhanced-team-card .detail-item .label {
-  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
+  font-weight: var(--font-weight-medium);
 }
 
 .enhanced-team-card .detail-item .value {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
   color: var(--color-text);
+  font-weight: var(--font-weight-bold);
 }
 
 .enhanced-team-card .team-stats {
