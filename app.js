@@ -192,85 +192,97 @@ class DashboardApp {
         const playerStats = {};
         const matches = [];
 
-        // Process each match
-        Object.entries(this.rawData).forEach(([matchName, matchData]) => {
-            const matchInfo = {
-                matchName: matchName,
-                teams: Object.keys(matchData).filter(key => key !== 'Team Total'),
-                teamTotals: {},
-                players: []
-            };
-
-            Object.entries(matchData).forEach(([teamName, teamData]) => {
-                if (teamName === 'Team Total') return;
+        // Process each match WEEK (Level 1: MatchWeeks)
+        Object.entries(this.rawData).forEach(([matchWeekName, matchWeekData]) => {
+            console.log(`Processing ${matchWeekName}`);
+            
+            // Process each MATCH within the week (Level 2: Matches)
+            Object.entries(matchWeekData).forEach(([matchName, matchData]) => {
+                console.log(`  Processing match: ${matchName}`);
                 
-                // Add null check for teamData
-                if (!teamData || typeof teamData !== 'object') {
-                    console.warn(`⚠️ Skipping invalid team data for ${teamName} in ${matchName}`);
-                    return;
-                }
+                const matchInfo = {
+                    matchWeek: matchWeekName,
+                    matchName: matchName,
+                    teams: Object.keys(matchData).filter(key => key !== 'Team Total'),
+                    teamTotals: {},
+                    players: []
+                };
 
-                // Handle nested Players structure
-                const playersData = teamData.Players || teamData;
-                const teamTotal = playersData['Team Total'] || 0;
-                matchInfo.teamTotals[teamName] = teamTotal;
+                // Process each FANTASY TEAM in the match (Level 3: Fantasy Teams)
+                Object.entries(matchData).forEach(([fantasyTeamName, teamData]) => {
+                    if (fantasyTeamName === 'Team Total') return;
+                    
+                    console.log(`    Processing fantasy team: ${fantasyTeamName}`);
+                    
+                    // Add null check for teamData
+                    if (!teamData || typeof teamData !== 'object') {
+                        console.warn(`⚠️ Skipping invalid team data for ${fantasyTeamName} in ${matchName}`);
+                        return;
+                    }
 
-                if (!teamTotals[teamName]) {
-                    teamTotals[teamName] = 0;
-                }
-                teamTotals[teamName] += teamTotal;
+                    // Handle nested Players structure
+                    const playersData = teamData.Players || teamData;
+                    const teamTotal = playersData['Team Total'] || 0;
+                    matchInfo.teamTotals[fantasyTeamName] = teamTotal;
 
-                // Process individual players for this match
-                const playersList = playersData.Players || teamData.Players;
-                if (playersList && Array.isArray(playersList)) {
-                    playersList.forEach(player => {
-                        const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
-                        const safeValue = (val) => (val !== null && val !== undefined && !isNaN(val)) ? val : '-';
-                        
-                        const playerData = {
-                            name: player.Player || 'Unknown',
-                            team: teamName,
-                            runs: safeNumber(player.Score),
-                            balls: safeNumber(player.Balls),
-                            fours: safeNumber(player['4s']),
-                            sixes: safeNumber(player['6s']),
-                            strikeRate: safeValue(player.SR),
-                            wickets: safeNumber(player.Wickets),
-                            dots: safeNumber(player['0s']),
-                            economy: safeValue(player.ER),
-                            catches: safeNumber(player.Catch) + safeNumber(player.Runout),
-                            fantasyPoints: safeNumber(player.Points)
-                        };
-                        
-                        matchInfo.players.push(playerData);
+                    // Accumulate points for FANTASY TEAMS (not MatchWeeks!)
+                    if (!teamTotals[fantasyTeamName]) {
+                        teamTotals[fantasyTeamName] = 0;
+                    }
+                    teamTotals[fantasyTeamName] += teamTotal;
 
-                        // Store in overall player stats
-                        const playerKey = player.Player;
-                        if (!playerStats[playerKey]) {
-                            playerStats[playerKey] = {
-                                player: player.Player,
-                                name: player.Player,
-                                team: teamName,
-                                totalPoints: 0,
-                                matches: 0,
-                                runs: 0,
-                    wickets: 0,
-                    catches: 0,
-                                averagePoints: 0
+                    // Process individual players for this match
+                    const playersList = playersData.Players || teamData.Players;
+                    if (playersList && Array.isArray(playersList)) {
+                        playersList.forEach(player => {
+                            const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
+                            const safeValue = (val) => (val !== null && val !== undefined && !isNaN(val)) ? val : '-';
+                            
+                            const playerData = {
+                                name: player.Player || 'Unknown',
+                                team: fantasyTeamName, // Use FANTASY team name
+                                runs: safeNumber(player.Score),
+                                balls: safeNumber(player.Balls),
+                                fours: safeNumber(player['4s']),
+                                sixes: safeNumber(player['6s']),
+                                strikeRate: safeValue(player.SR),
+                                wickets: safeNumber(player.Wickets),
+                                dots: safeNumber(player['0s']),
+                                economy: safeValue(player.ER),
+                                catches: safeNumber(player.Catch) + safeNumber(player.Runout),
+                                fantasyPoints: safeNumber(player.Points)
                             };
-                        }
+                            
+                            matchInfo.players.push(playerData);
 
-                        playerStats[playerKey].totalPoints += safeNumber(player.Points);
-                        playerStats[playerKey].matches += 1;
-                        playerStats[playerKey].runs += safeNumber(player.Score);
-                        playerStats[playerKey].wickets += safeNumber(player.Wickets);
-                        playerStats[playerKey].catches += safeNumber(player.Catch) + safeNumber(player.Runout);
-                        playerStats[playerKey].averagePoints = playerStats[playerKey].totalPoints / playerStats[playerKey].matches;
-                    });
-                }
+                            // Store in overall player stats
+                            const playerKey = player.Player;
+                            if (!playerStats[playerKey]) {
+                                playerStats[playerKey] = {
+                                    player: player.Player,
+                                    name: player.Player,
+                                    team: fantasyTeamName, // Use FANTASY team name
+                                    totalPoints: 0,
+                                    matches: 0,
+                                    runs: 0,
+                                    wickets: 0,
+                                    catches: 0,
+                                    averagePoints: 0
+                                };
+                            }
+
+                            playerStats[playerKey].totalPoints += safeNumber(player.Points);
+                            playerStats[playerKey].matches += 1;
+                            playerStats[playerKey].runs += safeNumber(player.Score);
+                            playerStats[playerKey].wickets += safeNumber(player.Wickets);
+                            playerStats[playerKey].catches += safeNumber(player.Catch) + safeNumber(player.Runout);
+                            playerStats[playerKey].averagePoints = playerStats[playerKey].totalPoints / playerStats[playerKey].matches;
+                        });
+                    }
+                });
+
+                matches.push(matchInfo);
             });
-
-            matches.push(matchInfo);
         });
 
         // Create players array for compatibility with existing code
@@ -279,7 +291,7 @@ class DashboardApp {
         // Store processed data
         this.data = {
             teamTotals,
-            teamStandings: teamTotals,
+            teamStandings: teamTotals, // Now contains FANTASY team totals
             playerStats,
             players,
             matches,
@@ -287,6 +299,8 @@ class DashboardApp {
         };
 
         console.log('✅ Fantasy data processed. Team standings keys:', Object.keys(this.data.teamStandings));
+        console.log('✅ Total matches processed:', matches.length);
+        console.log('✅ Fantasy teams found:', Object.keys(teamTotals));
     }
 
     processPlayerProfiles() {
