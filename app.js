@@ -20,7 +20,7 @@ class DashboardApp {
         this.sortDirection = 'asc';
         this.enhancedFilters = null;
         
-        // Initialize theme from localStorage or default to light
+        // Initialize theme immediately
         this.initializeTheme();
         
         this.init();
@@ -33,28 +33,50 @@ class DashboardApp {
         html.setAttribute('data-color-scheme', savedTheme);
         this.currentTheme = savedTheme;
         
-        // Set initial icon visibility when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
+        console.log('🎨 Theme initialized:', savedTheme);
+        
+        // Update theme icon after a brief delay to ensure DOM is ready
+        setTimeout(() => {
             this.updateThemeIcon();
-        });
+        }, 50);
     }
 
     updateThemeIcon() {
         const toggleButton = document.getElementById('themeToggle');
-        if (!toggleButton) return;
+        if (!toggleButton) {
+            console.log('❌ Theme toggle button not found');
+            return;
+        }
         
         const lightIcon = toggleButton.querySelector('.light-icon'); // 💡 bulb
         const darkIcon = toggleButton.querySelector('.dark-icon');   // 🌙 moon
         
-        // Correct logic: Show the icon for what you want to switch TO
+        if (!lightIcon || !darkIcon) {
+            console.log('❌ Theme icons not found');
+            return;
+        }
+        
+        console.log('🎯 Current theme:', this.currentTheme);
+        
+        // CORRECTED LOGIC: Show the icon for what you want to switch TO
         if (this.currentTheme === 'dark') {
             // In dark mode, show bulb (💡) to switch to light mode
-            if (lightIcon) lightIcon.style.display = 'block';
-            if (darkIcon) darkIcon.style.display = 'none';
+            lightIcon.style.display = 'block';
+            lightIcon.style.opacity = '1';
+            lightIcon.style.visibility = 'visible';
+            darkIcon.style.display = 'none';
+            darkIcon.style.opacity = '0';
+            darkIcon.style.visibility = 'hidden';
+            console.log('🌙 Dark mode: showing light bulb icon');
         } else {
             // In light mode, show moon (🌙) to switch to dark mode
-            if (lightIcon) lightIcon.style.display = 'none';
-            if (darkIcon) darkIcon.style.display = 'block';
+            lightIcon.style.display = 'none';
+            lightIcon.style.opacity = '0';
+            lightIcon.style.visibility = 'hidden';
+            darkIcon.style.display = 'block';
+            darkIcon.style.opacity = '1';
+            darkIcon.style.visibility = 'visible';
+            console.log('☀️ Light mode: showing moon icon');
         }
     }
 
@@ -62,9 +84,6 @@ class DashboardApp {
         console.log('🚀 Initializing dashboard...');
         try {
             this.showLoading();
-            
-            // Initialize theme icons after DOM is ready
-            this.updateThemeIcon();
             
             // Load and process data
             console.log('📡 Loading data...');
@@ -79,6 +98,11 @@ class DashboardApp {
             console.log('🎛️ Setting up UI...');
             this.initializeTabs();
             this.setupEventListeners();
+            
+            // Initialize theme icons after DOM elements are ready
+        setTimeout(() => {
+                this.updateThemeIcon();
+        }, 100);
             
             // Skip charts for now to avoid errors
             console.log('📊 Setting up charts...');
@@ -608,8 +632,8 @@ class DashboardApp {
                         <div class="expensive-details">
                             ₹${player.Price}Cr • ${player.performance.totalPoints} pts
                             <span class="value-ratio">${player.pointsPerCrore.toFixed(1)} pts/₹Cr</span>
-                        </div>
-                    </div>
+                </div>
+                </div>
                 `).join('');
         }
 
@@ -658,7 +682,7 @@ class DashboardApp {
                             <span class="type-icon">🏏</span>
                             <span class="type-label">Batsmen</span>
                             <span class="type-count">${comp.playerTypes.BAT}</span>
-                </div>
+            </div>
                         <div class="breakdown-item">
                             <span class="type-icon">⚡</span>
                             <span class="type-label">Bowlers</span>
@@ -668,7 +692,7 @@ class DashboardApp {
                             <span class="type-icon">🌟</span>
                             <span class="type-label">All-rounders</span>
                             <span class="type-count">${comp.playerTypes.AR}</span>
-            </div>
+                </div>
                         <div class="breakdown-item">
                             <span class="type-icon">🧤</span>
                             <span class="type-label">Wicket-keepers</span>
@@ -680,7 +704,7 @@ class DashboardApp {
                             <span class="exp-label">Overseas</span>
                             <span class="exp-count">${comp.overseas}</span>
                 </div>
-                </div>
+            </div>
                 </div>
             `).join('');
     }
@@ -894,12 +918,10 @@ class DashboardApp {
     }
 
     toggleTheme() {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-color-scheme') || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        const toggleButton = document.getElementById('themeToggle');
+        console.log('🎨 Toggle theme called');
         
         // Add switching animation
+        const toggleButton = document.getElementById('themeToggle');
         if (toggleButton) {
             toggleButton.classList.add('switching');
             setTimeout(() => {
@@ -907,15 +929,22 @@ class DashboardApp {
             }, 300);
         }
         
-        html.setAttribute('data-color-scheme', newTheme);
-        this.currentTheme = newTheme;
+        // Switch theme
+        this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
         
-        // Update icon visibility
-        this.updateThemeIcon();
+        // Apply theme to document
+        const html = document.documentElement;
+        html.setAttribute('data-color-scheme', this.currentTheme);
         
-        localStorage.setItem('theme', newTheme);
+        // Save theme preference
+        localStorage.setItem('theme', this.currentTheme);
         
-        console.log(`🎨 Theme switched to: ${newTheme}`);
+        // Update theme icon
+        setTimeout(() => {
+            this.updateThemeIcon();
+        }, 150);
+        
+        console.log('🎨 Theme switched to:', this.currentTheme);
     }
 
     showLoading() {
