@@ -436,12 +436,7 @@ class DashboardApp {
         
         // Update most expensive player display
         if (mostExpensivePlayer) {
-            const playerDisplay = `${mostExpensivePlayer.Player}`;
-            const priceDisplay = `₹${mostExpensivePlayer.Price} Cr`;
-            document.getElementById('mostExpensivePlayer').innerHTML = `
-                <div style="font-size: var(--font-size-lg); margin-bottom: var(--space-4);">${playerDisplay}</div>
-                <div style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold);">${priceDisplay}</div>
-            `;
+            document.getElementById('mostExpensivePlayer').textContent = `${mostExpensivePlayer.Player} - ₹${mostExpensivePlayer.Price}Cr`;
         } else {
             document.getElementById('mostExpensivePlayer').textContent = '-';
         }
