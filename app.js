@@ -824,19 +824,40 @@ class DashboardApp {
         const ctx = document.getElementById('investmentChart');
         if (!ctx || typeof Chart === 'undefined') return;
 
-        // Get team investment data
-        const teamInvestments = Object.entries(this.data.teamCompositions)
-            .map(([teamName, composition]) => ({
-                team: teamName,
-                investment: composition.totalInvestment || 0
-            }))
-            .sort((a, b) => b.investment - a.investment);
+        // Define price brackets
+        const priceRanges = {
+            'Budget (< ₹5Cr)': { min: 0, max: 5, count: 0, players: [] },
+            'Mid-range (₹5-10Cr)': { min: 5, max: 10, count: 0, players: [] },
+            'Premium (₹10-20Cr)': { min: 10, max: 20, count: 0, players: [] },
+            'Superstars (> ₹20Cr)': { min: 20, max: 999, count: 0, players: [] }
+        };
 
-        const teamColors = [
-            'rgba(255, 99, 132, 0.8)',   // Red
-            'rgba(255, 206, 86, 0.8)',   // Yellow  
-            'rgba(54, 162, 235, 0.8)',   // Blue
-            'rgba(75, 192, 192, 0.8)'    // Teal
+        // Count players in each price bracket
+        this.data.auctionData.allPlayers.forEach(player => {
+            const price = player.Price || 0;
+            
+            if (price < 5) {
+                priceRanges['Budget (< ₹5Cr)'].count++;
+                priceRanges['Budget (< ₹5Cr)'].players.push(player.Player);
+            } else if (price >= 5 && price < 10) {
+                priceRanges['Mid-range (₹5-10Cr)'].count++;
+                priceRanges['Mid-range (₹5-10Cr)'].players.push(player.Player);
+            } else if (price >= 10 && price < 20) {
+                priceRanges['Premium (₹10-20Cr)'].count++;
+                priceRanges['Premium (₹10-20Cr)'].players.push(player.Player);
+            } else if (price >= 20) {
+                priceRanges['Superstars (> ₹20Cr)'].count++;
+                priceRanges['Superstars (> ₹20Cr)'].players.push(player.Player);
+            }
+        });
+
+        const labels = Object.keys(priceRanges);
+        const data = Object.values(priceRanges).map(range => range.count);
+        const colors = [
+            'rgba(34, 197, 94, 0.8)',   // Green for Budget
+            'rgba(59, 130, 246, 0.8)',  // Blue for Mid-range
+            'rgba(245, 158, 11, 0.8)',  // Orange for Premium
+            'rgba(239, 68, 68, 0.8)'    // Red for Superstars
         ];
 
         // Destroy existing chart if it exists
@@ -847,11 +868,11 @@ class DashboardApp {
         this.charts.investment = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: teamInvestments.map(t => t.team),
+                labels: labels,
                 datasets: [{
-                    data: teamInvestments.map(t => t.investment),
-                    backgroundColor: teamColors,
-                    borderColor: teamColors.map(color => color.replace('0.8', '1')),
+                    data: data,
+                    backgroundColor: colors,
+                    borderColor: colors.map(color => color.replace('0.8', '1')),
                     borderWidth: 2
                 }]
             },
@@ -865,7 +886,7 @@ class DashboardApp {
                             generateLabels: function(chart) {
                                 const data = chart.data;
                                 return data.labels.map((label, i) => ({
-                                    text: `${label}: ₹${data.datasets[0].data[i].toFixed(1)}Cr`,
+                                    text: `${label}: ${data.datasets[0].data[i]} players`,
                                     fillStyle: data.datasets[0].backgroundColor[i],
                                     strokeStyle: data.datasets[0].borderColor[i],
                                     lineWidth: 2,
@@ -882,7 +903,15 @@ class DashboardApp {
                                 const value = context.parsed || 0;
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                 const percentage = ((value / total) * 100).toFixed(1);
-                                return `${label}: ₹${value.toFixed(1)}Cr (${percentage}%)`;
+                                return `${label}: ${value} players (${percentage}%)`;
+                            },
+                            afterLabel: function(context) {
+                                const rangeKey = context.label;
+                                const players = priceRanges[rangeKey].players.slice(0, 3);
+                                if (players.length > 0) {
+                                    return `Top: ${players.join(', ')}${players.length === 3 ? '...' : ''}`;
+                                }
+                                return '';
                             }
                         }
                     }
