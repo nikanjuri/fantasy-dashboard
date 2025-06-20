@@ -1635,3 +1635,15 @@ select.form-control {
     padding: var(--space-6) var(--space-10);
   }
 }
+
+/* Center align numerical data in enhanced table */
+.enhanced-table th:not(:first-child),
+.enhanced-table td:not(:first-child) {
+  text-align: center;
+}
+
+/* Keep player names left-aligned */
+.enhanced-table th:first-child,
+.enhanced-table td:first-child {
+  text-align: left;
+}
