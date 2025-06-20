@@ -1370,17 +1370,17 @@ class DashboardApp {
         
         // Team colors for consistency
         const teamColors = {
-            'Royal Smashers': 'rgba(255, 99, 132, 0.1)',
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.1)',
-            'Silly Pointers': 'rgba(54, 162, 235, 0.1)',
-            'The Kingsmen': 'rgba(75, 192, 192, 0.1)'
+            'Royal Smashers': 'rgba(255, 99, 132, 0.1)',     // Light pink background
+            'Sher-e-Punjab': 'rgba(245, 158, 11, 0.1)',      // Light orange background  
+            'Silly Pointers': 'rgba(59, 130, 246, 0.1)',     // Light blue background
+            'The Kingsmen': 'rgba(16, 185, 129, 0.1)'        // Light green background - changed from rgba(75, 192, 192, 0.8)
         };
 
         const teamBorderColors = {
             'Royal Smashers': 'rgba(255, 99, 132, 0.8)',
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)',
-            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
-            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
+            'Sher-e-Punjab': 'rgba(245, 158, 11, 0.8)',      // Orange border
+            'Silly Pointers': 'rgba(59, 130, 246, 0.8)',     // Blue border  
+            'The Kingsmen': 'rgba(16, 185, 129, 0.8)'        // Green border - changed from rgba(75, 192, 192, 0.8)
         };
         
         // Find the winning team
@@ -1510,9 +1510,9 @@ class DashboardApp {
         // Team colors
         const teamColors = {
             'Royal Smashers': 'rgba(255, 99, 132, 0.8)',
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)',
-            'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
-            'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
+            'Sher-e-Punjab': 'rgba(245, 158, 11, 0.8)',      // Orange
+            'Silly Pointers': 'rgba(59, 130, 246, 0.8)',     // Blue
+            'The Kingsmen': 'rgba(16, 185, 129, 0.8)'        // Green - changed from rgba(75, 192, 192, 0.8)
         };
 
         // Prepare data for pie chart

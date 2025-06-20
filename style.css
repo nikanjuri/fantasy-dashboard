@@ -1303,7 +1303,7 @@ select.form-control {
 .enhanced-table th,
 .enhanced-table td {
   padding: var(--space-12) var(--space-16);
-  text-align: left;
+  text-align: center;  /* Change from left to center */
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -2484,4 +2484,14 @@ select.form-control {
 /* Theme-responsive overrides for light mode */
 [data-color-scheme="light"] .enhanced-team-card .stat-item .count {
   color: #000000 !important;
+}
+
+/* Keep player names left-aligned */
+.enhanced-table td:first-child {
+  text-align: left;
+}
+
+/* Keep headers center-aligned except for the first column */
+.enhanced-table th:first-child {
+  text-align: left;
 }
