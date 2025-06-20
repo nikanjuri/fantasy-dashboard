@@ -1528,13 +1528,13 @@ class DashboardApp {
         // Clear match scorecard container
         const scorecardContainer = document.getElementById('matchScorecard');
         if (scorecardContainer) {
-            scorecardContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Please select a match to view details</p>';
+            scorecardContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Please select a match to view details.</p>';
         }
         
         // Clear player performance details container
         const playerDetailsContainer = document.getElementById('playerPerformanceDetails');
         if (playerDetailsContainer) {
-            playerDetailsContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Match player details will appear here</p>';
+            playerDetailsContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Player\'s Match details will appear here.</p>';
         }
         
         // Clear the match points chart
