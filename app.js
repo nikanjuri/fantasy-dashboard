@@ -131,89 +131,70 @@ class DashboardApp {
         const playerStats = {};
         const matches = [];
 
-        // Process each match (existing logic)
+        // Process each match
         Object.entries(this.rawData).forEach(([matchName, matchData]) => {
             const matchInfo = {
                 matchName: matchName,
                 teams: Object.keys(matchData).filter(key => key !== 'Team Total'),
                 teamTotals: {},
-                players: [] // Add this to store individual player data for the match
+                players: []
             };
 
             Object.entries(matchData).forEach(([teamName, teamData]) => {
                 if (teamName === 'Team Total') return;
 
+                const teamTotal = teamData['Team Total'] || 0;
+                matchInfo.teamTotals[teamName] = teamTotal;
+
                 if (!teamTotals[teamName]) {
                     teamTotals[teamName] = 0;
                 }
-
-                const teamTotal = teamData['Team Total'] || 0;
                 teamTotals[teamName] += teamTotal;
-                matchInfo.teamTotals[teamName] = teamTotal;
 
-                if (teamData.Players) {
+                // Process individual players for this match
+                if (teamData.Players && Array.isArray(teamData.Players)) {
                     teamData.Players.forEach(player => {
-                        const playerName = player.Player;
-                        
-                        // Add player data to match info
                         const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
                         const safeValue = (val) => (val !== null && val !== undefined && !isNaN(val)) ? val : '-';
                         
-                        matchInfo.players.push({
-                            name: playerName,
+                        const playerData = {
+                            name: player.Player || 'Unknown',
                             team: teamName,
                             runs: safeNumber(player.Score),
                             balls: safeNumber(player.Balls),
-                            strikeRate: player.Balls > 0 ? Math.round((safeNumber(player.Score) / safeNumber(player.Balls)) * 100 * 100) / 100 : safeValue(player.SR),
+                            fours: safeNumber(player['4s']), // Add 4s
+                            sixes: safeNumber(player['6s']), // Add 6s
+                            strikeRate: safeValue(player.SR),
                             wickets: safeNumber(player.Wickets),
+                            dots: safeNumber(player['0s']), // Add dots (0s)
                             economy: safeValue(player.ER),
-                            catches: Math.floor(safeNumber(player.Catch) / 8) + safeNumber(player.Runout), // Catches + Runouts
-                            fantasyPoints: safeNumber(player.Total)
-                        });
+                            catches: safeNumber(player.Catch) + safeNumber(player.Runout), // Combined C/RO
+                            fantasyPoints: safeNumber(player.Points)
+                        };
                         
-                        if (!playerStats[playerName]) {
-                            playerStats[playerName] = {
-                                player: playerName,
+                        matchInfo.players.push(playerData);
+
+                        // Store in overall player stats
+                        const playerKey = player.Player;
+                        if (!playerStats[playerKey]) {
+                            playerStats[playerKey] = {
+                                name: player.Player,
                                 team: teamName,
                                 totalPoints: 0,
-                                runs: 0,
-                                wickets: 0,
-                                catches: 0,
-                                balls: 0,
-                                dotBalls: 0,
-                                fours: 0,
-                                sixes: 0,
-                                matchesPlayed: 0,
-                                battingPoints: 0,
-                                bowlingPoints: 0,
-                                fieldingPoints: 0,
-                                economyTotal: 0,
-                                economyInnings: 0
+                                matches: 0,
+                                totalRuns: 0,
+                                totalWickets: 0,
+                                totalCatches: 0,
+                                averagePoints: 0
                             };
                         }
 
-                        const stats = playerStats[playerName];
-                        
-                        stats.totalPoints += safeNumber(player.Total);
-                        stats.runs += safeNumber(player.Score);
-                        stats.wickets += safeNumber(player.Wickets);
-                        stats.balls += safeNumber(player.Balls);
-                        stats.dotBalls += safeNumber(player['0s']);
-                        stats.fours += safeNumber(player['4s']);
-                        stats.sixes += safeNumber(player['6s']);
-                        stats.battingPoints += safeNumber(player.Batting);
-                        stats.bowlingPoints += safeNumber(player.Bowling);
-                        stats.fieldingPoints += safeNumber(player.Catch) + safeNumber(player.Runout);
-                        stats.matchesPlayed++;
-
-                        if (player.Catch && typeof player.Catch === 'number') {
-                            stats.catches += Math.floor(player.Catch / 8);
-                        }
-
-                        if (player.ER && typeof player.ER === 'number' && player.ER > 0) {
-                            stats.economyTotal += player.ER;
-                            stats.economyInnings++;
-                        }
+                        playerStats[playerKey].totalPoints += safeNumber(player.Points);
+                        playerStats[playerKey].matches += 1;
+                        playerStats[playerKey].totalRuns += safeNumber(player.Score);
+                        playerStats[playerKey].totalWickets += safeNumber(player.Wickets);
+                        playerStats[playerKey].totalCatches += safeNumber(player.Catch) + safeNumber(player.Runout);
+                        playerStats[playerKey].averagePoints = playerStats[playerKey].totalPoints / playerStats[playerKey].matches;
                     });
                 }
             });
@@ -221,20 +202,15 @@ class DashboardApp {
             matches.push(matchInfo);
         });
 
-        // Calculate derived statistics
-        const processedPlayers = Object.values(playerStats).map(player => {
-            return {
-                ...player,
-                strikeRate: player.balls > 0 ? Math.round((player.runs / player.balls) * 100 * 100) / 100 : null,
-                economyRate: player.economyInnings > 0 ? Math.round((player.economyTotal / player.economyInnings) * 100) / 100 : null,
-                average: player.runs > 0 ? Math.round((player.runs / player.matchesPlayed) * 100) / 100 : 0
-            };
-        });
+        // Store processed data
+        this.data = {
+            teamTotals,
+            playerStats,
+            matches,
+            totalMatches: matches.length
+        };
 
-        this.data.teamStandings = teamTotals;
-        this.data.players = processedPlayers.sort((a, b) => b.totalPoints - a.totalPoints);
-        this.data.matches = matches;
-        this.filteredPlayers = [...this.data.players];
+        console.log('✅ Fantasy data processed:', this.data);
     }
 
     processPlayerProfiles() {
@@ -1134,8 +1110,9 @@ class DashboardApp {
         
         const match = this.data.matches[matchIndex];
         const scorecardContainer = document.getElementById('matchScorecard');
+        const playerDetailsContainer = document.getElementById('playerPerformanceDetails');
         
-        if (!scorecardContainer) return;
+        if (!scorecardContainer || !playerDetailsContainer) return;
         
         // Team colors for consistency
         const teamColors = {
@@ -1156,7 +1133,7 @@ class DashboardApp {
         const winningTeam = Object.entries(match.teamTotals)
             .sort(([,a], [,b]) => b - a)[0][0];
         
-        // Create team performance cards
+        // Create team performance cards (without player table)
         const teamCardsHTML = Object.entries(match.teamTotals)
             .sort(([,a], [,b]) => b - a)
             .map(([teamName, total]) => {
@@ -1175,6 +1152,18 @@ class DashboardApp {
                 `;
             }).join('');
         
+        // Create scorecard HTML (without player table)
+        const scorecardHTML = `
+            <div class="match-info">
+                <h3>${match.matchName}</h3>
+                <div class="team-cards-container">
+                    ${teamCardsHTML}
+                </div>
+            </div>
+        `;
+        
+        scorecardContainer.innerHTML = scorecardHTML;
+        
         // Group players by team and sort within teams
         const playersByTeam = {};
         match.players.forEach(player => {
@@ -1189,83 +1178,70 @@ class DashboardApp {
             playersByTeam[team].sort((a, b) => b.fantasyPoints - a.fantasyPoints);
         });
         
-        // Create detailed player table
-        const playerTableHTML = `
-            <div class="match-details-section">
-                <div class="details-header">
-                    <h4>Player Performance Details</h4>
-                    <button class="btn btn--outline btn--sm" id="toggleMatchDetails">Collapse Details</button>
-                </div>
-                <div class="match-player-table" id="matchPlayerTable">
-                    ${Object.entries(playersByTeam).map(([teamName, players]) => {
-                        const bgColor = teamColors[teamName] || 'rgba(128, 128, 128, 0.1)';
-                        const borderColor = teamBorderColors[teamName] || 'rgba(128, 128, 128, 0.8)';
-                        
-                        return `
-                            <div class="team-section" style="border-left: 4px solid ${borderColor};">
-                                <div class="team-section-header" style="background: ${bgColor};">
-                                    <h5>${teamName}</h5>
-                                    <span class="team-section-total">${match.teamTotals[teamName].toFixed(1)} pts</span>
-                                </div>
-                                <div class="team-players-table">
-                                    <table class="players-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Player</th>
-                                                <th>Runs</th>
-                                                <th>Balls</th>
-                                                <th>SR</th>
-                                                <th>Wickets</th>
-                                                <th>Economy</th>
-                                                <th>C/RO</th>
-                                                <th>Points</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${players.map(player => `
-                                                <tr>
-                                                    <td><strong>${player.name}</strong></td>
-                                                    <td>${player.runs}</td>
-                                                    <td>${player.balls}</td>
-                                                    <td>${player.strikeRate}</td>
-                                                    <td>${player.wickets}</td>
-                                                    <td>${player.economy}</td>
-                                                    <td>${player.catches}</td>
-                                                    <td><strong>${player.fantasyPoints}</strong></td>
-                                                </tr>
-                                            `).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
+        // Create enhanced player performance table
+        const playerDetailsHTML = `
+            ${Object.entries(playersByTeam).map(([teamName, players]) => {
+                const bgColor = teamColors[teamName] || 'rgba(128, 128, 128, 0.1)';
+                const borderColor = teamBorderColors[teamName] || 'rgba(128, 128, 128, 0.8)';
+                
+                return `
+                    <div class="team-section" style="border-left: 4px solid ${borderColor};">
+                        <div class="team-section-header" style="background: ${bgColor};">
+                            <h5>${teamName}</h5>
+                            <span class="team-section-total">${match.teamTotals[teamName].toFixed(1)} pts</span>
+                        </div>
+                        <div class="team-players-table">
+                            <table class="players-table enhanced-table">
+                                <thead>
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>Runs</th>
+                                        <th>Balls</th>
+                                        <th>4s</th>
+                                        <th>6s</th>
+                                        <th>SR</th>
+                                        <th>Wickets</th>
+                                        <th>Dots</th>
+                                        <th>Economy</th>
+                                        <th>Catches</th>
+                                        <th>Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${players.map(player => `
+                                        <tr>
+                                            <td><strong>${player.name}</strong></td>
+                                            <td>${player.runs}</td>
+                                            <td>${player.balls}</td>
+                                            <td>${player.fours}</td>
+                                            <td>${player.sixes}</td>
+                                            <td>${player.strikeRate}</td>
+                                            <td>${player.wickets}</td>
+                                            <td>${player.dots}</td>
+                                            <td>${player.economy}</td>
+                                            <td>${player.catches}</td>
+                                            <td><strong>${player.fantasyPoints}</strong></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
         `;
         
-        // Create scorecard HTML
-        const scorecardHTML = `
-            <div class="match-info">
-                <h3>${match.matchName}</h3>
-                <div class="team-cards-container">
-                    ${teamCardsHTML}
-                </div>
-                ${playerTableHTML}
-            </div>
-        `;
+        playerDetailsContainer.innerHTML = playerDetailsHTML;
         
-        scorecardContainer.innerHTML = scorecardHTML;
-        
-        // Add toggle functionality for details
-        const toggleButton = document.getElementById('toggleMatchDetails');
-        const playerTable = document.getElementById('matchPlayerTable');
+        // Add toggle functionality for player details
+        const toggleButton = document.getElementById('togglePlayerDetails');
+        const playerDetailsDiv = document.getElementById('playerPerformanceDetails');
         let isExpanded = true;
         
-        if (toggleButton && playerTable) {
+        if (toggleButton && playerDetailsDiv) {
             toggleButton.addEventListener('click', () => {
                 isExpanded = !isExpanded;
-                playerTable.style.display = isExpanded ? 'block' : 'none';
+                playerDetailsDiv.style.display = isExpanded ? 'block' : 'none';
                 toggleButton.textContent = isExpanded ? 'Collapse Details' : 'Show Details';
             });
         }

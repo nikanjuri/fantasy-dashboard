@@ -1034,6 +1034,7 @@ select.form-control {
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: var(--space-24);
   margin-bottom: var(--space-32);
+  align-items: start;
 }
 
 .match-scorecard {
@@ -2112,5 +2113,59 @@ select.form-control {
     .players-table th,
     .players-table td {
         padding: var(--space-6) var(--space-8);
+    }
+}
+
+/* Ensure Points Breakdown card doesn't expand unnecessarily */
+.match-details-container .card:has(#matchPointsChart) {
+  height: fit-content;
+  max-height: 500px; /* Set a reasonable max height */
+}
+
+.match-details-container .card:has(#matchPointsChart) .card__body {
+  height: fit-content;
+}
+
+#matchPointsChart {
+  max-height: 350px !important;
+  height: 350px !important;
+}
+
+/* Enhanced Player Performance Table */
+.player-performance-container {
+    margin-top: var(--space-16);
+}
+
+.enhanced-table {
+    font-size: var(--font-size-sm);
+}
+
+.enhanced-table th,
+.enhanced-table td {
+    padding: var(--space-8) var(--space-6);
+    text-align: center;
+}
+
+.enhanced-table th:first-child,
+.enhanced-table td:first-child {
+    text-align: left;
+    padding-left: var(--space-12);
+}
+
+.enhanced-table th:last-child,
+.enhanced-table td:last-child {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+/* Responsive adjustments for enhanced table */
+@media (max-width: 768px) {
+    .enhanced-table {
+        font-size: var(--font-size-xs);
+    }
+    
+    .enhanced-table th,
+    .enhanced-table td {
+        padding: var(--space-4) var(--space-2);
     }
 }
