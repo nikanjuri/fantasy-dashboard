@@ -1,4 +1,3 @@
-// IPL Fantasy League Dashboard Application
 class DashboardApp {
     constructor() {
         this.rawData = null;
@@ -775,18 +774,16 @@ class DashboardApp {
                 datasets: [{
                     label: 'Price vs Points',
                     data: playerData,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    pointRadius: 6,
-                    pointHoverRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',  // More opaque dots
                     title: {
                         display: true,
-                        text: '💰 Price vs Performance Analysis'
+                        text: '💰 Price vs Performance Analysis',
+                        color: 'var(--color-text)'  // Theme-aware title color
+                    },
+                    legend: {
+                        labels: {
+                            color: 'var(--color-text)'  // Theme-aware legend color
+                        }
                     },
                     tooltip: {
                         callbacks: {
@@ -795,110 +792,6 @@ class DashboardApp {
                                 return [
                                     `${point.player}`,
                                     `Price: ₹${point.x}Cr`,
-                                    `Points: ${point.y}`,
-                                    `Team: ${point.team}`
-                                ];
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Price (₹Cr)'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Fantasy Points'
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    createInvestmentChart() {
-        const ctx = document.getElementById('investmentChart');
-        if (!ctx || typeof Chart === 'undefined') return;
-
-        // Define price brackets
-        const priceRanges = {
-            'Budget (< ₹5Cr)': { min: 0, max: 5, count: 0, players: [] },
-            'Mid-range (₹5-10Cr)': { min: 5, max: 10, count: 0, players: [] },
-            'Premium (₹10-20Cr)': { min: 10, max: 20, count: 0, players: [] },
-            'Superstars (> ₹20Cr)': { min: 20, max: 999, count: 0, players: [] }
-        };
-
-        // Count players in each price bracket
-        this.data.auctionData.allPlayers.forEach(player => {
-            const price = player.Price || 0;
-            
-            if (price < 5) {
-                priceRanges['Budget (< ₹5Cr)'].count++;
-                priceRanges['Budget (< ₹5Cr)'].players.push(player.Player);
-            } else if (price >= 5 && price < 10) {
-                priceRanges['Mid-range (₹5-10Cr)'].count++;
-                priceRanges['Mid-range (₹5-10Cr)'].players.push(player.Player);
-            } else if (price >= 10 && price < 20) {
-                priceRanges['Premium (₹10-20Cr)'].count++;
-                priceRanges['Premium (₹10-20Cr)'].players.push(player.Player);
-            } else if (price >= 20) {
-                priceRanges['Superstars (> ₹20Cr)'].count++;
-                priceRanges['Superstars (> ₹20Cr)'].players.push(player.Player);
-            }
-        });
-
-        const labels = Object.keys(priceRanges);
-        const data = Object.values(priceRanges).map(range => range.count);
-        const colors = [
-            'rgba(34, 197, 94, 0.8)',   // Green for Budget
-            'rgba(59, 130, 246, 0.8)',  // Blue for Mid-range
-            'rgba(245, 158, 11, 0.8)',  // Orange for Premium
-            'rgba(239, 68, 68, 0.8)'    // Red for Superstars
-        ];
-
-        // Destroy existing chart if it exists
-        if (this.charts.investment) {
-            this.charts.investment.destroy();
-        }
-
-        this.charts.investment = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: colors,
-                    borderColor: colors.map(color => color.replace('0.8', '1')),
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            generateLabels: function(chart) {
-                                const data = chart.data;
-                                return data.labels.map((label, i) => ({
-                                    text: `${label}: ${data.datasets[0].data[i]} players`,
-                                    fillStyle: data.datasets[0].backgroundColor[i],
-                                    strokeStyle: data.datasets[0].borderColor[i],
-                                    lineWidth: 2,
-                                    hidden: false,
-                                    index: i
-                                }));
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
                                 const label = context.label || '';
                                 const value = context.parsed || 0;
                                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -1543,6 +1436,15 @@ class EnhancedFilters {
         // Add enhanced filter controls to player analytics tab
         const playerAnalyticsTab = document.getElementById('player-analytics');
         if (playerAnalyticsTab) {
+            // Enhanced filters would be added here
+        }
+    }
+}
+
+// Initialize the enhanced dashboard
+document.addEventListener('DOMContentLoaded', () => {
+    new DashboardApp();
+});
             // Enhanced filters would be added here
         }
     }
