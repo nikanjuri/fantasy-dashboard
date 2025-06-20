@@ -1992,7 +1992,7 @@ select.form-control {
   display: flex;
   align-items: center;
   gap: var(--space-8);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
