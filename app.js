@@ -1590,10 +1590,18 @@ class DashboardApp {
         if (!container) return;
 
         const teams = ['Royal Smashers', 'Sher-e-Punjab', 'Silly Pointers', 'The Kingsmen'];
+        
+        // Team colors for styling
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#ffce56', 
+            'Silly Pointers': '#36a2eb',
+            'The Kingsmen': '#4bc0c0'
+        };
 
         let tablesHTML = '<div class="team-auction-tables-grid">';
 
-        teams.forEach(teamName => {
+        teams.forEach((teamName, index) => {
             const teamKey = this.findCompositionKey(teamName);
             const teamPlayers = this.playerListData[teamKey] || [];
             
@@ -1601,39 +1609,65 @@ class DashboardApp {
 
             // Calculate team total
             const totalPurchase = teamPlayers.reduce((sum, p) => sum + (p.Price || 0), 0);
+            const teamColor = teamColors[teamName];
+            const tableId = `team-table-${index}`;
+
+            // Sort players by purchase price (highest first)
+            const sortedPlayers = [...teamPlayers].sort((a, b) => (b.Price || 0) - (a.Price || 0));
+            
+            // Split into visible and hidden rows
+            const visibleRows = sortedPlayers.slice(0, 5);
+            const hiddenRows = sortedPlayers.slice(5);
 
             tablesHTML += `
                 <div class="team-auction-table-card">
-                    <div class="team-table-header">
-                        <h4>${teamName}</h4>
+                    <div class="team-table-header" style="border-left: 4px solid ${teamColor}">
+                        <h4 style="color: ${teamColor}">${teamName}</h4>
                         <div class="team-total">
-                            Total: ₹${totalPurchase.toFixed(1)}Cr
+                            Total: <span style="color: ${teamColor}">₹${totalPurchase.toFixed(1)}Cr</span>
                         </div>
                     </div>
                     <div class="auction-table-container">
                         <table class="auction-table">
                             <thead>
                                 <tr>
-                                    <th>Player</th>
-                                    <th>Base Price</th>
-                                    <th>Purchase Price</th>
+                                    <th style="color: ${teamColor}">Player</th>
+                                    <th style="color: #cccccc">Base Price</th>
+                                    <th style="color: #cccccc">Purchase Price</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="${tableId}-visible">
             `;
 
-            // Sort players by purchase price (highest first)
-            const sortedPlayers = [...teamPlayers].sort((a, b) => (b.Price || 0) - (a.Price || 0));
-
-            sortedPlayers.forEach(player => {
+            // Add visible rows
+            visibleRows.forEach(player => {
                 const basePrice = player.Base || 0;
                 const purchasePrice = player.Price || 0;
 
                 tablesHTML += `
                     <tr>
                         <td class="player-name">${player.Player}</td>
-                        <td>₹${basePrice.toFixed(1)}Cr</td>
-                        <td>₹${purchasePrice.toFixed(1)}Cr</td>
+                        <td style="color: #aaaaaa">₹${basePrice.toFixed(1)}Cr</td>
+                        <td style="color: #ffffff">₹${purchasePrice.toFixed(1)}Cr</td>
+                    </tr>
+                `;
+            });
+
+            tablesHTML += `
+                            </tbody>
+                            <tbody id="${tableId}-hidden" class="hidden-rows" style="display: none;">
+            `;
+
+            // Add hidden rows
+            hiddenRows.forEach(player => {
+                const basePrice = player.Base || 0;
+                const purchasePrice = player.Price || 0;
+
+                tablesHTML += `
+                    <tr>
+                        <td class="player-name">${player.Player}</td>
+                        <td style="color: #aaaaaa">₹${basePrice.toFixed(1)}Cr</td>
+                        <td style="color: #ffffff">₹${purchasePrice.toFixed(1)}Cr</td>
                     </tr>
                 `;
             });
@@ -1641,6 +1675,22 @@ class DashboardApp {
             tablesHTML += `
                             </tbody>
                         </table>
+            `;
+
+            // Add expand/collapse button if there are hidden rows
+            if (hiddenRows.length > 0) {
+                tablesHTML += `
+                    <div class="table-expand-controls">
+                        <button class="expand-btn" onclick="toggleTableRows('${tableId}')" style="color: ${teamColor}; border-color: ${teamColor}">
+                            <span class="expand-text">Show All (${sortedPlayers.length})</span>
+                            <span class="collapse-text" style="display: none">Show Less</span>
+                            <span class="expand-icon">▼</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            tablesHTML += `
                     </div>
                 </div>
             `;
@@ -1648,6 +1698,27 @@ class DashboardApp {
 
         tablesHTML += '</div>';
         container.innerHTML = tablesHTML;
+
+        // Add global toggle function to window for onclick handlers
+        window.toggleTableRows = function(tableId) {
+            const hiddenRows = document.getElementById(`${tableId}-hidden`);
+            const button = document.querySelector(`[onclick="toggleTableRows('${tableId}')"]`);
+            const expandText = button.querySelector('.expand-text');
+            const collapseText = button.querySelector('.collapse-text');
+            const expandIcon = button.querySelector('.expand-icon');
+            
+            if (hiddenRows.style.display === 'none') {
+                hiddenRows.style.display = 'table-row-group';
+                expandText.style.display = 'none';
+                collapseText.style.display = 'inline';
+                expandIcon.textContent = '▲';
+            } else {
+                hiddenRows.style.display = 'none';
+                expandText.style.display = 'inline';
+                collapseText.style.display = 'none';
+                expandIcon.textContent = '▼';
+            }
+        };
     }
 }
 

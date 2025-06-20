@@ -2051,6 +2051,12 @@ select.form-control {
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border);
     overflow: hidden;
+    transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.team-auction-table-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .team-table-header {
@@ -2066,7 +2072,6 @@ select.form-control {
     margin: 0;
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-text);
 }
 
 .team-total {
@@ -2090,7 +2095,6 @@ select.form-control {
     padding: var(--space-8) var(--space-12);
     text-align: left;
     font-weight: var(--font-weight-medium);
-    color: var(--color-text-secondary);
     border-bottom: 1px solid var(--color-border);
     font-size: var(--font-size-sm);
 }
@@ -2098,7 +2102,6 @@ select.form-control {
 .auction-table td {
     padding: var(--space-8) var(--space-12);
     border-bottom: 1px solid var(--color-border);
-    color: var(--color-text);
 }
 
 .auction-table tbody tr:hover {
@@ -2126,6 +2129,140 @@ select.form-control {
     margin: 0;
     color: var(--color-text-secondary);
     font-size: var(--font-size-base);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .team-auction-tables-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-12);
+    }
+    
+    .auction-table {
+        font-size: var(--font-size-xs);
+    }
+    
+    .auction-table th,
+    .auction-table td {
+        padding: var(--space-6) var(--space-8);
+    }
+    
+    .team-table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+}
+
+/* Enhanced Team Auction Tables Styling with Colors */
+.team-auction-tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-16);
+    margin-bottom: var(--space-24);
+}
+
+.team-auction-table-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.team-auction-table-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.team-table-header {
+    padding: var(--space-16);
+    background: var(--color-surface-secondary);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.team-table-header h4 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+}
+
+.team-total {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+
+.auction-table-container {
+    padding: var(--space-16);
+}
+
+.auction-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+}
+
+.auction-table th {
+    background: var(--color-surface-secondary);
+    padding: var(--space-8) var(--space-12);
+    text-align: left;
+    font-weight: var(--font-weight-medium);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-sm);
+}
+
+.auction-table td {
+    padding: var(--space-8) var(--space-12);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.auction-table tbody tr:hover {
+    background: var(--color-hover);
+}
+
+.player-name {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+}
+
+.hidden-rows {
+    transition: all var(--duration-normal) var(--ease-standard);
+}
+
+.table-expand-controls {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-12) 0 var(--space-8) 0;
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-8);
+}
+
+.expand-btn {
+    background: transparent;
+    border: 1px solid;
+    border-radius: var(--radius-sm);
+    padding: var(--space-6) var(--space-12);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-standard);
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.expand-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.expand-icon {
+    font-size: var(--font-size-xs);
+    transition: transform var(--duration-fast) var(--ease-standard);
 }
 
 /* Mobile responsiveness */
