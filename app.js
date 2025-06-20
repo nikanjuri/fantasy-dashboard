@@ -954,48 +954,32 @@ class DashboardApp {
 
         // Count players in each price bracket
         this.data.auctionData.allPlayers.forEach(player => {
-            const price = player.Price || 0;
-            
-            if (price < 5) {
-                priceRanges['Budget (< ₹5Cr)'].count++;
-                priceRanges['Budget (< ₹5Cr)'].players.push(player.Player);
-            } else if (price >= 5 && price < 10) {
-                priceRanges['Mid-range (₹5-10Cr)'].count++;
-                priceRanges['Mid-range (₹5-10Cr)'].players.push(player.Player);
-            } else if (price >= 10 && price < 20) {
-                priceRanges['Premium (₹10-20Cr)'].count++;
-                priceRanges['Premium (₹10-20Cr)'].players.push(player.Player);
-            } else if (price >= 20) {
-                priceRanges['Superstars (> ₹20Cr)'].count++;
-                priceRanges['Superstars (> ₹20Cr)'].players.push(player.Player);
-            }
+            Object.entries(priceRanges).forEach(([range, bracket]) => {
+                if (player.Price >= bracket.min && player.Price < bracket.max) {
+                    bracket.count++;
+                    bracket.players.push(player);
+                }
+            });
         });
 
-        const labels = Object.keys(priceRanges);
-        const data = Object.values(priceRanges).map(range => range.count);
-        const colors = [
-            'rgba(34, 197, 94, 0.8)',   // Green for Budget
-            'rgba(59, 130, 246, 0.8)',  // Blue for Mid-range
-            'rgba(245, 158, 11, 0.8)',  // Orange for Premium
-            'rgba(239, 68, 68, 0.8)'    // Red for Superstars
-        ];
+        const chartData = {
+            labels: Object.keys(priceRanges),
+            datasets: [{
+                data: Object.values(priceRanges).map(range => range.count),
+                backgroundColor: ['#4ade80', '#3b82f6', '#f59e0b', '#ef4444'],
+                borderColor: themeColors.borderColor,
+                borderWidth: 1
+            }]
+        };
 
         // Destroy existing chart if it exists
-        if (this.charts.investment) {
-            this.charts.investment.destroy();
+        if (this.charts.investmentChart) {
+            this.charts.investmentChart.destroy();
         }
 
-        this.charts.investment = new Chart(ctx, {
+        this.charts.investmentChart = new Chart(ctx, {
             type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: colors,
-                    borderColor: colors.map(color => color.replace('0.8', '1')),
-                    borderWidth: 2
-                }]
-            },
+            data: chartData,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -1003,7 +987,7 @@ class DashboardApp {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: '#ffffff',  // Force white text regardless of theme
+                            color: themeColors.subtleTextColor,  // Use theme-responsive color
                             usePointStyle: false,
                             font: {
                                 size: 12,
@@ -1015,7 +999,7 @@ class DashboardApp {
                                     text: `${label}: ${data.datasets[0].data[i]} players`,
                                     fillStyle: data.datasets[0].backgroundColor[i],
                                     strokeStyle: data.datasets[0].borderColor[i],
-                                    fontColor: '#ffffff',  // Additional force white
+                                    fontColor: themeColors.subtleTextColor,  // Use theme-responsive color
                                     lineWidth: 2,
                                     hidden: false,
                                     index: i

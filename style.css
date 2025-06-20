@@ -2450,3 +2450,38 @@ select.form-control {
 .enhanced-team-card .stat-item .count {
   color: #ffffff !important;  /* White */
 }
+
+/* Add missing team-stats CSS for horizontal layout */
+.enhanced-team-card .team-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-16);
+  margin-top: var(--space-16);
+  flex-wrap: wrap;
+}
+
+.enhanced-team-card .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 40px;
+}
+
+.enhanced-team-card .stat-item .icon {
+  font-size: 18px;
+  display: block;
+}
+
+.enhanced-team-card .stat-item .count {
+  color: #ffffff !important;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  display: block;
+  text-align: center;
+}
+
+/* Theme-responsive overrides for light mode */
+[data-color-scheme="light"] .enhanced-team-card .stat-item .count {
+  color: #000000 !important;
+}
