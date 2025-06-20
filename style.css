@@ -1432,12 +1432,25 @@ select.form-control {
   }
 }
 
-/* Charts Grid */
+/* More compact charts */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: var(--space-24);
-  margin-bottom: var(--space-32);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-16);
+  margin-bottom: var(--space-24);
+}
+
+.charts-grid .card {
+  min-height: 300px;
+}
+
+.charts-grid .card .card__body {
+  padding: var(--space-12);
+}
+
+.charts-grid canvas {
+  max-height: 250px !important;
+  height: 250px !important;
 }
 
 /* Responsive Design */

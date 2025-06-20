@@ -821,7 +821,74 @@ class DashboardApp {
     }
 
     createInvestmentChart() {
-        // Implementation of createInvestmentChart method
+        const ctx = document.getElementById('investmentChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        // Get team investment data
+        const teamInvestments = Object.entries(this.data.teamCompositions)
+            .map(([teamName, composition]) => ({
+                team: teamName,
+                investment: composition.totalInvestment || 0
+            }))
+            .sort((a, b) => b.investment - a.investment);
+
+        const teamColors = [
+            'rgba(255, 99, 132, 0.8)',   // Red
+            'rgba(255, 206, 86, 0.8)',   // Yellow  
+            'rgba(54, 162, 235, 0.8)',   // Blue
+            'rgba(75, 192, 192, 0.8)'    // Teal
+        ];
+
+        // Destroy existing chart if it exists
+        if (this.charts.investment) {
+            this.charts.investment.destroy();
+        }
+
+        this.charts.investment = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: teamInvestments.map(t => t.team),
+                datasets: [{
+                    data: teamInvestments.map(t => t.investment),
+                    backgroundColor: teamColors,
+                    borderColor: teamColors.map(color => color.replace('0.8', '1')),
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                return data.labels.map((label, i) => ({
+                                    text: `${label}: ₹${data.datasets[0].data[i].toFixed(1)}Cr`,
+                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                    strokeStyle: data.datasets[0].borderColor[i],
+                                    lineWidth: 2,
+                                    hidden: false,
+                                    index: i
+                                }));
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ₹${value.toFixed(1)}Cr (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     createPlayerTypeChart() {
