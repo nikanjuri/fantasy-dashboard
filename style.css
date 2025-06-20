@@ -1508,7 +1508,7 @@ select.form-control {
 .scoring-card {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
-  padding: var(--space-20);
+  padding: 16px;
   box-shadow: var(--shadow-sm);
   transition: transform var(--duration-fast) var(--ease-standard);
   border: 1px solid var(--color-border);
@@ -1539,7 +1539,7 @@ select.form-control {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-8) var(--space-12);
+  padding: 6px 12px;
   background: var(--color-background);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
@@ -1566,16 +1566,17 @@ select.form-control {
   text-align: center;
 }
 
-/* Color coding for points */
-.rule-points {
-  background: var(--color-success);
-  color: white;
+/* Fix 1: Better color coding */
+.rule-points[data-negative="true"] {
+  background: #ef4444; /* Red for negative */
+}
+.rule-points:not([data-negative]) {
+  background: #10b981; /* Green for positive */
 }
 
-.rule-item:has(.rule-points:contains("-")) .rule-points,
-.rule-points[data-negative="true"] {
-  background: var(--color-error);
-  color: white;
+/* Fix 3: Category icons */
+.scoring-card h4::before {
+  content: "🏏"; /* Different icon per category */
 }
 
 /* Category-specific styling */
