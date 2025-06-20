@@ -436,7 +436,7 @@ class DashboardApp {
         
         // Update most expensive player display
         if (mostExpensivePlayer) {
-            const playerDisplay = `${mostExpensivePlayer.Player} (${mostExpensivePlayer.fantasyTeam})`;
+            const playerDisplay = `${mostExpensivePlayer.Player}`;
             const priceDisplay = `₹${mostExpensivePlayer.Price} Cr`;
             document.getElementById('mostExpensivePlayer').innerHTML = `
                 <div style="font-size: var(--font-size-lg); margin-bottom: var(--space-4);">${playerDisplay}</div>
