@@ -2061,6 +2061,9 @@ select.form-control {
     border: 1px solid var(--color-border);
     overflow: hidden;
     transition: transform var(--duration-fast) var(--ease-standard);
+    display: flex;
+    flex-direction: column;
+    min-height: 400px; /* Set minimum height for consistency */
 }
 
 .team-auction-table-card:hover {
@@ -2075,6 +2078,7 @@ select.form-control {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .team-table-header h4 {
@@ -2091,12 +2095,16 @@ select.form-control {
 
 .auction-table-container {
     padding: var(--space-16);
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    flex-direction: column;
 }
 
 .auction-table {
     width: 100%;
     border-collapse: collapse;
     font-size: var(--font-size-sm);
+    flex: 1; /* Allow table to grow */
 }
 
 .auction-table th {
@@ -2131,7 +2139,8 @@ select.form-control {
     justify-content: center;
     padding: var(--space-12) 0 var(--space-8) 0;
     border-top: 1px solid var(--color-border);
-    margin-top: var(--space-8);
+    margin-top: auto; /* Push to bottom */
+    flex-shrink: 0; /* Prevent controls from shrinking */
 }
 
 .expand-btn {
@@ -2146,6 +2155,8 @@ select.form-control {
     display: flex;
     align-items: center;
     gap: var(--space-6);
+    min-width: 120px; /* Ensure consistent button width */
+    justify-content: center;
 }
 
 .expand-btn:hover {
@@ -2156,29 +2167,6 @@ select.form-control {
 .expand-icon {
     font-size: var(--font-size-xs);
     transition: transform var(--duration-fast) var(--ease-standard);
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .team-auction-tables-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-12);
-    }
-    
-    .auction-table {
-        font-size: var(--font-size-xs);
-    }
-    
-    .auction-table th,
-    .auction-table td {
-        padding: var(--space-6) var(--space-8);
-    }
-    
-    .team-table-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-4);
-    }
 }
 
 /* Enhanced VFM Table Styling */
@@ -2355,4 +2343,36 @@ select.form-control {
 /* Keep headers center-aligned except for the first column */
 .enhanced-table th:first-child {
   text-align: left;
+}
+
+/* Mobile responsiveness for team auction tables */
+@media (max-width: 768px) {
+    .team-auction-tables-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-12);
+    }
+    
+    .team-auction-table-card {
+        min-height: auto; /* Remove minimum height on mobile */
+    }
+    
+    .auction-table {
+        font-size: var(--font-size-xs);
+    }
+    
+    .auction-table th,
+    .auction-table td {
+        padding: var(--space-6) var(--space-8);
+    }
+    
+    .team-table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+    
+    .expand-btn {
+        min-width: 100px; /* Smaller minimum width on mobile */
+        font-size: var(--font-size-xs);
+    }
 }
