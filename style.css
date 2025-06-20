@@ -1031,7 +1031,7 @@ select.form-control {
 /* Match Analysis */
 .match-details-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--space-16);
   margin-bottom: var(--space-20);
   align-items: stretch;
@@ -1047,7 +1047,7 @@ select.form-control {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: var(--space-16);
+  padding: var(--space-12);
 }
 
 .match-details-container .card:has(#matchScorecard) .card__body {
@@ -1067,10 +1067,10 @@ select.form-control {
 }
 
 #matchPointsChart {
-  max-height: 350px !important;
-  height: 350px !important;
+  max-height: 280px !important;
+  height: 280px !important;
   width: 100% !important;
-  max-width: 350px !important;
+  max-width: 280px !important;
   margin: 0 auto !important;
 }
 
@@ -1109,7 +1109,7 @@ select.form-control {
   grid-template-rows: 1fr 1fr;
   gap: var(--space-8);
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
   margin: 0 auto;
   background: transparent;
 }
@@ -1474,7 +1474,7 @@ select.form-control {
   .team-cards-container {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, auto);
-    max-width: 280px;
+    max-width: 250px;
     gap: var(--space-6);
   }
   
@@ -1486,9 +1486,9 @@ select.form-control {
   }
   
   #matchPointsChart {
-    max-height: 300px !important;
-    height: 300px !important;
-    max-width: 300px !important;
+    max-height: 250px !important;
+    height: 250px !important;
+    max-width: 250px !important;
   }
 
   .team-match-points {
