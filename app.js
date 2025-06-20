@@ -1454,8 +1454,8 @@ class DashboardApp {
                                         <th>Wickets</th>
                                         <th>Dots</th>
                                         <th>Economy</th>
-                                        <th>Catches</th>
-                                        <th>Points</th>
+                                        <th>Fielding Points</th>
+                                        <th>Total Points</th>
                                     </tr>
                                 </thead>
                                 <tbody>
