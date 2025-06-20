@@ -1257,19 +1257,6 @@ class DashboardApp {
             positionFilter.addEventListener('change', (e) => this.handlePositionFilter(e.target.value));
         }
         
-        // Master table control buttons
-        const expandAllBtn = document.getElementById('expandAllTables');
-        if (expandAllBtn) {
-            expandAllBtn.addEventListener('click', () => this.expandAllTables());
-            console.log('✅ Expand all tables listener added');
-        }
-        
-        const collapseAllBtn = document.getElementById('collapseAllTables');
-        if (collapseAllBtn) {
-            collapseAllBtn.addEventListener('click', () => this.collapseAllTables());
-            console.log('✅ Collapse all tables listener added');
-        }
-        
         console.log('✅ All event listeners setup complete');
     }
 
@@ -1291,68 +1278,6 @@ class DashboardApp {
     filterByTeam(teamName) {
         console.log('🎯 Filter by team:', teamName);
         // Add team filtering functionality here if needed
-    }
-
-    expandAllTables() {
-        console.log('📈 Expanding all tables...');
-        
-        // Check if we're on mobile (where this feature should be disabled)
-        if (window.innerWidth <= 768) {
-            console.log('📱 Mobile detected, ignoring expand all command');
-            return;
-        }
-
-        // Expand VFM table
-        const vfmHiddenRows = document.getElementById('vfmTableBodyHidden');
-        const vfmButton = document.querySelector('.vfm-expand-btn');
-        if (vfmHiddenRows && vfmButton && vfmHiddenRows.style.display === 'none') {
-            window.toggleVFMRows();
-        }
-
-        // Expand all team auction tables
-        const expandButtons = document.querySelectorAll('.expand-btn');
-        expandButtons.forEach(button => {
-            const tableId = button.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
-            if (tableId) {
-                const hiddenRows = document.getElementById(`${tableId}-hidden`);
-                if (hiddenRows && hiddenRows.style.display === 'none') {
-                    window.toggleTableRows(tableId);
-                }
-            }
-        });
-        
-        console.log('✅ All tables expanded');
-    }
-
-    collapseAllTables() {
-        console.log('📉 Collapsing all tables...');
-        
-        // Check if we're on mobile (where this feature should be disabled)
-        if (window.innerWidth <= 768) {
-            console.log('📱 Mobile detected, ignoring collapse all command');
-            return;
-        }
-
-        // Collapse VFM table
-        const vfmHiddenRows = document.getElementById('vfmTableBodyHidden');
-        const vfmButton = document.querySelector('.vfm-expand-btn');
-        if (vfmHiddenRows && vfmButton && vfmHiddenRows.style.display !== 'none') {
-            window.toggleVFMRows();
-        }
-
-        // Collapse all team auction tables
-        const expandButtons = document.querySelectorAll('.expand-btn');
-        expandButtons.forEach(button => {
-            const tableId = button.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
-            if (tableId) {
-                const hiddenRows = document.getElementById(`${tableId}-hidden`);
-                if (hiddenRows && hiddenRows.style.display !== 'none') {
-                    window.toggleTableRows(tableId);
-                }
-            }
-        });
-        
-        console.log('✅ All tables collapsed');
     }
 
     renderPlayersTable() {
@@ -1826,16 +1751,65 @@ class DashboardApp {
             const collapseText = button.querySelector('.collapse-text');
             const expandIcon = button.querySelector('.expand-icon');
             
+            // Check if we're on desktop (where sync behavior should be enabled)
+            const isDesktop = window.innerWidth > 768;
+            
             if (hiddenRows.style.display === 'none') {
+                // Expanding - show hidden rows
                 hiddenRows.style.display = 'table-row-group';
                 expandText.style.display = 'none';
                 collapseText.style.display = 'inline';
                 expandIcon.textContent = '▲';
+                
+                // On desktop, expand all other team tables too
+                if (isDesktop) {
+                    document.querySelectorAll('.expand-btn').forEach(otherButton => {
+                        if (otherButton !== button) {
+                            const otherTableId = otherButton.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
+                            if (otherTableId) {
+                                const otherHiddenRows = document.getElementById(`${otherTableId}-hidden`);
+                                const otherExpandText = otherButton.querySelector('.expand-text');
+                                const otherCollapseText = otherButton.querySelector('.collapse-text');
+                                const otherExpandIcon = otherButton.querySelector('.expand-icon');
+                                
+                                if (otherHiddenRows && otherHiddenRows.style.display === 'none') {
+                                    otherHiddenRows.style.display = 'table-row-group';
+                                    otherExpandText.style.display = 'none';
+                                    otherCollapseText.style.display = 'inline';
+                                    otherExpandIcon.textContent = '▲';
+                                }
+                            }
+                        }
+                    });
+                }
             } else {
+                // Collapsing - hide rows
                 hiddenRows.style.display = 'none';
                 expandText.style.display = 'inline';
                 collapseText.style.display = 'none';
                 expandIcon.textContent = '▼';
+                
+                // On desktop, collapse all other team tables too
+                if (isDesktop) {
+                    document.querySelectorAll('.expand-btn').forEach(otherButton => {
+                        if (otherButton !== button) {
+                            const otherTableId = otherButton.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
+                            if (otherTableId) {
+                                const otherHiddenRows = document.getElementById(`${otherTableId}-hidden`);
+                                const otherExpandText = otherButton.querySelector('.expand-text');
+                                const otherCollapseText = otherButton.querySelector('.collapse-text');
+                                const otherExpandIcon = otherButton.querySelector('.expand-icon');
+                                
+                                if (otherHiddenRows && otherHiddenRows.style.display !== 'none') {
+                                    otherHiddenRows.style.display = 'none';
+                                    otherExpandText.style.display = 'inline';
+                                    otherCollapseText.style.display = 'none';
+                                    otherExpandIcon.textContent = '▼';
+                                }
+                            }
+                        }
+                    });
+                }
             }
         };
     }
