@@ -20,13 +20,48 @@ class DashboardApp {
         this.sortDirection = 'asc';
         this.enhancedFilters = null;
         
+        // Initialize theme from localStorage or default to light
+        this.initializeTheme();
+        
         this.init();
+    }
+
+    initializeTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const html = document.documentElement;
+        
+        html.setAttribute('data-color-scheme', savedTheme);
+        this.currentTheme = savedTheme;
+        
+        // Set initial icon visibility when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            this.updateThemeIcon();
+        });
+    }
+
+    updateThemeIcon() {
+        const toggleButton = document.getElementById('themeToggle');
+        if (!toggleButton) return;
+        
+        const lightIcon = toggleButton.querySelector('.light-icon');
+        const darkIcon = toggleButton.querySelector('.dark-icon');
+        
+        if (this.currentTheme === 'dark') {
+            if (lightIcon) lightIcon.style.display = 'none';
+            if (darkIcon) darkIcon.style.display = 'block';
+        } else {
+            if (lightIcon) lightIcon.style.display = 'block';
+            if (darkIcon) darkIcon.style.display = 'none';
+        }
     }
 
     async init() {
         console.log('🚀 Initializing dashboard...');
         try {
             this.showLoading();
+            
+            // Initialize theme icons after DOM is ready
+            this.updateThemeIcon();
             
             // Load and process data
             console.log('📡 Loading data...');
@@ -39,13 +74,13 @@ class DashboardApp {
             
             // Initialize UI components
             console.log('🎛️ Setting up UI...');
-        this.initializeTabs();
+            this.initializeTabs();
             this.setupEventListeners();
             
             // Skip charts for now to avoid errors
             console.log('📊 Setting up charts...');
             try {
-        this.setupCharts();
+                this.setupCharts();
             } catch (chartError) {
                 console.warn('Charts failed to load:', chartError);
             }
@@ -430,10 +465,10 @@ class DashboardApp {
 
         // Team colors matching the chart
         const teamColors = {
-            'Royal Smashers': 'rgba(255, 99, 132, 0.1)',   // Light Pink/Red
-            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.1)',    // Light Yellow
-            'Silly Pointers': 'rgba(54, 162, 235, 0.1)',   // Light Blue  
-            'The Kingsmen': 'rgba(75, 192, 192, 0.1)'      // Light Teal
+            'Royal Smashers': 'rgba(255, 99, 132, 0.15)',   // Light Pink/Red
+            'Sher-e-Punjab': 'rgba(255, 206, 86, 0.15)',    // Light Yellow
+            'Silly Pointers': 'rgba(54, 162, 235, 0.15)',   // Light Blue  
+            'The Kingsmen': 'rgba(75, 192, 192, 0.15)'      // Light Teal
         };
 
         const teamBorderColors = {
@@ -441,6 +476,13 @@ class DashboardApp {
             'Sher-e-Punjab': 'rgba(255, 206, 86, 0.8)', 
             'Silly Pointers': 'rgba(54, 162, 235, 0.8)',
             'The Kingsmen': 'rgba(75, 192, 192, 0.8)'
+        };
+
+        const teamPointsColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#ffce56', 
+            'Silly Pointers': '#36a2eb',
+            'The Kingsmen': '#4bc0c0'
         };
 
         const sortedTeams = Object.entries(this.data.teamStandings)
@@ -467,14 +509,15 @@ class DashboardApp {
         const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => {
             const bgColor = teamColors[team] || 'rgba(128, 128, 128, 0.1)';
             const borderColor = teamBorderColors[team] || 'rgba(128, 128, 128, 0.8)';
+            const pointsColor = teamPointsColors[team] || '#007bff';
             
             return `
-                <div class="enhanced-team-card" data-team="${team}" style="border: 2px solid ${borderColor}; margin: 10px; padding: 15px; background: ${bgColor};">
+                <div class="enhanced-team-card" data-team="${team}" style="background: ${bgColor}; border: 2px solid ${borderColor};">
                     <div class="team-header">
                         <h4>${team}</h4>
                         <div class="team-rank">#${rank}</div>
                     </div>
-                    <div class="team-points" style="font-size: 24px; font-weight: bold; color: #007bff;">${points.toLocaleString()} pts</div>
+                    <div class="team-points" style="color: ${pointsColor};">${points.toLocaleString()} pts</div>
                     <div class="team-details">
                         <div class="detail-item">
                             <span class="label">Investment:</span>
@@ -863,6 +906,9 @@ class DashboardApp {
         
         html.setAttribute('data-color-scheme', newTheme);
         this.currentTheme = newTheme;
+        
+        // Update icon visibility
+        this.updateThemeIcon();
         
         localStorage.setItem('theme', newTheme);
         

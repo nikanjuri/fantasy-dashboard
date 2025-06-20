@@ -1267,3 +1267,101 @@ select.form-control {
     padding: var(--space-4) var(--space-2);
   }
 }
+
+/* Enhanced Team Cards */
+.enhanced-team-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-20);
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-standard);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.enhanced-team-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.enhanced-team-card .team-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-16);
+}
+
+.enhanced-team-card .team-header h4 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+    margin: 0;
+}
+
+.enhanced-team-card .team-rank {
+    background: var(--color-primary);
+    color: white;
+    padding: var(--space-4) var(--space-8);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+}
+
+.enhanced-team-card .team-points {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-16);
+    text-align: center;
+}
+
+.enhanced-team-card .team-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    margin-bottom: var(--space-16);
+    font-size: var(--font-size-sm);
+}
+
+.enhanced-team-card .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.enhanced-team-card .detail-item .label {
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.enhanced-team-card .detail-item .value {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+}
+
+.enhanced-team-card .team-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+}
+
+.enhanced-team-card .stat-item {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: var(--space-4);
+    text-align: center;
+}
+
+.enhanced-team-card .stat-item .icon {
+    font-size: var(--font-size-lg);
+    line-height: 1;
+}
+
+.enhanced-team-card .stat-item .count {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+}
