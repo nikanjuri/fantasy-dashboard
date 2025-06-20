@@ -1001,7 +1001,7 @@ class DashboardApp {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: themeColors.textColor,
+                            color: themeColors.subtleTextColor,
                             usePointStyle: false,
                             font: {
                                 size: 12,
