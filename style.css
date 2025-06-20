@@ -2010,6 +2010,7 @@ select.form-control {
   color: var(--color-text);
   flex: 1;
   margin-right: var(--space-8);
+  font-size: var(--font-size-sm);  /* Ensure consistent font size */
 }
 
 .bargain-details,
