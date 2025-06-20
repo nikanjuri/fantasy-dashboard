@@ -1013,9 +1013,9 @@ select.form-control {
 /* Match Analysis */
 .match-details-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: var(--space-24);
-  margin-bottom: var(--space-32);
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-16);
+  margin-bottom: var(--space-20);
   align-items: stretch;
 }
 
@@ -1029,6 +1029,7 @@ select.form-control {
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding: var(--space-16);
 }
 
 .match-details-container .card:has(#matchScorecard) .card__body {
@@ -1040,46 +1041,47 @@ select.form-control {
 }
 
 .match-details-container .card:has(#matchPointsChart) .card__body {
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-12);
+  min-height: auto;
 }
 
 #matchPointsChart {
-  max-height: 350px !important;
-  height: 350px !important;
+  max-height: 280px !important;
+  height: 280px !important;
   width: 100% !important;
-  max-width: 350px !important;
+  max-width: 280px !important;
   margin: 0 auto !important;
 }
 
 /* Match Scorecard Styling */
 #matchScorecard {
   width: 100%;
-  min-height: 200px;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--space-16);
+  padding: var(--space-12);
 }
 
 .match-info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-16);
+  gap: var(--space-12);
   width: 100%;
   background: transparent;
 }
 
 .match-info h3 {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
   margin: 0;
   text-align: center;
-  padding: var(--space-12) 0;
+  padding: var(--space-8) 0;
   background: transparent;
 }
 
@@ -1088,15 +1090,15 @@ select.form-control {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: var(--space-12);
+  gap: var(--space-8);
   width: 100%;
-  max-width: 600px;
-  margin: var(--space-16) auto;
+  max-width: 500px;
+  margin: var(--space-8) auto;
   background: transparent;
 }
 
 .match-team-card {
-  padding: var(--space-16);
+  padding: var(--space-12);
   border-radius: var(--radius-lg);
   text-align: center;
   position: relative;
@@ -1104,10 +1106,10 @@ select.form-control {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 120px;
+  min-height: 90px;
   flex: 1;
-  min-width: 180px;
-  max-width: 220px;
+  min-width: 160px;
+  max-width: 200px;
   box-shadow: var(--shadow-sm);
   transition: transform var(--duration-fast) var(--ease-standard);
 }
@@ -1118,8 +1120,8 @@ select.form-control {
 }
 
 .match-team-card h4 {
-  margin: 0 0 var(--space-12) 0;
-  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-8) 0;
+  font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
   text-align: center;
@@ -1127,7 +1129,7 @@ select.form-control {
 }
 
 .team-match-points {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
   margin: 0;
