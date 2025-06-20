@@ -2037,3 +2037,116 @@ select.form-control {
     grid-column: 1 / -1;
   }
 }
+
+/* Team Auction Tables Styling */
+.team-auction-tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-16);
+    margin-bottom: var(--space-24);
+}
+
+.team-auction-table-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.team-table-header {
+    padding: var(--space-16);
+    background: var(--color-surface-secondary);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.team-table-header h4 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+.team-total {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+
+.auction-table-container {
+    padding: var(--space-16);
+}
+
+.auction-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+}
+
+.auction-table th {
+    background: var(--color-surface-secondary);
+    padding: var(--space-8) var(--space-12);
+    text-align: left;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-sm);
+}
+
+.auction-table td {
+    padding: var(--space-8) var(--space-12);
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.auction-table tbody tr:hover {
+    background: var(--color-hover);
+}
+
+.player-name {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text);
+}
+
+.section-divider {
+    margin: var(--space-32) 0 var(--space-24) 0;
+    padding-bottom: var(--space-16);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.section-divider h3 {
+    margin: 0 0 var(--space-8) 0;
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+}
+
+.section-divider p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .team-auction-tables-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-12);
+    }
+    
+    .auction-table {
+        font-size: var(--font-size-xs);
+    }
+    
+    .auction-table th,
+    .auction-table td {
+        padding: var(--space-6) var(--space-8);
+    }
+    
+    .team-table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-4);
+    }
+}

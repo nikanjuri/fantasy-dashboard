@@ -401,7 +401,10 @@ class DashboardApp {
     // Enhanced UI Update Methods
     updateAllDashboards() {
         this.updateTeamOverview();
+        this.updateEnhancedTeamCards();
         this.updateAuctionAnalysis();
+        this.updateTeamAuctionTables();
+        this.updateVFMTable();
         this.updateTeamComposition();
         this.updateStats();
         this.updateScoringRules();
@@ -1580,6 +1583,71 @@ class DashboardApp {
                 }
             }
         });
+    }
+
+    updateTeamAuctionTables() {
+        const container = document.getElementById('teamAuctionTables');
+        if (!container) return;
+
+        const teams = ['Royal Smashers', 'Sher-e-Punjab', 'Silly Pointers', 'The Kingsmen'];
+
+        let tablesHTML = '<div class="team-auction-tables-grid">';
+
+        teams.forEach(teamName => {
+            const teamKey = this.findCompositionKey(teamName);
+            const teamPlayers = this.playerListData[teamKey] || [];
+            
+            if (teamPlayers.length === 0) return;
+
+            // Calculate team total
+            const totalPurchase = teamPlayers.reduce((sum, p) => sum + (p.Price || 0), 0);
+
+            tablesHTML += `
+                <div class="team-auction-table-card">
+                    <div class="team-table-header">
+                        <h4>${teamName}</h4>
+                        <div class="team-total">
+                            Total: ₹${totalPurchase.toFixed(1)}Cr
+                        </div>
+                    </div>
+                    <div class="auction-table-container">
+                        <table class="auction-table">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Base Price</th>
+                                    <th>Purchase Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            // Sort players by purchase price (highest first)
+            const sortedPlayers = [...teamPlayers].sort((a, b) => (b.Price || 0) - (a.Price || 0));
+
+            sortedPlayers.forEach(player => {
+                const basePrice = player.Base || 0;
+                const purchasePrice = player.Price || 0;
+
+                tablesHTML += `
+                    <tr>
+                        <td class="player-name">${player.Player}</td>
+                        <td>₹${basePrice.toFixed(1)}Cr</td>
+                        <td>₹${purchasePrice.toFixed(1)}Cr</td>
+                    </tr>
+                `;
+            });
+
+            tablesHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        });
+
+        tablesHTML += '</div>';
+        container.innerHTML = tablesHTML;
     }
 }
 
