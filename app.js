@@ -354,7 +354,7 @@ class DashboardApp {
             allPlayers,
             bestBargains: allPlayers.slice(0, 5),
             expensivePicks: allPlayers.filter(p => (p.Price || 0) > 10 && p.pointsPerCrore < 50),
-            highRiskReward: allPlayers.filter(p => p.Price >= 8 && p.pointsPerCrore >= 45)
+            highRiskReward: allPlayers.filter(p => p.Price >= 15 && p.pointsPerCrore >= 45)
         };
     }
 
@@ -607,9 +607,9 @@ class DashboardApp {
         // Update high-risk, high-reward
         const highRiskContainer = document.getElementById('highRiskReward');
         if (highRiskContainer) {
-            // Filter expensive players (₹8Cr+) with decent returns (45+ pts/₹Cr)
+            // Filter premium players (₹15Cr+) with decent returns (45+ pts/₹Cr)
             const highRiskReward = this.data.auctionData.allPlayers
-                .filter(player => player.Price >= 8 && player.pointsPerCrore >= 45)
+                .filter(player => player.Price >= 15 && player.pointsPerCrore >= 45)
                 .sort((a, b) => b.performance.totalPoints - a.performance.totalPoints)
                 .slice(0, 5);
 
