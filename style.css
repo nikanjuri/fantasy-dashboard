@@ -1900,3 +1900,127 @@ select.form-control {
     justify-content: space-between;
   }
 }
+
+/* Three-column layout for auction insights */
+.insight-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-16);
+  margin-bottom: var(--space-24);
+}
+
+.insight-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-16);
+  border: 1px solid var(--color-border);
+}
+
+.insight-card.success {
+  border-left: 3px solid var(--color-success);
+}
+
+.insight-card.warning {
+  border-left: 3px solid var(--color-error);
+}
+
+.insight-card.info {
+  border-left: 3px solid var(--color-primary);
+}
+
+.insight-card h4 {
+  margin: 0 0 var(--space-12) 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Common styling for all lists */
+.bargain-list,
+.expensive-list,
+.highrisk-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.bargain-item,
+.expensive-item,
+.highrisk-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-6) var(--space-8);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast) var(--ease-standard);
+  font-size: var(--font-size-sm);
+}
+
+.bargain-item:hover,
+.expensive-item:hover,
+.highrisk-item:hover {
+  background: var(--color-hover);
+}
+
+.bargain-item strong,
+.expensive-item strong,
+.highrisk-item strong {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  flex: 1;
+  margin-right: var(--space-8);
+}
+
+.bargain-details,
+.expensive-details,
+.highrisk-details {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.value-ratio {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) var(--space-6);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.025em;
+}
+
+.bargain-item .value-ratio {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+}
+
+.expensive-item .value-ratio {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-error);
+}
+
+.highrisk-item .value-ratio {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-primary);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .insight-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .insight-row {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-14);
+  }
+  
+  .insight-card:last-child {
+    grid-column: 1 / -1;
+  }
+}

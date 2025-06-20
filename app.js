@@ -355,7 +355,7 @@ class DashboardApp {
             allPlayers,
             bestBargains: allPlayers.slice(0, 5),
             expensivePicks: allPlayers.filter(p => (p.Price || 0) > 10 && p.pointsPerCrore < 50),
-            fairValue: allPlayers.filter(p => p.pointsPerCrore >= 50 && p.pointsPerCrore <= 150)
+            highRiskReward: allPlayers.filter(p => p.Price >= 8 && p.pointsPerCrore >= 45)
         };
     }
 
@@ -632,8 +632,29 @@ class DashboardApp {
                         <div class="expensive-details">
                             ₹${player.Price}Cr • ${player.performance.totalPoints} pts
                             <span class="value-ratio">${player.pointsPerCrore.toFixed(1)} pts/₹Cr</span>
-                </div>
-                </div>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        // Update high-risk, high-reward
+        const highRiskContainer = document.getElementById('highRiskReward');
+        if (highRiskContainer) {
+            // Filter expensive players (₹8Cr+) with decent returns (45+ pts/₹Cr)
+            const highRiskReward = this.data.auctionData.allPlayers
+                .filter(player => player.Price >= 8 && player.pointsPerCrore >= 45)
+                .sort((a, b) => b.performance.totalPoints - a.performance.totalPoints)
+                .slice(0, 5);
+
+            highRiskContainer.innerHTML = highRiskReward
+                .map(player => `
+                    <div class="highrisk-item">
+                        <strong>${player.Player}</strong>
+                        <div class="highrisk-details">
+                            ₹${player.Price}Cr • ${player.performance.totalPoints} pts
+                            <span class="value-ratio">${player.pointsPerCrore.toFixed(1)} pts/₹Cr</span>
+                        </div>
+                    </div>
                 `).join('');
         }
 
