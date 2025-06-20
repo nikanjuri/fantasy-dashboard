@@ -1319,14 +1319,26 @@ select.form-control {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-16);
-  padding-bottom: var(--space-12);
+  padding: var(--space-16) 0 var(--space-12) 0;
   border-bottom: 1px solid var(--color-border);
+  min-height: 48px;
 }
 
 .details-header h3 {
   margin: 0;
   font-size: var(--font-size-xl);
   color: var(--color-text);
+  line-height: 1.2;
+  flex: 1;
+}
+
+.details-header .btn {
+  margin-left: var(--space-12);
+  flex-shrink: 0;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Floating Theme Toggle */
