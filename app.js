@@ -1810,6 +1810,18 @@ class DashboardApp {
                         }
                     });
                 }
+                
+                // Scroll back to team tables section when collapsed
+                setTimeout(() => {
+                    const teamTablesContainer = document.getElementById('teamAuctionTables');
+                    if (teamTablesContainer) {
+                        teamTablesContainer.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                    }
+                }, 150); // Small delay to ensure DOM updates are complete
             }
         };
     }
