@@ -162,13 +162,13 @@ class DashboardApp {
                             team: teamName,
                             runs: safeNumber(player.Score),
                             balls: safeNumber(player.Balls),
-                            fours: safeNumber(player['4s']), // Add 4s
-                            sixes: safeNumber(player['6s']), // Add 6s
+                            fours: safeNumber(player['4s']),
+                            sixes: safeNumber(player['6s']),
                             strikeRate: safeValue(player.SR),
                             wickets: safeNumber(player.Wickets),
-                            dots: safeNumber(player['0s']), // Add dots (0s)
+                            dots: safeNumber(player['0s']),
                             economy: safeValue(player.ER),
-                            catches: safeNumber(player.Catch) + safeNumber(player.Runout), // Combined C/RO
+                            catches: safeNumber(player.Catch) + safeNumber(player.Runout),
                             fantasyPoints: safeNumber(player.Points)
                         };
                         
@@ -178,22 +178,23 @@ class DashboardApp {
                         const playerKey = player.Player;
                         if (!playerStats[playerKey]) {
                             playerStats[playerKey] = {
+                                player: player.Player,
                                 name: player.Player,
                                 team: teamName,
                                 totalPoints: 0,
                                 matches: 0,
-                                totalRuns: 0,
-                                totalWickets: 0,
-                                totalCatches: 0,
+                                runs: 0,
+                                wickets: 0,
+                                catches: 0,
                                 averagePoints: 0
                             };
                         }
 
                         playerStats[playerKey].totalPoints += safeNumber(player.Points);
                         playerStats[playerKey].matches += 1;
-                        playerStats[playerKey].totalRuns += safeNumber(player.Score);
-                        playerStats[playerKey].totalWickets += safeNumber(player.Wickets);
-                        playerStats[playerKey].totalCatches += safeNumber(player.Catch) + safeNumber(player.Runout);
+                        playerStats[playerKey].runs += safeNumber(player.Score);
+                        playerStats[playerKey].wickets += safeNumber(player.Wickets);
+                        playerStats[playerKey].catches += safeNumber(player.Catch) + safeNumber(player.Runout);
                         playerStats[playerKey].averagePoints = playerStats[playerKey].totalPoints / playerStats[playerKey].matches;
                     });
                 }
@@ -202,10 +203,15 @@ class DashboardApp {
             matches.push(matchInfo);
         });
 
+        // Create players array for compatibility with existing code
+        const players = Object.values(playerStats).sort((a, b) => b.totalPoints - a.totalPoints);
+
         // Store processed data
         this.data = {
             teamTotals,
+            teamStandings: teamTotals,
             playerStats,
+            players,
             matches,
             totalMatches: matches.length
         };
@@ -219,16 +225,16 @@ class DashboardApp {
         // Combine fantasy performance with auction data
         Object.entries(this.playerListData).forEach(([teamName, players]) => {
             players.forEach(player => {
-                const fantasyPlayer = this.data.players.find(p => p.player === player.Player);
+                const fantasyPlayer = this.data.playerStats[player.Player];
                 
                 profiles[player.Player] = {
                     ...player,
                     fantasyTeam: teamName,
                     performance: fantasyPlayer || {
                         totalPoints: 0,
-                    runs: 0,
-                    wickets: 0,
-                    catches: 0,
+                        runs: 0,
+                        wickets: 0,
+                        catches: 0,
                         matchesPlayed: 0
                     },
                     valueForMoney: this.calculateValueForMoney(fantasyPlayer?.totalPoints || 0, player.Price || 0),
@@ -367,8 +373,10 @@ class DashboardApp {
         const bestValue = this.data.auctionData.bestBargains[0];
         const hiddenGem = this.data.auctionData.allPlayers
             .filter(p => (p.Price || 0) < 2 && p.performance.totalPoints > 100)[0];
-        const formPlayer = this.data.players
-            .sort((a, b) => (b.totalPoints / b.matchesPlayed) - (a.totalPoints / a.matchesPlayed))[0];
+        
+        const formPlayer = this.data.players && this.data.players.length > 0 
+            ? this.data.players.sort((a, b) => (b.totalPoints / b.matches) - (a.totalPoints / a.matches))[0]
+            : null;
 
         if (bestValue) {
             document.getElementById('bestValuePlayer').innerHTML = `
@@ -387,7 +395,7 @@ class DashboardApp {
         if (formPlayer) {
             document.getElementById('formPlayer').innerHTML = `
                 <strong>${formPlayer.player}</strong><br>
-                <small>${(formPlayer.totalPoints / formPlayer.matchesPlayed).toFixed(1)} pts/match</small>
+                <small>${(formPlayer.totalPoints / formPlayer.matches).toFixed(1)} pts/match</small>
             `;
         }
     }
