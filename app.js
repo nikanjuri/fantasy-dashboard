@@ -1003,7 +1003,7 @@ class DashboardApp {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            color: themeColors.textColor,
+                            color: '#ffffff',  // Force white text regardless of theme
                             usePointStyle: false,
                             font: {
                                 size: 12,
@@ -1015,6 +1015,7 @@ class DashboardApp {
                                     text: `${label}: ${data.datasets[0].data[i]} players`,
                                     fillStyle: data.datasets[0].backgroundColor[i],
                                     strokeStyle: data.datasets[0].borderColor[i],
+                                    fontColor: '#ffffff',  // Additional force white
                                     lineWidth: 2,
                                     hidden: false,
                                     index: i

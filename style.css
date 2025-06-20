@@ -1169,30 +1169,77 @@ select.form-control {
   margin-bottom: var(--space-16);
 }
 
+/* Enhanced Team Card Styling - Override all text colors for better visibility */
 .enhanced-team-card .team-header h4 {
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text);
+  color: #ffffff !important;  /* Force white for team names */
 }
 
-.enhanced-team-card .team-rank {
-  background: var(--color-primary);
-  color: white;
-  padding: var(--space-4) var(--space-12);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-bold);
-}
-
-/* Fix the team points color override */
 .enhanced-team-card .team-points {
   font-size: 2.5rem;
   font-weight: var(--font-weight-bold);
-  color: #ffffff !important;  /* Force white color with !important */
+  color: #ffffff !important;
   text-align: center;
   margin: var(--space-16) 0;
-  pointer-events: none;  /* Remove click interactivity */
+  pointer-events: none;
+}
+
+/* Remove the hardcoded white colors and replace with theme-responsive rules */
+
+/* Default colors (for dark theme and colored backgrounds) */
+.enhanced-team-card .detail-item .label {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: var(--font-weight-medium);
+}
+
+.enhanced-team-card .detail-item .value {
+  color: #ffffff !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.enhanced-team-card .stat-item .count {
+  color: #ffffff !important;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Light theme overrides - use dark text on light backgrounds */
+[data-color-scheme="light"] .enhanced-team-card .detail-item .label {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-color-scheme="light"] .enhanced-team-card .detail-item .value {
+  color: #000000 !important;
+}
+
+[data-color-scheme="light"] .enhanced-team-card .stat-item .count {
+  color: #000000 !important;
+}
+
+[data-color-scheme="light"] .enhanced-team-card .team-header h4 {
+  color: #000000 !important;
+}
+
+[data-color-scheme="light"] .enhanced-team-card .team-points {
+  color: #000000 !important;
+}
+
+.enhanced-team-card .detail-item .label {
+  color: rgba(255, 255, 255, 0.8) !important;  /* Semi-transparent white */
+  font-weight: var(--font-weight-medium);
+}
+
+.enhanced-team-card .detail-item .value {
+  color: #ffffff !important;  /* White */
+  font-weight: var(--font-weight-bold);
+}
+
+.enhanced-team-card .stat-item .count {
+  color: #ffffff !important;  /* White */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Alternative: Single Line Layout */
@@ -1210,45 +1257,6 @@ select.form-control {
   align-items: center;
   gap: var(--space-4);
   white-space: nowrap;
-}
-
-.enhanced-team-card .detail-item .label {
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
-}
-
-.enhanced-team-card .detail-item .value {
-  color: var(--color-text);
-  font-weight: var(--font-weight-bold);
-}
-
-.enhanced-team-card .team-stats {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding-top: var(--space-16);
-  border-top: 1px solid var(--color-border);
-}
-
-.enhanced-team-card .stat-item {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: var(--space-4);
-  flex: 1;
-  min-width: 0;
-  justify-content: center;
-}
-
-.enhanced-team-card .stat-item .icon {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.enhanced-team-card .stat-item .count {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
 }
 
 /* Player Performance Details */
@@ -2431,4 +2439,14 @@ select.form-control {
         padding: var(--space-6) var(--space-12);
         font-size: var(--font-size-xs);
     }
+}
+
+.enhanced-team-card .detail-item .label {
+  color: rgba(255, 255, 255, 0.8) !important;  /* Semi-transparent white */
+}
+.enhanced-team-card .detail-item .value {
+  color: #ffffff !important;  /* White */
+}
+.enhanced-team-card .stat-item .count {
+  color: #ffffff !important;  /* White */
 }
