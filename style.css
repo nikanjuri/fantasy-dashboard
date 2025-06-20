@@ -2386,40 +2386,40 @@ select.form-control {
     }
 }
 
-/* Enhanced Toggle Player Details Button */
+/* Enhanced Toggle Player Details Button - Theme Aligned */
 #togglePlayerDetails {
-  background: linear-gradient(135deg, var(--color-primary) 0%, rgba(59, 130, 246, 0.8) 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   border: 1px solid var(--color-primary);
-  color: #ffffff !important;
+  color: var(--color-btn-primary-text) !important;
   font-weight: var(--font-weight-medium);
   padding: var(--space-8) var(--space-16);
   border-radius: var(--radius-md);
   transition: all var(--duration-fast) var(--ease-standard);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 #togglePlayerDetails:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, var(--color-primary) 100%);
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  border-color: rgba(59, 130, 246, 0.8);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-hover);
 }
 
 #togglePlayerDetails:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Dark mode adjustments for the toggle button */
 [data-color-scheme="dark"] #togglePlayerDetails {
-  background: linear-gradient(135deg, var(--color-primary) 0%, rgba(59, 130, 246, 0.9) 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   border-color: var(--color-primary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 [data-color-scheme="dark"] #togglePlayerDetails:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, var(--color-primary) 100%);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
+  box-shadow: var(--shadow-md);
 }
