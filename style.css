@@ -739,7 +739,7 @@ select.form-control {
 .header-stats .stat-value {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text);
+  color: #ffffff;
 }
 
 /* Enhanced Navigation */
