@@ -29,7 +29,6 @@ This dashboard manages **4 fantasy teams** with **103 players** and **₹598.4 C
 - **Squad Composition** with player role distribution (BAT/BOWL/AR/WK)
 - **Investment Analysis** per team
 - **Player Type Visualization** with interactive charts
-- **Best XI Generator** (points-based or value-based)
 
 ### Player Analytics
 - **Advanced Filtering System** (team, position, performance level)
@@ -74,7 +73,6 @@ This dashboard manages **4 fantasy teams** with **103 players** and **₹598.4 C
 ### Technologies Used
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
 - **Charts**: Chart.js for interactive visualizations  
-- **Icons**: Custom SVG icons and emoji indicators
 - **Styling**: CSS Grid, Flexbox, CSS Custom Properties
 - **Data**: JSON-based data processing and management
 
@@ -160,8 +158,8 @@ This is a specialized fantasy cricket dashboard. For major changes or feature re
 
 ## License
 
-This project is for educational and personal use in fantasy cricket league management.
+This project is for personal use in fantasy cricket league management.
 
 ---
 
-**Built with care for Fantasy Cricket Enthusiasts**
+**Built with Excitement for Fantasy Cricket Enthusiasts**
