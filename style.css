@@ -2356,7 +2356,23 @@ select.form-control {
   }
   
   .header-stats {
-    display: none;
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-8);
+    justify-content: center;
+  }
+  
+  .header-stats .stat-item {
+    padding: var(--space-6) var(--space-8);
+    min-width: 60px;
+  }
+  
+  .header-stats .stat-label {
+    font-size: var(--font-size-xs);
+  }
+  
+  .header-stats .stat-value {
+    font-size: var(--font-size-sm);
   }
   
   .header-controls {
@@ -2405,35 +2421,13 @@ select.form-control {
     gap: var(--space-16);
   }
   
-  /* Tables Mobile */
-  .enhanced-table {
-    font-size: var(--font-size-xs);
-  }
-  
-  .enhanced-table th,
-  .enhanced-table td {
-    padding: var(--space-6) var(--space-8);
-  }
-  
-  /* Match Details Mobile */
-  .team-cards-container {
-    grid-template-columns: 1fr;
-    gap: var(--space-12);
-    margin-bottom: var(--space-16);
-  }
-  
-  .match-team-card {
-    padding: var(--space-12);
-    min-height: auto;
-  }
+    /* Tables Mobile - Handled above with horizontal scroll */
   
   #matchPointsChart {
     height: 250px !important;
   }
   
-  .team-match-points {
-    font-size: var(--font-size-lg);
-  }
+
   
   .match-info h3 {
     font-size: var(--font-size-lg);
@@ -2556,4 +2550,53 @@ select.form-control {
 
 [data-color-scheme="dark"] .purchase-price {
     color: #ffffff;
+}
+
+/* Tables Mobile - Add horizontal scroll */
+.enhanced-table {
+  font-size: var(--font-size-xs);
+}
+
+.enhanced-table th,
+.enhanced-table td {
+  padding: var(--space-6) var(--space-8);
+  white-space: nowrap;
+}
+
+/* Horizontal scroll wrapper for tables */
+.table-container,
+.player-performance-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.enhanced-table {
+  min-width: 600px; /* Ensure table is wide enough to show all columns */
+}
+
+/* Match Point Cards Mobile - Better layout */
+.team-cards-container {
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  margin-bottom: var(--space-16);
+}
+
+.match-team-card {
+  padding: var(--space-10);
+  min-height: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-team-card h4 {
+  font-size: var(--font-size-sm);
+  margin: 0;
+  flex: 1;
+}
+
+.team-match-points {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
 }
