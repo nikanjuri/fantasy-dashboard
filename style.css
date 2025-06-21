@@ -739,7 +739,7 @@ select.form-control {
 .header-stats .stat-value {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
-  color: #ffffff;
+  color: var(--color-text);
 }
 
 /* Enhanced Navigation */
@@ -815,7 +815,7 @@ select.form-control {
 .tab-button.active {
   color: #3b82f6;
   border-bottom-color: #3b82f6;
-  background: #ffffff;
+  background: var(--color-surface);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -1263,78 +1263,54 @@ select.form-control {
   margin-bottom: var(--space-16);
 }
 
-/* Enhanced Team Card Styling - Override all text colors for better visibility */
+/* Enhanced Team Card Styling - Clean theme-aware colors */
 .enhanced-team-card .team-header h4 {
   margin: 0;
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: #ffffff !important;  /* Force white for team names */
+  color: var(--color-text);
 }
 
 .enhanced-team-card .team-points {
   font-size: 2.5rem;
   font-weight: var(--font-weight-bold);
-  color: #ffffff !important;
+  color: var(--color-text);
   text-align: center;
   margin: var(--space-16) 0;
   pointer-events: none;
 }
 
-/* Remove the hardcoded white colors and replace with theme-responsive rules */
-
-/* Default colors (for dark theme and colored backgrounds) */
+/* Default colors for enhanced team cards */
 .enhanced-team-card .detail-item .label {
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.enhanced-team-card .detail-item .value {
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+}
+
+.enhanced-team-card .stat-item .count {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Special styling for colored team card backgrounds */
+.enhanced-team-card[data-team-background="true"] .team-header h4,
+.enhanced-team-card[data-team-background="true"] .team-points,
+.enhanced-team-card[data-team-background="true"] .detail-item .label,
+.enhanced-team-card[data-team-background="true"] .detail-item .value,
+.enhanced-team-card[data-team-background="true"] .stat-item .count {
+  color: #ffffff !important;
+}
+
+.enhanced-team-card[data-team-background="true"] .detail-item .label {
   color: rgba(255, 255, 255, 0.8) !important;
-  font-weight: var(--font-weight-medium);
 }
 
-.enhanced-team-card .detail-item .value {
-  color: #ffffff !important;
-  font-weight: var(--font-weight-bold);
-}
 
-.enhanced-team-card .stat-item .count {
-  color: #ffffff !important;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
-
-/* Light theme overrides - use dark text on light backgrounds */
-[data-color-scheme="light"] .enhanced-team-card .detail-item .label {
-  color: rgba(0, 0, 0, 0.7) !important;
-}
-
-[data-color-scheme="light"] .enhanced-team-card .detail-item .value {
-  color: #000000 !important;
-}
-
-[data-color-scheme="light"] .enhanced-team-card .stat-item .count {
-  color: #000000 !important;
-}
-
-[data-color-scheme="light"] .enhanced-team-card .team-header h4 {
-  color: #000000 !important;
-}
-
-[data-color-scheme="light"] .enhanced-team-card .team-points {
-  color: #000000 !important;
-}
-
-.enhanced-team-card .detail-item .label {
-  color: rgba(255, 255, 255, 0.8) !important;  /* Semi-transparent white */
-  font-weight: var(--font-weight-medium);
-}
-
-.enhanced-team-card .detail-item .value {
-  color: #ffffff !important;  /* White */
-  font-weight: var(--font-weight-bold);
-}
-
-.enhanced-team-card .stat-item .count {
-  color: #ffffff !important;  /* White */
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-}
 
 /* Alternative: Single Line Layout */
 .enhanced-team-card .team-details {
@@ -2205,7 +2181,8 @@ select.form-control {
     border-radius: 50%;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-bold);
-    color: #000000;
+    color: var(--color-background);
+    background-color: var(--color-text);
     min-width: 24px;
 }
 
@@ -2282,7 +2259,7 @@ select.form-control {
 
 /* VFM Table specific row styling */
 .vfm-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--color-hover);
     transform: translateX(2px);
 }
 
@@ -2290,16 +2267,6 @@ select.form-control {
 
 /* Mobile responsiveness */
 
-
-.enhanced-team-card .detail-item .label {
-  color: rgba(255, 255, 255, 0.8) !important;  /* Semi-transparent white */
-}
-.enhanced-team-card .detail-item .value {
-  color: #ffffff !important;  /* White */
-}
-.enhanced-team-card .stat-item .count {
-  color: #ffffff !important;  /* White */
-}
 
 /* Add missing team-stats CSS for horizontal layout */
 .enhanced-team-card .team-stats {
@@ -2321,19 +2288,6 @@ select.form-control {
 .enhanced-team-card .stat-item .icon {
   font-size: 18px;
   display: block;
-}
-
-.enhanced-team-card .stat-item .count {
-  color: #ffffff !important;
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  display: block;
-  text-align: center;
-}
-
-/* Theme-responsive overrides for light mode */
-[data-color-scheme="light"] .enhanced-team-card .stat-item .count {
-  color: #000000 !important;
 }
 
 /* Keep player names left-aligned */
