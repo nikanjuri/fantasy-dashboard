@@ -2488,15 +2488,24 @@ select.form-control {
   
   .stat-card {
     padding: var(--space-12); /* Even smaller padding on mobile */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 80px; /* Ensure consistent height */
   }
   
   .stat-card h3 {
     font-size: var(--font-size-xs); /* Smaller title on mobile */
     margin-bottom: var(--space-4);
+    margin-top: 0;
   }
   
   .stat-value {
     font-size: var(--font-size-xl); /* Smaller value on mobile */
+    margin: 0;
+    line-height: 1.2;
   }
   
   .charts-grid {
