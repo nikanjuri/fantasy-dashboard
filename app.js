@@ -1728,8 +1728,8 @@ class DashboardApp {
                             <thead>
                                 <tr>
                                     <th style="color: ${teamColor}">Player</th>
-                                    <th style="color: #cccccc">Base Price</th>
-                                    <th style="color: #cccccc">Purchase Price</th>
+                                    <th>Base Price</th>
+                                    <th>Purchase Price</th>
                                 </tr>
                             </thead>
                             <tbody id="${tableId}-visible">
@@ -1743,8 +1743,8 @@ class DashboardApp {
                 tablesHTML += `
                     <tr>
                         <td class="player-name">${player.Player}</td>
-                        <td style="color: #aaaaaa">₹${basePrice.toFixed(1)}Cr</td>
-                        <td style="color: #ffffff">₹${purchasePrice.toFixed(1)}Cr</td>
+                        <td class="base-price">₹${basePrice.toFixed(1)}Cr</td>
+                        <td class="purchase-price">₹${purchasePrice.toFixed(1)}Cr</td>
                     </tr>
                 `;
             });
@@ -1762,8 +1762,8 @@ class DashboardApp {
                 tablesHTML += `
                     <tr>
                         <td class="player-name">${player.Player}</td>
-                        <td style="color: #aaaaaa">₹${basePrice.toFixed(1)}Cr</td>
-                        <td style="color: #ffffff">₹${purchasePrice.toFixed(1)}Cr</td>
+                        <td class="base-price">₹${basePrice.toFixed(1)}Cr</td>
+                        <td class="purchase-price">₹${purchasePrice.toFixed(1)}Cr</td>
                     </tr>
                 `;
             });
