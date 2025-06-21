@@ -272,6 +272,7 @@ class DashboardApp {
                                 dots: safeNumber(player['0s']),
                                 economy: safeValue(player.ER),
                                 catches: safeNumber(player.Catch) + safeNumber(player.Runout),
+                                multiplier: safeValue(player['C/VC']),
                                 fantasyPoints: safeNumber(player.Points)
                             };
                             
@@ -1512,7 +1513,8 @@ class DashboardApp {
                                         <th>Wickets</th>
                                         <th>Dots</th>
                                         <th>Economy</th>
-                                        <th>Fielding Points</th>
+                                        <th>Fielding</th>
+                                        <th>C/VC Multiplier</th>
                                         <th>Total Points</th>
                                     </tr>
                                 </thead>
@@ -1529,6 +1531,7 @@ class DashboardApp {
                                             <td>${player.dots}</td>
                                             <td>${player.economy}</td>
                                             <td>${player.catches}</td>
+                                            <td>${player.multiplier || '1.0'}x</td>
                                             <td><strong>${player.fantasyPoints}</strong></td>
                                         </tr>
                                     `).join('')}
