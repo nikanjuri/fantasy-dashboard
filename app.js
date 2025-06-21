@@ -1223,15 +1223,32 @@ class DashboardApp {
             tabContents[0].classList.add('active');
         }
         
-        // Add click listeners for tab switching
+        // Add click listeners for tab switching with mobile support
         tabButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const targetTab = e.target.dataset.tab;
-                this.switchTab(targetTab);
-            });
+            // Handle both click and touch events for mobile
+            const handleTabClick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                let targetTab;
+                if (e.target.classList.contains('tab-button')) {
+                    targetTab = e.target.dataset.tab;
+                } else if (e.target.classList.contains('tab-text')) {
+                    targetTab = e.target.parentElement.dataset.tab;
+                } else {
+                    targetTab = e.target.closest('.tab-button')?.dataset.tab;
+                }
+                
+                if (targetTab) {
+                    this.switchTab(targetTab);
+                }
+            };
+            
+            button.addEventListener('click', handleTabClick);
+            button.addEventListener('touchend', handleTabClick);
         });
         
-        console.log('✅ Tabs initialized successfully');
+        console.log('✅ Tabs initialized successfully with mobile support');
     }
 
     setupEventListeners() {
@@ -1243,18 +1260,6 @@ class DashboardApp {
             themeToggle.addEventListener('click', () => this.toggleTheme());
             console.log('✅ Theme toggle listener added');
         }
-        
-        // Tab navigation
-        const tabButtons = document.querySelectorAll('.tab-button');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const tabId = e.target.getAttribute('data-tab');
-                if (tabId) {
-                    this.switchTab(tabId);
-                }
-            });
-        });
-        console.log('✅ Tab navigation listeners added:', tabButtons.length);
         
         // Generate Best XI button
         const generateXIBtn = document.getElementById('generateXI');

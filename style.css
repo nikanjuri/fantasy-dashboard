@@ -1557,74 +1557,7 @@ select.form-control {
   height: 250px !important;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .team-cards-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(4, auto);
-    max-width: 220px;
-    height: 200px;
-    gap: var(--space-6);
-  }
-  
-  .match-team-card {
-    max-width: 100%;
-    min-width: 200px;
-    height: 43px;
-  }
-  
-  #matchPointsChart {
-    max-height: 200px !important;
-    height: 200px !important;
-    max-width: 200px !important;
-  }
 
-  .team-match-points {
-    font-size: var(--font-size-2xl);
-  }
-
-  .match-info h3 {
-    font-size: var(--font-size-xl);
-  }
-
-  .winner-badge {
-    font-size: 10px;
-    padding: var(--space-2) var(--space-6);
-  }
-
-  .floating-theme-toggle {
-    width: 48px;
-    height: 48px;
-    bottom: 20px;
-    right: 20px;
-    font-size: 20px;
-  }
-
-  .enhanced-table {
-    font-size: var(--font-size-sm);
-  }
-
-  .enhanced-table th,
-  .enhanced-table td {
-    padding: var(--space-8) var(--space-12);
-  }
-
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .match-details-container {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .team-cards-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* Dark mode specific adjustments */
 [data-color-scheme="dark"] .team-section-total {
@@ -1781,25 +1714,7 @@ select.form-control {
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
-  .scoring-rules-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-16);
-  }
-  
-  .scoring-card {
-    padding: var(--space-16);
-  }
-  
-  .rule-item {
-    padding: var(--space-6) 0;
-  }
-  
-  .rule-action,
-  .rule-points {
-    font-size: var(--font-size-xs);
-  }
-}
+
 
 /* Auction Analysis Tab Styling */
 .auction-highlights {
@@ -2122,27 +2037,7 @@ select.form-control {
 }
 
 /* Mobile responsiveness */
-@media (max-width: 768px) {
-    .team-auction-tables-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-12);
-    }
-    
-    .auction-table {
-        font-size: var(--font-size-xs);
-    }
-    
-    .auction-table th,
-    .auction-table td {
-        padding: var(--space-6) var(--space-8);
-    }
-    
-    .team-table-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-4);
-    }
-}
+
 
 /* Enhanced Team Auction Tables Styling with Colors */
 .team-auction-tables-grid {
@@ -2370,22 +2265,7 @@ select.form-control {
 
 
 /* Mobile responsiveness */
-@media (max-width: 768px) {
-    .vfm-player-cell {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-4);
-    }
-    
-    .vfm-rank {
-        align-self: flex-start;
-    }
-    
-    .vfm-expand-btn {
-        padding: var(--space-6) var(--space-12);
-        font-size: var(--font-size-xs);
-    }
-}
+
 
 .enhanced-team-card .detail-item .label {
   color: rgba(255, 255, 255, 0.8) !important;  /* Semi-transparent white */
@@ -2443,36 +2323,7 @@ select.form-control {
 }
 
 /* Mobile responsiveness for team auction tables */
-@media (max-width: 768px) {
-    .team-auction-tables-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-12);
-    }
-    
-    .team-auction-table-card {
-        min-height: auto; /* Remove minimum height on mobile */
-    }
-    
-    .auction-table {
-        font-size: var(--font-size-xs);
-    }
-    
-    .auction-table th,
-    .auction-table td {
-        padding: var(--space-6) var(--space-8);
-    }
-    
-    .team-table-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-4);
-    }
-    
-    .expand-btn {
-        min-width: 100px; /* Smaller minimum width on mobile */
-        font-size: var(--font-size-xs);
-    }
-}
+
 
 /* Enhanced Toggle Player Details Button - Theme Aligned */
 #togglePlayerDetails {
@@ -2513,7 +2364,11 @@ select.form-control {
 }
 
 /* Mobile responsiveness for header */
+
+
+/* Consolidated Mobile Responsiveness */
 @media (max-width: 768px) {
+  /* Header Mobile Styles */
   .dashboard-header {
     padding: var(--space-8) 0;
   }
@@ -2526,13 +2381,172 @@ select.form-control {
     display: none;
   }
   
+  .header-controls {
+    gap: var(--space-12);
+  }
+  
+  /* Navigation Mobile Styles */
   .tab-button {
-    padding: var(--space-10) var(--space-16);
-    font-size: var(--font-size-xs);
-    min-width: 60px;
+    padding: var(--space-12) var(--space-16);
+    font-size: var(--font-size-sm);
+    min-width: 70px;
+    font-weight: var(--font-weight-medium);
   }
   
   .tab-text {
+    font-size: var(--font-size-sm);
+    font-weight: inherit;
+  }
+  
+  /* Content Mobile Styles */
+  .dashboard-main {
+    padding: var(--space-16) 0;
+  }
+  
+  .section-header {
+    margin-bottom: var(--space-24);
+  }
+  
+  .section-header h2 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  /* Cards and Grids Mobile */
+  .team-cards-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-12);
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  
+  /* Tables Mobile */
+  .enhanced-table {
+    font-size: var(--font-size-xs);
+  }
+  
+  .enhanced-table th,
+  .enhanced-table td {
+    padding: var(--space-6) var(--space-8);
+  }
+  
+  /* Match Details Mobile */
+  .team-cards-container {
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    margin-bottom: var(--space-16);
+  }
+  
+  .match-team-card {
+    padding: var(--space-12);
+    min-height: auto;
+  }
+  
+  #matchPointsChart {
+    height: 250px !important;
+  }
+  
+  .team-match-points {
+    font-size: var(--font-size-lg);
+  }
+  
+  .match-info h3 {
+    font-size: var(--font-size-lg);
+  }
+  
+  .winner-badge {
+    font-size: var(--font-size-xs);
+    padding: var(--space-2) var(--space-6);
+  }
+  
+  /* Theme Toggle Mobile */
+  .floating-theme-toggle {
+    width: 40px;
+    height: 40px;
+    bottom: var(--space-16);
+    right: var(--space-16);
+  }
+  
+  /* Match Details Container Mobile */
+  .match-details-container {
+    gap: var(--space-12);
+  }
+  
+  /* Scoring Rules Mobile */
+  .scoring-rules-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  
+  .scoring-card {
+    padding: var(--space-16);
+  }
+  
+  .rule-item {
+    padding: var(--space-8) var(--space-12);
+  }
+  
+  .rule-action,
+  .rule-points {
+    font-size: var(--font-size-xs);
+  }
+  
+  /* Auction Analysis Mobile */
+  .insight-row {
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+  
+  .team-auction-tables-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+  }
+  
+  .team-auction-table-card {
+    min-height: auto;
+  }
+  
+  .auction-table {
+    font-size: var(--font-size-xs);
+  }
+  
+  .auction-table th,
+  .auction-table td {
+    padding: var(--space-6) var(--space-8);
+  }
+  
+  .team-table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  
+  .expand-btn {
+    min-width: 100px;
+    font-size: var(--font-size-xs);
+    padding: var(--space-6) var(--space-12);
+  }
+  
+  /* VFM Table Mobile */
+  .vfm-player-cell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  
+  .vfm-rank {
+    align-self: flex-start;
+  }
+  
+  .vfm-expand-btn {
+    padding: var(--space-6) var(--space-12);
     font-size: var(--font-size-xs);
   }
 }
