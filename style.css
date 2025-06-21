@@ -812,18 +812,7 @@ select.form-control {
   background-color: #374151;
 }
 
-.tab-button.active {
-  color: #3b82f6;
-  border-bottom-color: #3b82f6;
-  background: var(--color-surface);
-  font-weight: var(--font-weight-semibold);
-}
 
-[data-color-scheme="dark"] .tab-button.active {
-  color: #60a5fa;
-  border-bottom-color: #60a5fa;
-  background: #111827;
-}
 
 /* Main content */
 .dashboard-main {
@@ -2387,6 +2376,35 @@ select.form-control {
     font-weight: var(--font-weight-medium);
   }
   
+  .tab-button.active {
+    color: #3b82f6 !important;
+    background: var(--color-surface) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    border-bottom-color: transparent !important;
+  }
+  
+  .tab-button.active::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 24px) !important; /* Smaller padding for mobile */
+    height: 2px !important;
+    background-color: #3b82f6 !important;
+    border-radius: 1px !important;
+  }
+  
+  [data-color-scheme="dark"] .tab-button.active {
+    color: #60a5fa !important;
+    background: #111827 !important;
+    border-bottom-color: transparent !important;
+  }
+  
+  [data-color-scheme="dark"] .tab-button.active::after {
+    background-color: #60a5fa !important;
+  }
+  
   .tab-text {
     font-size: var(--font-size-sm);
     font-weight: inherit;
@@ -2584,27 +2602,5 @@ select.form-control {
 
 [data-color-scheme="dark"] .purchase-price {
     color: #ffffff;
-}
-
-/* Tables Mobile - Add horizontal scroll */
-.enhanced-table {
-  font-size: var(--font-size-xs);
-}
-
-.enhanced-table th,
-.enhanced-table td {
-  padding: var(--space-6) var(--space-8);
-  white-space: nowrap;
-}
-
-/* Horizontal scroll wrapper for tables */
-.table-container,
-.player-performance-container {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.enhanced-table {
-  min-width: 600px; /* Ensure table is wide enough to show all columns */
 }
 
