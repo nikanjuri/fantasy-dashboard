@@ -468,17 +468,23 @@ class DashboardApp {
         // Find most expensive player
         let mostExpensivePlayer = null;
         let highestPrice = 0;
+        let highestBid = 0;
         
         Object.values(this.data.playerProfiles).forEach(player => {
             if (player.Price > highestPrice) {
                 highestPrice = player.Price;
                 mostExpensivePlayer = player;
             }
+            // Track highest bid separately
+            if (player.Price > highestBid) {
+                highestBid = player.Price;
+            }
         });
 
         document.getElementById('totalPlayers').textContent = totalPlayers;
         document.getElementById('totalInvestment').textContent = `₹${totalInvestment.toFixed(1)} Cr`;
         document.getElementById('avgPrice').textContent = `₹${avgPrice.toFixed(1)} Cr`;
+        document.getElementById('highestBid').textContent = `₹${highestBid.toFixed(1)} Cr`;
         
         // Update most expensive player display
         if (mostExpensivePlayer) {

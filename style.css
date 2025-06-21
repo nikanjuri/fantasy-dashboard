@@ -884,8 +884,8 @@ select.form-control {
 /* Stats grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-20);
+  grid-template-columns: repeat(6, 1fr); /* Force 6 equal columns */
+  gap: var(--space-16); /* Reduced gap for better fit */
   margin-bottom: var(--space-32);
 }
 
@@ -893,13 +893,11 @@ select.form-control {
   background-color: var(--color-surface);
   border: 1px solid var(--color-card-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-20);
+  padding: var(--space-16); /* Reduced padding */
   text-align: center;
   transition: all var(--duration-fast) var(--ease-standard);
+  min-width: 0; /* Allow cards to shrink */
 }
-
-/* Special handling for the 5th card to span both columns in the third row */
-
 
 .stat-card:hover {
   transform: translateY(-2px);
@@ -2484,8 +2482,21 @@ select.form-control {
   }
   
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-12);
+    grid-template-columns: repeat(3, 1fr); /* 3 cards per row on mobile */
+    gap: var(--space-8); /* Smaller gap for mobile */
+  }
+  
+  .stat-card {
+    padding: var(--space-12); /* Even smaller padding on mobile */
+  }
+  
+  .stat-card h3 {
+    font-size: var(--font-size-xs); /* Smaller title on mobile */
+    margin-bottom: var(--space-4);
+  }
+  
+  .stat-value {
+    font-size: var(--font-size-xl); /* Smaller value on mobile */
   }
   
   .charts-grid {
