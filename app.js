@@ -769,50 +769,84 @@ class DashboardApp {
         const grid = document.getElementById('compositionGrid');
         if (!grid) return;
 
-        grid.innerHTML = Object.entries(this.data.teamCompositions)
-            .map(([teamName, comp]) => `
-                <div class="composition-card">
-                    <h4>${teamName}</h4>
-                    <div class="comp-stats">
-                        <div class="comp-stat">
-                            <span class="comp-label">Total Investment</span>
-                            <span class="comp-value">₹${comp.totalInvestment.toFixed(1)}Cr</span>
+        // Get team names in a consistent order
+        const teams = ['Royal Smashers', 'Sher-e-Punjab', 'Silly Pointers', 'The Kingsmen'];
+        
+        const getTypeIcon = (type) => {
+            switch(type) {
+                case 'BAT': return '🏏';
+                case 'BOWL': return '⚡';
+                case 'AR': return '🌟';
+                case 'WK': return '🧤';
+                default: return '❓';
+            }
+        };
+
+        const getTypeLabel = (type) => {
+            switch(type) {
+                case 'BAT': return 'Batsman';
+                case 'BOWL': return 'Bowler';
+                case 'AR': return 'All-rounder';
+                case 'WK': return 'Wicket-keeper';
+                default: return type;
+            }
+        };
+
+        grid.innerHTML = teams.map(teamName => {
+            const teamKey = this.findCompositionKey(teamName);
+            const players = this.playerListData[teamKey] || [];
+            const comp = this.data.teamCompositions[teamKey];
+            
+            if (!players.length) return '';
+
+            // Sort players by price (highest first)
+            const sortedPlayers = [...players].sort((a, b) => (b.Price || 0) - (a.Price || 0));
+
+            return `
+                <div class="team-composition-card" data-team="${teamName}">
+                    <div class="team-composition-header">
+                        <h3>${teamName}</h3>
+                        <div class="team-composition-stats">
+                            <span>₹${comp.totalInvestment.toFixed(1)}Cr</span>
+                            <span>${players.length} Players</span>
+                            <span>${comp.overseas} Overseas</span>
+                        </div>
+                    </div>
+                    
+                    <div class="players-header">
+                        <div>Player</div>
+                        <div>Type</div>
+                        <div>IPL Team</div>
+                        <div>Status</div>
+                        <div>Price</div>
+                    </div>
+                    
+                    <div class="players-grid">
+                        ${sortedPlayers.map(player => `
+                            <div class="player-card">
+                                <div class="player-name">${player.Player}</div>
+                                <div class="player-type">
+                                    <span class="type-icon">${getTypeIcon(player.Type)}</span>
+                                    <span>${getTypeLabel(player.Type)}</span>
+                                </div>
+                                <div class="player-team">${player.Team || 'N/A'}</div>
+                                <div class="player-status">
+                                    <div class="overseas-badge ${player.Overseas ? 'yes' : 'no'}">
+                                        ${player.Overseas ? 'Overseas' : 'Local'}
+                                    </div>
+                                    <div class="cap-badge ${(player['Cap/Un'] || '').toLowerCase()}">
+                                        ${player['Cap/Un'] || 'N/A'}
+                                    </div>
+                                </div>
+                                <div class="player-price">₹${(player.Price || 0).toFixed(1)}Cr</div>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
-                        <div class="comp-stat">
-                            <span class="comp-label">Avg Price</span>
-                            <span class="comp-value">₹${comp.avgPrice.toFixed(1)}Cr</span>
-                </div>
-                </div>
-                    <div class="player-breakdown">
-                        <div class="breakdown-item">
-                            <span class="type-icon">🏏</span>
-                            <span class="type-label">Batsmen</span>
-                            <span class="type-count">${comp.playerTypes.BAT}</span>
-            </div>
-                        <div class="breakdown-item">
-                            <span class="type-icon">⚡</span>
-                            <span class="type-label">Bowlers</span>
-                            <span class="type-count">${comp.playerTypes.BOWL}</span>
-                </div>
-                        <div class="breakdown-item">
-                            <span class="type-icon">🌟</span>
-                            <span class="type-label">All-rounders</span>
-                            <span class="type-count">${comp.playerTypes.AR}</span>
-                </div>
-                        <div class="breakdown-item">
-                            <span class="type-icon">🧤</span>
-                            <span class="type-label">Wicket-keepers</span>
-                            <span class="type-count">${comp.playerTypes.WK || 0}</span>
-                </div>
-                </div>
-                    <div class="experience-breakdown">
-                        <div class="exp-item">
-                            <span class="exp-label">Overseas</span>
-                            <span class="exp-count">${comp.overseas}</span>
-                </div>
-            </div>
-                </div>
-            `).join('');
+            `;
+        }).filter(html => html).join('');
+
+        console.log('✅ Team composition updated with player cards!');
     }
 
     updateStats() {
@@ -1547,383 +1581,4 @@ class DashboardApp {
             </div>
         `;
             }).join('')}
-        `;
-        
-        playerDetailsContainer.innerHTML = playerDetailsHTML;
-        
-        // Add toggle functionality for player details
-        const toggleButton = document.getElementById('togglePlayerDetails');
-        const playerDetailsDiv = document.getElementById('playerPerformanceDetails');
-        let isExpanded = true;
-        
-        if (toggleButton && playerDetailsDiv) {
-            toggleButton.addEventListener('click', () => {
-                isExpanded = !isExpanded;
-                playerDetailsDiv.style.display = isExpanded ? 'block' : 'none';
-                toggleButton.textContent = isExpanded ? 'Collapse Details' : 'Show Details';
-            });
-        }
-        
-        // Update the points breakdown chart
-        this.createMatchPointsChart(match);
-        
-        console.log('✅ Match details updated for:', match.matchName);
-    }
-
-    clearMatchDetails() {
-        // Clear match scorecard container
-        const scorecardContainer = document.getElementById('matchScorecard');
-        if (scorecardContainer) {
-            scorecardContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Please select a match to view details.</p>';
-        }
-        
-        // Clear player performance details container
-        const playerDetailsContainer = document.getElementById('playerPerformanceDetails');
-        if (playerDetailsContainer) {
-            playerDetailsContainer.innerHTML = '<p style="color: var(--color-text-secondary); text-align: center; padding: 20px;">Player\'s Match details will appear here.</p>';
-        }
-        
-        // Clear the match points chart
-        const ctx = document.getElementById('matchPointsChart');
-        if (ctx && this.charts.matchPoints) {
-            this.charts.matchPoints.destroy();
-            this.charts.matchPoints = null;
-        }
-        
-        console.log('✅ Match details cleared');
-    }
-
-    createMatchPointsChart(match) {
-        const ctx = document.getElementById('matchPointsChart');
-        if (!ctx || typeof Chart === 'undefined') return;
-
-        // Team colors
-        const teamColors = {
-            'Royal Smashers': 'rgba(255, 99, 132, 0.8)',
-            'Sher-e-Punjab': 'rgba(245, 158, 11, 0.8)',      // Orange
-            'Silly Pointers': 'rgba(59, 130, 246, 0.8)',     // Blue
-            'The Kingsmen': 'rgba(16, 185, 129, 0.8)'        // Green - changed from rgba(75, 192, 192, 0.8)
-        };
-
-        // Prepare data for pie chart
-        const chartData = [];
-        const chartLabels = [];
-        const chartColors = [];
-        
-        // Group players by team and handle "Others"
-        const playersByTeam = {};
-        match.players.forEach(player => {
-            if (!playersByTeam[player.team]) {
-                playersByTeam[player.team] = [];
-            }
-            playersByTeam[player.team].push(player);
-        });
-        
-        Object.entries(playersByTeam).forEach(([teamName, players]) => {
-            const teamColor = teamColors[teamName] || 'rgba(128, 128, 128, 0.8)';
-            
-            // Individual players with >= 25 points
-            const significantPlayers = players.filter(p => p.fantasyPoints >= 25);
-            const otherPlayers = players.filter(p => p.fantasyPoints < 25);
-            
-            // Add significant players
-            significantPlayers.forEach(player => {
-                chartData.push(player.fantasyPoints);
-                chartLabels.push(player.name);
-                chartColors.push(teamColor);
-            });
-            
-            // Add "Others" group if there are any
-            if (otherPlayers.length > 0) {
-                const othersTotal = otherPlayers.reduce((sum, p) => sum + p.fantasyPoints, 0);
-                if (othersTotal > 0) {
-                    chartData.push(othersTotal);
-                    chartLabels.push(`Others - ${teamName}`);
-                    chartColors.push(teamColor.replace('0.8', '0.4')); // Lighter shade for others
-                }
-            }
-        });
-
-        // Destroy existing chart if it exists
-        if (this.charts.matchPoints) {
-            this.charts.matchPoints.destroy();
-        }
-
-        this.charts.matchPoints = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    data: chartData,
-                    backgroundColor: chartColors,
-                    borderColor: chartColors.map(color => color.replace('0.8', '1')),
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: false
-                    },
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((value / total) * 100).toFixed(1);
-                                return `${label}: ${value} pts (${percentage}%)`;
-                            }
-                        }
-                    }
-                },
-                layout: {
-                    padding: {
-                        bottom: 40
-                    }
-                }
-            }
-        });
-    }
-
-    updateTeamAuctionTables() {
-        const container = document.getElementById('teamAuctionTables');
-        if (!container) return;
-
-        const teams = ['Royal Smashers', 'Sher-e-Punjab', 'Silly Pointers', 'The Kingsmen'];
-        
-        // Team colors for styling
-        const teamColors = {
-            'Royal Smashers': '#ff6384',
-            'Sher-e-Punjab': '#f59e0b',       // Changed from #ffce56 - bright orange/amber
-            'Silly Pointers': '#3b82f6',      // Changed from #36a2eb - bright blue
-            'The Kingsmen': '#10b981'         // Changed from #4bc0c0 - bright emerald green
-        };
-
-        let tablesHTML = '<div class="team-auction-tables-grid">';
-
-        teams.forEach((teamName, index) => {
-            const teamKey = this.findCompositionKey(teamName);
-            const teamPlayers = this.playerListData[teamKey] || [];
-            
-            if (teamPlayers.length === 0) return;
-
-            // Calculate team total
-            const totalPurchase = teamPlayers.reduce((sum, p) => sum + (p.Price || 0), 0);
-            const teamColor = teamColors[teamName];
-            const tableId = `team-table-${index}`;
-
-            // Sort players by purchase price (highest first)
-            const sortedPlayers = [...teamPlayers].sort((a, b) => (b.Price || 0) - (a.Price || 0));
-            
-            // Split into visible and hidden rows
-            const visibleRows = sortedPlayers.slice(0, 5);
-            const hiddenRows = sortedPlayers.slice(5);
-
-            tablesHTML += `
-                <div class="team-auction-table-card">
-                    <div class="team-table-header" style="border-left: 4px solid ${teamColor}">
-                        <h4 style="color: ${teamColor}">${teamName}</h4>
-                        <div class="team-total">
-                            Total: <span style="color: ${teamColor}">₹${totalPurchase.toFixed(1)}Cr</span>
-                </div>
-                    </div>
-                    <div class="auction-table-container">
-                        <table class="auction-table">
-                            <thead>
-                                <tr>
-                                    <th style="color: ${teamColor}">Player</th>
-                                    <th>Base Price</th>
-                                    <th>Purchase Price</th>
-                                </tr>
-                            </thead>
-                            <tbody id="${tableId}-visible">
-            `;
-
-            // Add visible rows
-            visibleRows.forEach(player => {
-                const basePrice = player.Base || 0;
-                const purchasePrice = player.Price || 0;
-
-                tablesHTML += `
-                    <tr>
-                        <td class="player-name">${player.Player}</td>
-                        <td class="base-price">₹${basePrice.toFixed(1)}Cr</td>
-                        <td class="purchase-price">₹${purchasePrice.toFixed(1)}Cr</td>
-                    </tr>
-                `;
-            });
-
-            tablesHTML += `
-                            </tbody>
-                            <tbody id="${tableId}-hidden" class="hidden-rows" style="display: none;">
-            `;
-
-            // Add hidden rows
-            hiddenRows.forEach(player => {
-                const basePrice = player.Base || 0;
-                const purchasePrice = player.Price || 0;
-
-                tablesHTML += `
-                    <tr>
-                        <td class="player-name">${player.Player}</td>
-                        <td class="base-price">₹${basePrice.toFixed(1)}Cr</td>
-                        <td class="purchase-price">₹${purchasePrice.toFixed(1)}Cr</td>
-                    </tr>
-                `;
-            });
-
-            tablesHTML += `
-                            </tbody>
-                        </table>
-            `;
-
-            // Add expand/collapse button if there are hidden rows
-            if (hiddenRows.length > 0) {
-                tablesHTML += `
-                    <div class="table-expand-controls">
-                        <button class="expand-btn" onclick="toggleTableRows('${tableId}')" style="color: ${teamColor}; border-color: ${teamColor}">
-                            <span class="expand-text">Show All (${sortedPlayers.length})</span>
-                            <span class="collapse-text" style="display: none">Show Less</span>
-                            <span class="expand-icon">▼</span>
-                        </button>
-                </div>
-                `;
-            }
-
-            tablesHTML += `
-                </div>
-                </div>
-            `;
-        });
-
-        tablesHTML += '</div>';
-        container.innerHTML = tablesHTML;
-
-        // Add global toggle function to window for onclick handlers
-        window.toggleTableRows = function(tableId) {
-            const hiddenRows = document.getElementById(`${tableId}-hidden`);
-            const button = document.querySelector(`[onclick="toggleTableRows('${tableId}')"]`);
-            const expandText = button.querySelector('.expand-text');
-            const collapseText = button.querySelector('.collapse-text');
-            const expandIcon = button.querySelector('.expand-icon');
-            
-            // Check if we're on desktop (where sync behavior should be enabled)
-            const isDesktop = window.innerWidth > 768;
-            
-            if (hiddenRows.style.display === 'none') {
-                // Expanding - show hidden rows
-                hiddenRows.style.display = 'table-row-group';
-                expandText.style.display = 'none';
-                collapseText.style.display = 'inline';
-                expandIcon.textContent = '▲';
-                
-                // On desktop, expand all other team tables too
-                if (isDesktop) {
-                    document.querySelectorAll('.expand-btn').forEach(otherButton => {
-                        if (otherButton !== button) {
-                            const otherTableId = otherButton.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
-                            if (otherTableId) {
-                                const otherHiddenRows = document.getElementById(`${otherTableId}-hidden`);
-                                const otherExpandText = otherButton.querySelector('.expand-text');
-                                const otherCollapseText = otherButton.querySelector('.collapse-text');
-                                const otherExpandIcon = otherButton.querySelector('.expand-icon');
-                                
-                                if (otherHiddenRows && otherHiddenRows.style.display === 'none') {
-                                    otherHiddenRows.style.display = 'table-row-group';
-                                    otherExpandText.style.display = 'none';
-                                    otherCollapseText.style.display = 'inline';
-                                    otherExpandIcon.textContent = '▲';
-                                }
-                            }
-                        }
-                    });
-                }
-            } else {
-                // Collapsing - hide rows
-                hiddenRows.style.display = 'none';
-                expandText.style.display = 'inline';
-                collapseText.style.display = 'none';
-                expandIcon.textContent = '▼';
-                
-                // On desktop, collapse all other team tables too
-                if (isDesktop) {
-                    document.querySelectorAll('.expand-btn').forEach(otherButton => {
-                        if (otherButton !== button) {
-                            const otherTableId = otherButton.getAttribute('onclick')?.match(/toggleTableRows\('([^']+)'\)/)?.[1];
-                            if (otherTableId) {
-                                const otherHiddenRows = document.getElementById(`${otherTableId}-hidden`);
-                                const otherExpandText = otherButton.querySelector('.expand-text');
-                                const otherCollapseText = otherButton.querySelector('.collapse-text');
-                                const otherExpandIcon = otherButton.querySelector('.expand-icon');
-                                
-                                if (otherHiddenRows && otherHiddenRows.style.display !== 'none') {
-                                    otherHiddenRows.style.display = 'none';
-                                    otherExpandText.style.display = 'inline';
-                                    otherCollapseText.style.display = 'none';
-                                    otherExpandIcon.textContent = '▼';
-                                }
-                            }
-                        }
-                    });
-                }
-                
-                // Scroll back to team tables section when collapsed
-                setTimeout(() => {
-                    const teamTablesContainer = document.getElementById('teamAuctionTables');
-                    if (teamTablesContainer) {
-                        teamTablesContainer.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                            inline: 'nearest'
-                        });
-                    }
-                }, 150); // Small delay to ensure DOM updates are complete
-            }
-        };
-    }
-
-    // Add this helper method to get theme-appropriate colors
-    getThemeColors() {
-        const isDark = document.documentElement.getAttribute('data-color-scheme') === 'dark';
-        return {
-            textColor: isDark ? '#ffffff' : '#000000',
-            subtleTextColor: isDark ? '#cccccc' : '#666666',
-            borderColor: isDark ? '#ffffff' : '#000000',
-            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)'
-        };
-    }
-}
-
-// Enhanced Filters Class
-class EnhancedFilters {
-    constructor(app) {
-        this.app = app;
-        this.filters = {
-            search: '',
-            team: '',
-            playerType: '',
-            priceRange: [0, 50],
-            overseas: null,
-            experience: ''
-        };
-        this.setupFilters();
-    }
-
-    setupFilters() {
-        // Add enhanced filter controls to player analytics tab
-        const playerAnalyticsTab = document.getElementById('player-analytics');
-        if (playerAnalyticsTab) {
-            // Enhanced filters would be added here
-        }
-    }
-}
-
-// Initialize the enhanced dashboard
-document.addEventListener('DOMContentLoaded', () => {
-    new DashboardApp();
-});
+        `

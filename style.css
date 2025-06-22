@@ -2678,3 +2678,237 @@ select.form-control {
     color: #ffffff;
 }
 
+/* Team Composition Player Cards */
+.composition-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-20);
+  margin-bottom: var(--space-32);
+}
+
+.team-composition-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-20);
+  transition: all var(--duration-fast) var(--ease-standard);
+  box-shadow: var(--shadow-sm);
+}
+
+.team-composition-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.team-composition-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-16);
+  padding-bottom: var(--space-12);
+  border-bottom: 2px solid transparent;
+}
+
+.team-composition-header h3 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.team-composition-stats {
+  display: flex;
+  gap: var(--space-12);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.team-composition-stats span {
+  background: var(--color-surface-secondary);
+  padding: var(--space-4) var(--space-8);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.players-grid {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.player-card {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr;
+  gap: var(--space-12);
+  padding: var(--space-12);
+  background: var(--color-surface-secondary);
+  border-radius: var(--radius-md);
+  align-items: center;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+  font-size: var(--font-size-sm);
+}
+
+.player-card:hover {
+  background: var(--color-hover);
+}
+
+.player-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.player-type {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-weight: var(--font-weight-medium);
+}
+
+.type-icon {
+  font-size: var(--font-size-base);
+}
+
+.player-team {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.player-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.overseas-badge, .cap-badge {
+  padding: var(--space-2) var(--space-6);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  min-width: 50px;
+}
+
+.overseas-badge.yes {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-primary);
+}
+
+.overseas-badge.no {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-success);
+}
+
+.cap-badge.capped {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.cap-badge.uncapped {
+  background: rgba(107, 114, 128, 0.15);
+  color: var(--color-text-secondary);
+}
+
+.player-price {
+  text-align: right;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+/* Team color styling for composition cards */
+.team-composition-card[data-team="Royal Smashers"] .team-composition-header {
+  border-bottom-color: #ff6384;
+}
+
+.team-composition-card[data-team="Sher-e-Punjab"] .team-composition-header {
+  border-bottom-color: #f59e0b;
+}
+
+.team-composition-card[data-team="Silly Pointers"] .team-composition-header {
+  border-bottom-color: #3b82f6;
+}
+
+.team-composition-card[data-team="The Kingsmen"] .team-composition-header {
+  border-bottom-color: #10b981;
+}
+
+.team-composition-card[data-team="Royal Smashers"] .team-composition-header h3 {
+  color: #ff6384;
+}
+
+.team-composition-card[data-team="Sher-e-Punjab"] .team-composition-header h3 {
+  color: #f59e0b;
+}
+
+.team-composition-card[data-team="Silly Pointers"] .team-composition-header h3 {
+  color: #3b82f6;
+}
+
+.team-composition-card[data-team="The Kingsmen"] .team-composition-header h3 {
+  color: #10b981;
+}
+
+/* Player card headers */
+.players-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr;
+  gap: var(--space-12);
+  padding: var(--space-8) var(--space-12);
+  background: var(--color-background);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-8);
+}
+
+/* Mobile responsiveness for team composition */
+@media (max-width: 768px) {
+  .composition-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-16);
+  }
+  
+  .player-card {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    text-align: left;
+  }
+  
+  .players-header {
+    display: none; /* Hide headers on mobile for cleaner look */
+  }
+  
+  .player-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-8);
+  }
+  
+  .player-name {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-4);
+  }
+  
+  .player-details-mobile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    width: 100%;
+  }
+  
+  .player-type, .player-team, .player-status, .player-price {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  .composition-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-18);
+  }
+}
+

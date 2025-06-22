@@ -3,7 +3,7 @@
     {
       "Player": "Abdul Samad",
       "Type": "AR",
-      "Team": "LSG",
+      "Team": "Lucknow Super Giants",
       "Base": 0.3,
       "Price": 0.4,
       "Sale": "Sold",
@@ -24,7 +24,7 @@
     {
       "Player": "Aiden Markram",
       "Type": "BAT",
-      "Team": "LSG",
+      "Team": "Lucknow Super Giants",
       "Base": 2.0,
       "Price": 3.1,
       "Sale": "Sold",
@@ -45,7 +45,7 @@
     {
       "Player": "Ajinkya Rahane",
       "Type": "BAT",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 1.5,
       "Price": 5.2,
       "Sale": "Sold",
@@ -66,7 +66,7 @@
     {
       "Player": "Anshul Kamboj",
       "Type": "AR",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 0.3,
       "Price": 0.8,
       "Sale": "Sold",
@@ -87,7 +87,7 @@
     {
       "Player": "Arshdeep Singh",
       "Type": "BOWL",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 2.0,
       "Price": 11.0,
       "Sale": "Sold",
@@ -108,7 +108,7 @@
     {
       "Player": "Axar Patel",
       "Type": "AR",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 3.0,
       "Price": 9.2,
       "Sale": "Sold",
@@ -129,7 +129,7 @@
     {
       "Player": "Ayush Badoni",
       "Type": "AR",
-      "Team": "LSG",
+      "Team": "Lucknow Super Giants",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -150,7 +150,7 @@
     {
       "Player": "Dhruv Jurel",
       "Type": "BAT",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -171,7 +171,7 @@
     {
       "Player": "Harpreet Brar",
       "Type": "AR",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -192,7 +192,7 @@
     {
       "Player": "Jofra Archer",
       "Type": "BOWL",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 2.0,
       "Price": 2.5,
       "Sale": "Sold",
@@ -213,7 +213,7 @@
     {
       "Player": "Jos Buttler",
       "Type": "WK",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 2.0,
       "Price": 15.0,
       "Sale": "Sold",
@@ -234,7 +234,7 @@
     {
       "Player": "Josh Inglis",
       "Type": "WK",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 2.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -255,7 +255,7 @@
     {
       "Player": "Krunal Pandya",
       "Type": "AR",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 2.0,
       "Price": 5.0,
       "Sale": "Sold",
@@ -276,7 +276,7 @@
     {
       "Player": "Marco Jansen",
       "Type": "AR",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 1.25,
       "Price": 4.15,
       "Sale": "Sold",
@@ -297,7 +297,7 @@
     {
       "Player": "Mayank Markande",
       "Type": "BOWL",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -318,7 +318,7 @@
     {
       "Player": "Mukesh Kumar",
       "Type": "BOWL",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 2.0,
       "Price": 4.1,
       "Sale": "Sold",
@@ -339,7 +339,7 @@
     {
       "Player": "Noor Ahmad",
       "Type": "BOWL",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 2.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -360,7 +360,7 @@
     {
       "Player": "Prasidh Krishna",
       "Type": "BOWL",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 2.0,
       "Price": 5.4,
       "Sale": "Sold",
@@ -381,7 +381,7 @@
     {
       "Player": "Quinton de Kock",
       "Type": "WK",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 2.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -402,7 +402,7 @@
     {
       "Player": "Rajat Patidar",
       "Type": "BAT",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 3.0,
       "Price": 4.1,
       "Sale": "Sold",
@@ -423,7 +423,7 @@
     {
       "Player": "Riyan Parag",
       "Type": "AR",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 3.0,
       "Price": 4.9,
       "Sale": "Sold",
@@ -444,7 +444,7 @@
     {
       "Player": "Ruturaj Gaikwad",
       "Type": "BAT",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 3.0,
       "Price": 13.5,
       "Sale": "Sold",
@@ -465,7 +465,7 @@
     {
       "Player": "Sanju Samson",
       "Type": "BAT",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 3.0,
       "Price": 4.9,
       "Sale": "Sold",
@@ -486,7 +486,7 @@
     {
       "Player": "Trent Boult",
       "Type": "BOWL",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 2.0,
       "Price": 2.3,
       "Sale": "Sold",
@@ -507,7 +507,7 @@
     {
       "Player": "Venkatesh Iyer",
       "Type": "AR",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 2.0,
       "Price": 15.5,
       "Sale": "Sold",
@@ -528,7 +528,7 @@
     {
       "Player": "Virat Kohli",
       "Type": "BAT",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 3.0,
       "Price": 23.0,
       "Sale": "Sold",
@@ -551,7 +551,7 @@
     {
       "Player": "Abhinav Manohar",
       "Type": "BAT",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 0.3,
       "Price": 1.6,
       "Sale": "Sold",
@@ -572,7 +572,7 @@
     {
       "Player": "Abhishek Sharma",
       "Type": "AR",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 3.0,
       "Price": 10.0,
       "Sale": "Sold",
@@ -593,7 +593,7 @@
     {
       "Player": "Abishek Porel",
       "Type": "WK",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 3.0,
       "Price": 4.9,
       "Sale": "Sold",
@@ -614,7 +614,7 @@
     {
       "Player": "Angkrish Raghuvanshi",
       "Type": "BAT",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 0.3,
       "Price": 2.0,
       "Sale": "Sold",
@@ -635,7 +635,7 @@
     {
       "Player": "Bhuvneshwar Kumar",
       "Type": "BOWL",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 2.0,
       "Price": 10.0,
       "Sale": "Sold",
@@ -656,7 +656,7 @@
     {
       "Player": "Deepak Chahar",
       "Type": "BOWL",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 2.0,
       "Price": 4.0,
       "Sale": "Sold",
@@ -677,7 +677,7 @@
     {
       "Player": "Devdutt Padikkal",
       "Type": "BAT",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 2.0,
       "Price": 3.2,
       "Sale": "Sold",
@@ -698,7 +698,7 @@
     {
       "Player": "Glenn Maxwell",
       "Type": "AR",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 2.0,
       "Price": 7.0,
       "Sale": "Sold",
@@ -719,7 +719,7 @@
     {
       "Player": "Hardik Pandya",
       "Type": "AR",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 3.0,
       "Price": 9.0,
       "Sale": "Sold",
@@ -740,7 +740,7 @@
     {
       "Player": "Harshit Rana",
       "Type": "BOWL",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -761,7 +761,7 @@
     {
       "Player": "Heinrich Klaasen",
       "Type": "BAT",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -782,7 +782,7 @@
     {
       "Player": "Kuldeep Yadav",
       "Type": "BOWL",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 3.0,
       "Price": 5.0,
       "Sale": "Sold",
@@ -803,7 +803,7 @@
     {
       "Player": "Liam Livingstone",
       "Type": "AR",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 2.0,
       "Price": 5.2,
       "Sale": "Sold",
@@ -824,7 +824,7 @@
     {
       "Player": "Mitchell Marsh",
       "Type": "AR",
-      "Team": "LSG",
+      "Team": "Lucknow Super Giants",
       "Base": 2.0,
       "Price": 2.0,
       "Sale": "Sold",
@@ -845,7 +845,7 @@
     {
       "Player": "Nitish Kumar Reddy",
       "Type": "AR",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 3.0,
       "Price": 7.8,
       "Sale": "Sold",
@@ -866,7 +866,7 @@
     {
       "Player": "Phil Salt",
       "Type": "WK",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 2.0,
       "Price": 10.0,
       "Sale": "Sold",
@@ -887,7 +887,7 @@
     {
       "Player": "Rahul Tewatia",
       "Type": "AR",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -908,7 +908,7 @@
     {
       "Player": "Rahul Tripathi",
       "Type": "BAT",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 0.75,
       "Price": 2.9,
       "Sale": "Sold",
@@ -929,7 +929,7 @@
     {
       "Player": "Rashid Khan",
       "Type": "BOWL",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -950,7 +950,7 @@
     {
       "Player": "Ravindra Jadeja",
       "Type": "AR",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 3.0,
       "Price": 4.3,
       "Sale": "Sold",
@@ -971,7 +971,7 @@
     {
       "Player": "Rinku Singh",
       "Type": "BAT",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 3.0,
       "Price": 8.2,
       "Sale": "Sold",
@@ -992,7 +992,7 @@
     {
       "Player": "Rishabh Pant",
       "Type": "BAT",
-      "Team": "LSG",
+      "Team": "Lucknow Super Giants",
       "Base": 2.0,
       "Price": 22.5,
       "Sale": "Sold",
@@ -1013,7 +1013,7 @@
     {
       "Player": "Sam Curran",
       "Type": "AR",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 2.0,
       "Price": 2.0,
       "Sale": "Sold",
@@ -1034,7 +1034,7 @@
     {
       "Player": "Spencer Johnson",
       "Type": "BOWL",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 2.0,
       "Price": 2.0,
       "Sale": "Sold",
@@ -1055,7 +1055,7 @@
     {
       "Player": "Washington Sundar",
       "Type": "AR",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 2.0,
       "Price": 5.6,
       "Sale": "Sold",
@@ -1076,7 +1076,7 @@
     {
       "Player": "Yashasvi Jaiswal",
       "Type": "AR",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 3.0,
       "Price": 8.8,
       "Sale": "Sold",
@@ -1099,7 +1099,7 @@
     {
       "Player": "Adam Zampa",
       "Type": "BOWL",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 2.0,
       "Price": 2.0,
       "Sale": "Sold",
@@ -1120,7 +1120,7 @@
     {
       "Player": "Ashutosh Sharma",
       "Type": "AR",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1141,7 +1141,7 @@
     {
       "Player": "Avesh Khan",
       "Type": "BOWL",
-      "Team": "LSG",
+      "Team": "Lucknow Super Giants",
       "Base": 2.0,
       "Price": 2.0,
       "Sale": "Sold",
@@ -1162,7 +1162,7 @@
     {
       "Player": "C Andre Siddarth",
       "Type": "BAT",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1183,7 +1183,7 @@
     {
       "Player": "Devon Conway",
       "Type": "BAT",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 2.0,
       "Price": 3.4,
       "Sale": "Sold",
@@ -1204,7 +1204,7 @@
     {
       "Player": "Gerald Coetzee",
       "Type": "BOWL",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 1.25,
       "Price": 1.25,
       "Sale": "Sold",
@@ -1225,7 +1225,7 @@
     {
       "Player": "Glenn Phillips",
       "Type": "BAT",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 2.0,
       "Price": 2.0,
       "Sale": "Sold",
@@ -1246,7 +1246,7 @@
     {
       "Player": "Harnoor Singh",
       "Type": "BAT",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1267,7 +1267,7 @@
     {
       "Player": "Harshal Patel",
       "Type": "AR",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 2.0,
       "Price": 8.4,
       "Sale": "Sold",
@@ -1288,7 +1288,7 @@
     {
       "Player": "Jasprit Bumrah",
       "Type": "BOWL",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 3.0,
       "Price": 10.0,
       "Sale": "Sold",
@@ -1309,7 +1309,7 @@
     {
       "Player": "Khaleel Ahmed",
       "Type": "BOWL",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 2.0,
       "Price": 6.6,
       "Sale": "Sold",
@@ -1330,7 +1330,7 @@
     {
       "Player": "KL Rahul",
       "Type": "WK",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 2.0,
       "Price": 20.5,
       "Sale": "Sold",
@@ -1351,7 +1351,7 @@
     {
       "Player": "Mitchell Starc",
       "Type": "BOWL",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 2.0,
       "Price": 6.6,
       "Sale": "Sold",
@@ -1372,7 +1372,7 @@
     {
       "Player": "Moeen Ali",
       "Type": "AR",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 2.0,
       "Price": 2.4,
       "Sale": "Sold",
@@ -1393,7 +1393,7 @@
     {
       "Player": "MS Dhoni",
       "Type": "WK",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 3.0,
       "Price": 3.1,
       "Sale": "Sold",
@@ -1414,7 +1414,7 @@
     {
       "Player": "Nitish Rana",
       "Type": "AR",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 1.5,
       "Price": 4.0,
       "Sale": "Sold",
@@ -1435,7 +1435,7 @@
     {
       "Player": "Pat Cummins",
       "Type": "AR",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -1456,7 +1456,7 @@
     {
       "Player": "Ravi Bishnoi",
       "Type": "BOWL",
-      "Team": "LSG",
+      "Team": "Lucknow Super Giants",
       "Base": 3.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -1477,7 +1477,7 @@
     {
       "Player": "Rohit Sharma",
       "Type": "BAT",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 3.0,
       "Price": 20.5,
       "Sale": "Sold",
@@ -1498,7 +1498,7 @@
     {
       "Player": "Suryakumar Yadav",
       "Type": "BAT",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 3.0,
       "Price": 18.0,
       "Sale": "Sold",
@@ -1519,7 +1519,7 @@
     {
       "Player": "T Natarajan",
       "Type": "BOWL",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 2.0,
       "Price": 10.5,
       "Sale": "Sold",
@@ -1540,7 +1540,7 @@
     {
       "Player": "Vijaykumar Vyshak",
       "Type": "BOWL",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1561,7 +1561,7 @@
     {
       "Player": "Will Jacks",
       "Type": "AR",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 2.0,
       "Price": 2.6,
       "Sale": "Sold",
@@ -1582,7 +1582,7 @@
     {
       "Player": "Yuzvendra Chahal",
       "Type": "BOWL",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 2.0,
       "Price": 18.5,
       "Sale": "Sold",
@@ -1605,7 +1605,7 @@
     {
       "Player": "Akash Madhwal",
       "Type": "BOWL",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1626,7 +1626,7 @@
     {
       "Player": "Azmatullah Omarzai",
       "Type": "AR",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 1.5,
       "Price": 1.5,
       "Sale": "Sold",
@@ -1647,7 +1647,7 @@
     {
       "Player": "Faf du Plessis",
       "Type": "BAT",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 2.0,
       "Price": 5.6,
       "Sale": "Sold",
@@ -1668,7 +1668,7 @@
     {
       "Player": "Ishan Kishan",
       "Type": "WK",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 2.0,
       "Price": 12.0,
       "Sale": "Sold",
@@ -1689,7 +1689,7 @@
     {
       "Player": "Jake Fraser-McGurk",
       "Type": "BAT",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 2.0,
       "Price": 12.5,
       "Sale": "Sold",
@@ -1710,7 +1710,7 @@
     {
       "Player": "Kagiso Rabada",
       "Type": "BOWL",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 2.0,
       "Price": 8.6,
       "Sale": "Sold",
@@ -1731,7 +1731,7 @@
     {
       "Player": "Karn Sharma",
       "Type": "BOWL",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 0.5,
       "Price": 1.1,
       "Sale": "Sold",
@@ -1752,7 +1752,7 @@
     {
       "Player": "Karun Nair",
       "Type": "BAT",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 0.3,
       "Price": 0.4,
       "Sale": "Sold",
@@ -1773,7 +1773,7 @@
     {
       "Player": "Marcus Stoinis",
       "Type": "AR",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 2.0,
       "Price": 2.0,
       "Sale": "Sold",
@@ -1794,7 +1794,7 @@
     {
       "Player": "Mohammed Shami",
       "Type": "BOWL",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 2.0,
       "Price": 17.0,
       "Sale": "Sold",
@@ -1815,7 +1815,7 @@
     {
       "Player": "Mohit Sharma",
       "Type": "BOWL",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 0.5,
       "Price": 0.5,
       "Sale": "Sold",
@@ -1836,7 +1836,7 @@
     {
       "Player": "Naman Dhir",
       "Type": "AR",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1857,7 +1857,7 @@
     {
       "Player": "Nehal Wadhera",
       "Type": "BAT",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1878,7 +1878,7 @@
     {
       "Player": "Rachin Ravindra",
       "Type": "AR",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 1.5,
       "Price": 1.5,
       "Sale": "Sold",
@@ -1899,7 +1899,7 @@
     {
       "Player": "Rahmanullah Gurbaz",
       "Type": "WK",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 2.0,
       "Price": 3.0,
       "Sale": "Sold",
@@ -1920,7 +1920,7 @@
     {
       "Player": "Rasikh Salam",
       "Type": "BOWL",
-      "Team": "RCB",
+      "Team": "Royal Challengers Bangalore",
       "Base": 0.3,
       "Price": 0.8,
       "Sale": "Sold",
@@ -1941,7 +1941,7 @@
     {
       "Player": "Ravichandran Ashwin",
       "Type": "AR",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 2.0,
       "Price": 5.6,
       "Sale": "Sold",
@@ -1962,7 +1962,7 @@
     {
       "Player": "Sameer Rizvi",
       "Type": "AR",
-      "Team": "DC",
+      "Team": "Delhi Capitals",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -1983,7 +1983,7 @@
     {
       "Player": "Shivam Dube",
       "Type": "AR",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 3.0,
       "Price": 4.0,
       "Sale": "Sold",
@@ -2004,7 +2004,7 @@
     {
       "Player": "Shreyas Iyer",
       "Type": "BAT",
-      "Team": "PK",
+      "Team": "Punjab Kings",
       "Base": 2.0,
       "Price": 28.0,
       "Sale": "Sold",
@@ -2025,7 +2025,7 @@
     {
       "Player": "Shubman Gill",
       "Type": "BAT",
-      "Team": "GT",
+      "Team": "Gujarat Titans",
       "Base": 3.0,
       "Price": 15.0,
       "Sale": "Sold",
@@ -2046,7 +2046,7 @@
     {
       "Player": "Simarjeet Singh",
       "Type": "BOWL",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -2067,7 +2067,7 @@
     {
       "Player": "Tilak Varma",
       "Type": "AR",
-      "Team": "MI",
+      "Team": "Mumbai Indians",
       "Base": 3.0,
       "Price": 6.0,
       "Sale": "Sold",
@@ -2088,7 +2088,7 @@
     {
       "Player": "Travis Head",
       "Type": "BAT",
-      "Team": "SRH",
+      "Team": "Sunrisers Hyderabad",
       "Base": 3.0,
       "Price": 16.5,
       "Sale": "Sold",
@@ -2109,7 +2109,7 @@
     {
       "Player": "Vaibhav Suryavanshi",
       "Type": "BAT",
-      "Team": "RR",
+      "Team": "Rajasthan Royals",
       "Base": 0.3,
       "Price": 0.3,
       "Sale": "Sold",
@@ -2130,7 +2130,7 @@
     {
       "Player": "Varun Chakravarthy",
       "Type": "AR",
-      "Team": "KKR",
+      "Team": "Kolkata Knight Riders",
       "Base": 3.0,
       "Price": 5.0,
       "Sale": "Sold",
@@ -2151,7 +2151,7 @@
     {
       "Player": "Vijay Shankar",
       "Type": "AR",
-      "Team": "CSK",
+      "Team": "Chennai Super Kings",
       "Base": 0.3,
       "Price": 0.8,
       "Sale": "Sold",
