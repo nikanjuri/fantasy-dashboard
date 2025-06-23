@@ -317,16 +317,48 @@ pre code {
 }
 
 .btn--primary {
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
   color: var(--color-btn-primary-text);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  transition: all var(--duration-normal) var(--ease-standard);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  min-width: 120px;
 }
 
 .btn--primary:hover {
-  background-color: var(--color-primary-hover);
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .btn--primary:active {
-  background-color: var(--color-primary-active);
+  background: linear-gradient(135deg, var(--color-primary-active) 0%, var(--color-primary-active) 100%);
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--primary:focus {
+  outline: none;
+  box-shadow: var(--focus-ring), var(--shadow-md);
+}
+
+.btn--primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+  transition: left var(--duration-normal) var(--ease-standard);
+}
+
+.btn--primary:hover::before {
+  left: 100%;
 }
 
 .btn--secondary {
@@ -3453,14 +3485,57 @@ select.form-control {
     background-image: var(--select-caret-light);
 }
 
-/* Clear All button styling to match dashboard buttons and filter height */
+/* Clear All button styling to match enhanced theme buttons */
 .filter-controls .btn {
     white-space: nowrap;
     flex-shrink: 0;
     height: 40px; /* Match the height of filter inputs */
-    padding: var(--space-8) var(--space-12);
+    padding: var(--space-8) var(--space-16);
     align-items: center;
     justify-content: center;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    color: var(--color-btn-primary-text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-standard);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    min-width: 100px;
+}
+
+.filter-controls .btn:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.filter-controls .btn:focus {
+    outline: none;
+    box-shadow: var(--focus-ring), var(--shadow-md);
+}
+
+.filter-controls .btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-controls .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+    transition: left var(--duration-normal) var(--ease-standard);
+}
+
+.filter-controls .btn:hover::before {
+    left: 100%;
 }
 
 /* Results counter styling */
@@ -3486,38 +3561,77 @@ select.form-control {
     box-sizing: border-box;
 }
 
-.table-controls .btn {
+.table-controls .btn,
+.table-controls .btn.btn--outline {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--space-8);
-    padding: var(--space-8) var(--space-16);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-base);
-    color: var(--color-text);
+    padding: var(--space-12) var(--space-20) !important;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%) !important;
+    border: 1px solid var(--color-primary) !important;
+    border-radius: var(--radius-md);
+    color: var(--color-btn-primary-text) !important;
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-semibold);
     cursor: pointer;
-    transition: all var(--duration-fast) var(--ease-standard);
+    transition: all var(--duration-normal) var(--ease-standard);
     text-decoration: none;
     margin: 0 auto;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    min-width: 180px;
 }
 
-.table-controls .btn:hover {
-    background-color: var(--color-secondary);
-    border-color: var(--color-primary);
+.table-controls .btn:hover,
+.table-controls .btn.btn--outline:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-btn-primary-text) !important;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
 }
 
-.table-controls .btn:focus {
+.table-controls .btn:focus,
+.table-controls .btn.btn--outline:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: var(--focus-ring);
+    border-color: var(--color-primary) !important;
+    box-shadow: var(--focus-ring), var(--shadow-md);
+}
+
+.table-controls .btn:active,
+.table-controls .btn.btn--outline:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.table-controls .btn::before,
+.table-controls .btn.btn--outline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+    transition: left var(--duration-normal) var(--ease-standard);
+}
+
+.table-controls .btn:hover::before,
+.table-controls .btn.btn--outline:hover::before {
+    left: 100%;
 }
 
 .table-controls .expand-icon {
-    font-size: var(--font-size-xs);
-    transition: transform var(--duration-fast) var(--ease-standard);
+    font-size: var(--font-size-sm);
+    transition: transform var(--duration-normal) var(--ease-standard);
+    opacity: 0.8;
+}
+
+.table-controls .btn:hover .expand-icon {
+    opacity: 1;
+    transform: scale(1.1);
 }
 
 /* Dark theme support for table controls */
@@ -3526,13 +3640,45 @@ select.form-control {
 }
 
 [data-color-scheme="dark"] .table-controls .btn {
-    background-color: var(--color-surface);
+    background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-secondary) 100%);
     border-color: var(--color-border);
     color: var(--color-text);
 }
 
 [data-color-scheme="dark"] .table-controls .btn:hover {
-    background-color: var(--color-secondary);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    color: var(--color-btn-primary-text);
+}
+
+[data-color-scheme="dark"] .table-controls .btn::before {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+}
+
+/* Dark theme support for enhanced buttons */
+[data-color-scheme="dark"] .btn--primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    border-color: var(--color-primary);
+}
+
+[data-color-scheme="dark"] .btn--primary:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
+}
+
+[data-color-scheme="dark"] .btn--primary::before {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+}
+
+[data-color-scheme="dark"] .filter-controls .btn {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    border-color: var(--color-primary);
+}
+
+[data-color-scheme="dark"] .filter-controls .btn:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%);
+}
+
+[data-color-scheme="dark"] .filter-controls .btn::before {
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
 }
 
 /* Mobile responsive */
@@ -3576,8 +3722,9 @@ select.form-control {
     }
     
     .table-controls .btn {
-        padding: var(--space-6) var(--space-12);
+        padding: var(--space-10) var(--space-16);
         font-size: var(--font-size-xs);
+        min-width: 160px;
     }
 }
 
