@@ -47,7 +47,7 @@
         <nav class="dashboard-nav">
             <div class="container">
                 <div class="tab-list flex">
-                    <button class="tab-button" data-tab="team-overview">
+                    <button class="tab-button active" data-tab="team-overview">
                         <span class="tab-text">Overview</span>
                     </button>
                     <button class="tab-button" data-tab="match-analysis">
@@ -76,7 +76,7 @@
         <main class="dashboard-main">
             <div class="container">
                 <!-- Team Overview Tab (Enhanced) -->
-                <div class="tab-content" id="team-overview">
+                <div class="tab-content active" id="team-overview">
                     <div class="section-header">
                         <h2>Fantasy League Overview</h2>
                         <p>Current Standings, Leaderboards & Smart Insights</p>
@@ -362,19 +362,30 @@
                                 <table class="data-table" id="playersTable">
                                     <thead>
                                         <tr>
-                                            <th data-sort="player">Player</th>
-                                            <th data-sort="team">Team</th>
+                                            <th>Player</th>
+                                            <th>Team</th>
+                                            <th data-sort="matchesPlayed">Matches</th>
                                             <th data-sort="totalPoints">Total Points</th>
                                             <th data-sort="runs">Runs</th>
-                                            <th data-sort="wickets">Wickets</th>
-                                            <th data-sort="catches">Catches</th>
+                                            <th data-sort="fours">4s</th>
+                                            <th data-sort="sixes">6s</th>
                                             <th data-sort="strikeRate">Strike Rate</th>
+                                            <th data-sort="wickets">Wickets</th>
+                                            <th data-sort="dots">Dots</th>
                                             <th data-sort="economyRate">Economy</th>
                                         </tr>
                                     </thead>
                                     <tbody id="playersTableBody">
                                     </tbody>
                                 </table>
+                            </div>
+                            <!-- Players Table Controls -->
+                            <div class="table-controls" id="playersTableControls" style="display: none;">
+                                <button class="btn btn--outline btn--sm" id="showAllPlayersBtn">
+                                    <span class="expand-text">Show All Players</span>
+                                    <span class="collapse-text" style="display: none;">Show Less</span>
+                                    <span class="expand-icon">▼</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -487,7 +498,6 @@
         <span class="theme-icon dark-icon" style="display: none;">🌙</span>
     </button>
 
-    
     <script src="app.js"></script>
 </body>
 </html>

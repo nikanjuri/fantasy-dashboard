@@ -68,7 +68,6 @@ class DashboardApp {
             darkIcon.style.visibility = 'hidden';
             console.log('🌙 Dark mode: showing light bulb icon');
         } else {
-
             // In light mode, show moon (🌙) to switch to dark mode
             lightIcon.style.display = 'none';
             lightIcon.style.opacity = '0';
@@ -119,21 +118,11 @@ class DashboardApp {
             this.updateAllDashboards();
             
             this.hideLoading();
-            
-            // Ensure theme toggle works after everything is loaded
-            setTimeout(() => {
-                this.ensureThemeToggle();
-            }, 1000);
             console.log('✅ Dashboard initialized successfully!');
             
         } catch (error) {
             console.error('❌ Error initializing dashboard:', error);
             this.hideLoading();
-            
-            // Ensure theme toggle works after everything is loaded
-            setTimeout(() => {
-                this.ensureThemeToggle();
-            }, 1000);
             this.showError(`Failed to initialize dashboard: ${error.message}`);
         }
     }
@@ -302,8 +291,12 @@ class DashboardApp {
                                     totalPoints: 0,
                                     matches: 0,
                                     runs: 0,
-                    wickets: 0,
-                    catches: 0,
+                                    balls: 0,
+                                    fours: 0,
+                                    sixes: 0,
+                                    wickets: 0,
+                                    dots: 0,
+                                    catches: 0,
                                     averagePoints: 0
                                 };
                             }
@@ -311,7 +304,11 @@ class DashboardApp {
                             playerStats[playerKey].totalPoints += safeNumber(player.Points);
                             playerStats[playerKey].matches += 1;
                             playerStats[playerKey].runs += safeNumber(player.Score);
+                            playerStats[playerKey].balls += safeNumber(player.Balls);
+                            playerStats[playerKey].fours += safeNumber(player['4s']);
+                            playerStats[playerKey].sixes += safeNumber(player['6s']);
                             playerStats[playerKey].wickets += safeNumber(player.Wickets);
+                            playerStats[playerKey].dots += safeNumber(player['0s']);
                             playerStats[playerKey].catches += safeNumber(player.Catch) + safeNumber(player.Runout);
                             playerStats[playerKey].averagePoints = playerStats[playerKey].totalPoints / playerStats[playerKey].matches;
                         });
@@ -471,6 +468,9 @@ class DashboardApp {
         this.updateScoringRules();
         this.updateMatchSelector();
         this.setupCharts();
+        this.initializePlayerFilters();
+        this.renderPlayersTable();
+        this.renderLeaderboards();
     }
 
     updateTeamOverview() {
@@ -505,7 +505,6 @@ class DashboardApp {
         if (mostExpensivePlayer) {
             document.getElementById('mostExpensivePlayer').textContent = mostExpensivePlayer.Player;
         } else {
-
             document.getElementById('mostExpensivePlayer').textContent = '-';
         }
 
@@ -769,7 +768,6 @@ class DashboardApp {
                 collapseText.style.display = 'inline';
                 expandIcon.textContent = '▲';
             } else {
-
                 hiddenRows.style.display = 'none';
                 expandText.style.display = 'inline';
                 collapseText.style.display = 'none';
@@ -858,6 +856,7 @@ class DashboardApp {
                             <div class="player-card">
                                 <div class="player-name">${player.Player}</div>
                                 <div class="player-type">
+                                    <span class="type-icon">${getTypeIcon(player.Type)}</span>
                                     <span>${getTypeLabel(player.Type)}</span>
                                 </div>
                                 <div class="player-team">${player.Team || 'N/A'}</div>
@@ -1247,11 +1246,6 @@ class DashboardApp {
         if (targetTab && targetButton) {
             targetTab.classList.add('active');
             targetButton.classList.add('active');
-            
-            // Update URL hash without triggering page reload
-            if (window.location.hash !== `#${tabId}`) {
-                history.replaceState(null, null, `#${tabId}`);
-            }
         }
     }
 
@@ -1260,7 +1254,6 @@ class DashboardApp {
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
         document.documentElement.setAttribute('data-color-scheme', newTheme);
-        this.currentTheme = newTheme;
         localStorage.setItem('theme', newTheme);
         
         this.updateThemeIcon();
@@ -1289,27 +1282,6 @@ class DashboardApp {
         const loadingDiv = document.getElementById('loadingIndicator');
         if (loadingDiv) {
             loadingDiv.remove();
-        }
-    }
-
-    ensureThemeToggle() {
-        console.log('🔧 Ensuring theme toggle works...');
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            // Remove any existing listeners
-            const newButton = themeToggle.cloneNode(true);
-            themeToggle.parentNode.replaceChild(newButton, themeToggle);
-            
-            // Add fresh event listener
-            newButton.addEventListener('click', (e) => {
-                console.log('🎯 Theme toggle clicked (ensured)!');
-                e.preventDefault();
-                e.stopPropagation();
-                this.toggleTheme();
-            });
-            console.log('✅ Theme toggle ensured and working');
-        } else {
-            console.error('❌ Theme toggle button still not found!');
         }
     }
 
@@ -1346,26 +1318,11 @@ class DashboardApp {
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
         
-        // Check URL hash to determine initial tab
-        const urlHash = window.location.hash.substring(1); // Remove #
-        let initialTab = urlHash || 'team-overview'; // Default to overview if no hash
-        
-        // Validate that the tab exists
-        const validTab = document.getElementById(initialTab);
-        if (!validTab) {
-            initialTab = 'team-overview'; // Fallback to overview if invalid tab
+        // Initialize first tab as active
+        if (tabButtons.length > 0 && tabContents.length > 0) {
+            tabButtons[0].classList.add('active');
+            tabContents[0].classList.add('active');
         }
-        
-        // Initialize the correct tab based on URL hash
-        this.switchTab(initialTab);
-        
-        // Listen for hash changes (back/forward button support)
-        window.addEventListener('hashchange', () => {
-            const newHash = window.location.hash.substring(1);
-            if (newHash && document.getElementById(newHash)) {
-                this.switchTab(newHash);
-            }
-        });
         
         // Add click listeners for tab switching with mobile support
         tabButtons.forEach(button => {
@@ -1380,7 +1337,6 @@ class DashboardApp {
                 } else if (e.target.classList.contains('tab-text')) {
                     targetTab = e.target.parentElement.dataset.tab;
                 } else {
-
                     targetTab = e.target.closest('.tab-button')?.dataset.tab;
                 }
                 
@@ -1393,7 +1349,7 @@ class DashboardApp {
             button.addEventListener('touchend', handleTabClick);
         });
         
-        console.log('✅ Tabs initialized successfully with URL hash support and mobile compatibility');
+        console.log('✅ Tabs initialized successfully with mobile support');
     }
 
     setupEventListeners() {
@@ -1402,20 +1358,8 @@ class DashboardApp {
         // Theme toggle button
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
-            console.log('✅ Theme toggle button found, adding listener...');
-            themeToggle.addEventListener('click', (e) => {
-                console.log('🎯 Theme toggle clicked!');
-                e.preventDefault();
-                e.stopPropagation();
-                try {
-                    this.toggleTheme();
-                } catch (error) {
-                    console.error('❌ Error toggling theme:', error);
-                }
-            });
+            themeToggle.addEventListener('click', () => this.toggleTheme());
             console.log('✅ Theme toggle listener added');
-        } else {
-            console.error('❌ Theme toggle button not found!');
         }
         
         // Generate Best XI button
@@ -1432,7 +1376,6 @@ class DashboardApp {
                 if (e.target.value) {
                     this.updateMatchDetails(parseInt(e.target.value));
                 } else {
-
                     // Clear match details when "Select Match" is chosen
                     this.clearMatchDetails();
                 }
@@ -1456,22 +1399,306 @@ class DashboardApp {
             positionFilter.addEventListener('change', (e) => this.handlePositionFilter(e.target.value));
         }
         
+        const performanceFilter = document.getElementById('performanceFilter');
+        if (performanceFilter) {
+            performanceFilter.addEventListener('change', (e) => this.handlePerformanceFilter(e.target.value));
+        }
+        
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', () => this.clearAllFilters());
+        }
+        
+        // Show All Players button
+        const showAllPlayersBtn = document.getElementById('showAllPlayersBtn');
+        if (showAllPlayersBtn) {
+            showAllPlayersBtn.addEventListener('click', () => this.toggleShowAllPlayers());
+        }
+        
         console.log('✅ All event listeners setup complete');
     }
 
     handlePlayerSearch(searchTerm) {
         console.log('🔍 Player search:', searchTerm);
-        // Add search functionality here if needed
+        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
+        this.currentFilters.search = searchTerm.toLowerCase();
+        this.applyFilters();
+        this.updateSearchResultsCount();
     }
 
     handleTeamFilter(team) {
         console.log('🏏 Team filter:', team);
-        // Add team filtering functionality here if needed
+        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
+        this.currentFilters.team = team;
+        this.applyFilters();
     }
 
     handlePositionFilter(position) {
         console.log('📍 Position filter:', position);
-        // Add position filtering functionality here if needed
+        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
+        this.currentFilters.position = position;
+        this.applyFilters();
+    }
+
+    handlePerformanceFilter(performance) {
+        console.log('🎯 Performance filter:', performance);
+        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
+        this.currentFilters.performance = performance;
+        this.applyFilters();
+    }
+
+    applyFilters() {
+        if (!this.data.players) return;
+        
+        let filtered = [...this.data.players];
+        
+        // Apply search filter
+        if (this.currentFilters.search) {
+            filtered = filtered.filter(player => 
+                player.player.toLowerCase().includes(this.currentFilters.search)
+            );
+        }
+        
+        // Apply team filter
+        if (this.currentFilters.team) {
+            filtered = filtered.filter(player => player.team === this.currentFilters.team);
+        }
+        
+        // Apply position filter (need to get position from player profiles)
+        if (this.currentFilters.position) {
+            filtered = filtered.filter(player => {
+                const profile = this.data.playerProfiles[player.player];
+                return profile && this.getPlayerPosition(profile.Type) === this.currentFilters.position;
+            });
+        }
+        
+        // Apply performance filter
+        if (this.currentFilters.performance) {
+            filtered = this.applyPerformanceFilter(filtered, this.currentFilters.performance);
+        }
+        
+        this.filteredPlayers = filtered;
+        
+        // Reset pagination when filters are applied
+        this.showAllPlayers = false;
+        
+        this.renderFilteredPlayersTable();
+        this.updateSearchResultsCount();
+    }
+
+    getPlayerPosition(type) {
+        const typeMap = {
+            'BAT': 'Batsman',
+            'BOWL': 'Bowler', 
+            'AR': 'All-rounder',
+            'WK': 'Wicket-keeper'
+        };
+        return typeMap[type] || type;
+    }
+
+    applyPerformanceFilter(players, performance) {
+        switch (performance) {
+            case 'top':
+                return players.sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 20);
+            case 'rising':
+                // Players with good recent form (simplified)
+                return players.filter(p => p.totalPoints > 150).sort((a, b) => b.averagePoints - a.averagePoints);
+            case 'consistent':
+                // Players with consistent performance
+                return players.filter(p => p.matches >= 5 && p.averagePoints > 30);
+            case 'value':
+                // Value picks based on auction data
+                return players.filter(p => {
+                    const profile = this.data.playerProfiles[p.player];
+                    return profile && (profile.Price || 0) < 8 && p.totalPoints > 100;
+                });
+            default:
+                return players;
+        }
+    }
+
+    calculateStrikeRate(player) {
+        // Get comprehensive strike rate data from Fantasy_Points_2025.json
+        if (!this.rawData) return '-';
+        
+        let totalRuns = 0;
+        let totalBalls = 0;
+        let matchCount = 0;
+        
+        // Traverse through all matches to find this player's strike rate data
+        Object.values(this.rawData).forEach(matchWeek => {
+            Object.values(matchWeek).forEach(match => {
+                Object.values(match).forEach(teamData => {
+                    if (teamData && teamData.Players) {
+                        let playersList = [];
+                        if (Array.isArray(teamData.Players)) {
+                            playersList = teamData.Players;
+                        } else if (teamData.Players.Players) {
+                            playersList = teamData.Players.Players;
+                        }
+                        
+                        playersList.forEach(p => {
+                            if (p.Player === player.player && p.Score !== null && p.Balls !== null) {
+                                totalRuns += p.Score || 0;
+                                totalBalls += p.Balls || 0;
+                                if (p.Score > 0 || p.Balls > 0) matchCount++;
+                            }
+                        });
+                    }
+                });
+            });
+        });
+        
+        if (totalBalls === 0) return '-';
+        const sr = (totalRuns / totalBalls) * 100;
+        return sr.toFixed(1);
+    }
+
+    calculateEconomy(player) {
+        // Get comprehensive economy rate data from Fantasy_Points_2025.json
+        if (!this.rawData) return '-';
+        
+        let totalRuns = 0;
+        let matchCount = 0;
+        
+        // Traverse through all matches to find this player's economy data
+        Object.values(this.rawData).forEach(matchWeek => {
+            Object.values(matchWeek).forEach(match => {
+                Object.values(match).forEach(teamData => {
+                    if (teamData && teamData.Players) {
+                        let playersList = [];
+                        if (Array.isArray(teamData.Players)) {
+                            playersList = teamData.Players;
+                        } else if (teamData.Players.Players) {
+                            playersList = teamData.Players.Players;
+                        }
+                        
+                        playersList.forEach(p => {
+                            if (p.Player === player.player && p.ER !== null && p.ER !== undefined) {
+                                // ER is economy rate, accumulate for average
+                                if (typeof p.ER === 'number' && p.ER > 0) {
+                                    totalRuns += p.ER;
+                                    matchCount++;
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+        
+        if (matchCount === 0) return '-';
+        const avgER = totalRuns / matchCount;
+        return avgER.toFixed(2);
+    }
+
+    updateSearchResultsCount() {
+        const countElement = document.getElementById('searchResultsCount');
+        if (!countElement) return;
+        
+        const playersToShow = this.filteredPlayers.length > 0 || this.hasActiveFilters()
+            ? this.filteredPlayers 
+            : this.data.players;
+        
+        if (this.hasActiveFilters()) {
+            countElement.textContent = `${playersToShow.length} players found`;
+            countElement.style.display = 'inline';
+        } else {
+            countElement.style.display = 'none';
+        }
+    }
+
+    updateShowAllButton() {
+        const showAllBtn = document.getElementById('showAllPlayersBtn');
+        const controls = document.getElementById('playersTableControls');
+        
+        if (!showAllBtn || !controls) return;
+
+        const playersToShow = this.filteredPlayers.length > 0 || this.hasActiveFilters()
+            ? this.filteredPlayers 
+            : this.data.players;
+
+        if (playersToShow.length > 20) {
+            controls.style.display = 'flex';
+            const expandText = showAllBtn.querySelector('.expand-text');
+            const collapseText = showAllBtn.querySelector('.collapse-text');
+            
+            if (this.showAllPlayers) {
+                expandText.style.display = 'none';
+                collapseText.style.display = 'inline';
+            } else {
+                expandText.style.display = 'inline';
+                collapseText.style.display = 'none';
+                expandText.textContent = `Show All Players (${playersToShow.length} total)`;
+            }
+        } else {
+            controls.style.display = 'none';
+        }
+    }
+
+    toggleShowAllPlayers() {
+        this.showAllPlayers = !this.showAllPlayers;
+        this.renderFilteredPlayersTable();
+    }
+
+    clearAllFilters() {
+        // Reset all filter values
+        this.currentFilters = { search: '', team: '', position: '', performance: '' };
+        this.filteredPlayers = [];
+        this.showAllPlayers = false;
+        
+        // Reset UI controls
+        const playerSearch = document.getElementById('playerSearch');
+        const teamFilter = document.getElementById('teamFilter');
+        const positionFilter = document.getElementById('positionFilter');
+        const performanceFilter = document.getElementById('performanceFilter');
+        
+        if (playerSearch) playerSearch.value = '';
+        if (teamFilter) teamFilter.value = '';
+        if (positionFilter) positionFilter.value = '';
+        if (performanceFilter) performanceFilter.value = '';
+        
+        // Update display
+        this.renderFilteredPlayersTable();
+        this.updateSearchResultsCount();
+        
+        console.log('✅ All filters cleared');
+    }
+
+    initializePlayerFilters() {
+        this.currentFilters = {
+            search: '',
+            team: '',
+            position: '',
+            performance: ''
+        };
+        this.filteredPlayers = [];
+        this.showAllPlayers = false;
+        this.sortColumn = null;
+        this.sortDirection = 'asc';
+        
+        // Initialize UI
+        this.populateTeamFilter();
+        this.renderFilteredPlayersTable();
+        this.updateSearchResultsCount();
+        
+        console.log('✅ Player filters initialized with enhanced functionality');
+    }
+
+    populateTeamFilter() {
+        const teamFilter = document.getElementById('teamFilter');
+        if (!teamFilter || !this.data.teamStandings) return;
+        
+        // Clear existing options except "All Teams"
+        teamFilter.innerHTML = '<option value="">All Teams</option>';
+        
+        // Add team options
+        Object.keys(this.data.teamStandings).forEach(team => {
+            const option = document.createElement('option');
+            option.value = team;
+            option.textContent = team;
+            teamFilter.appendChild(option);
+        });
     }
 
     filterByTeam(teamName) {
@@ -1479,29 +1706,66 @@ class DashboardApp {
         // Add team filtering functionality here if needed
     }
 
-    renderPlayersTable() {
-        console.log('📊 Rendering players table...');
+    renderFilteredPlayersTable() {
         const tableBody = document.getElementById('playersTableBody');
-        if (!tableBody) {
-            console.log('❌ playersTableBody not found, skipping table render');
-            return;
-        }
+        if (!tableBody) return;
 
-        // Simple player table rendering
-        const topPlayers = this.data.players.slice(0, 20);
-        tableBody.innerHTML = topPlayers.map(player => `
-            <tr>
-                <td><strong>${player.player}</strong></td>
-                <td>${player.team}</td>
-                <td>${player.totalPoints}</td>
-                <td>${player.runs}</td>
-                <td>${player.wickets}</td>
-                <td>${player.catches}</td>
-                <td>${player.matchesPlayed}</td>
-            </tr>
-        `).join('');
-        
-        console.log('✅ Players table rendered with', topPlayers.length, 'players');
+        // Use filtered players if filters are applied, otherwise use all players
+        const playersToShow = this.filteredPlayers.length > 0 || this.hasActiveFilters()
+            ? this.filteredPlayers 
+            : this.data.players;
+
+        // Determine how many players to show
+        const maxPlayers = this.showAllPlayers ? playersToShow.length : Math.min(20, playersToShow.length);
+        const displayPlayers = playersToShow.slice(0, maxPlayers);
+
+        console.log(`📊 Rendering ${displayPlayers.length} of ${playersToShow.length} players`);
+
+        tableBody.innerHTML = displayPlayers.map(player => {
+            // Get additional data from player profiles
+            const profile = this.data.playerProfiles[player.player];
+            const fantasyData = this.data.playerStats[player.player];
+            
+            // Calculate enhanced statistics
+            const strikeRate = this.calculateStrikeRate(player);
+            const economy = this.calculateEconomy(player);
+            
+            return `
+                <tr>
+                    <td><strong>${player.player}</strong></td>
+                    <td>${player.team}</td>
+                    <td>${player.matches || fantasyData?.matches || 0}</td>
+                    <td><strong>${player.totalPoints}</strong></td>
+                    <td>${player.runs || fantasyData?.runs || 0}</td>
+                    <td>${fantasyData?.fours || 0}</td>
+                    <td>${fantasyData?.sixes || 0}</td>
+                    <td>${strikeRate}</td>
+                    <td>${player.wickets || fantasyData?.wickets || 0}</td>
+                    <td>${fantasyData?.dots || 0}</td>
+                    <td>${economy}</td>
+                </tr>
+            `;
+        }).join('');
+
+        // Update show all button
+        this.updateShowAllButton();
+    }
+
+    hasActiveFilters() {
+        return this.currentFilters && (
+            this.currentFilters.search || 
+            this.currentFilters.team || 
+            this.currentFilters.position || 
+            this.currentFilters.performance
+        );
+    }
+
+    renderPlayersTable() {
+        // Initialize player filters if not already done
+        if (!this.currentFilters) {
+            this.initializePlayerFilters();
+        }
+        this.renderFilteredPlayersTable();
     }
 
     renderLeaderboards() {
@@ -1963,7 +2227,6 @@ function toggleTableRows(tableId) {
             }
         }
     } else {
-
         hiddenRows.style.display = '';
         expandText.style.display = 'none';
         collapseText.style.display = 'inline';
@@ -1988,7 +2251,6 @@ function toggleTableRows(tableId) {
                         otherCollapseText.style.display = 'none';
                         otherExpandIcon.textContent = '▼';
                     } else {
-
                         otherHiddenRows.style.display = '';
                         otherExpandText.style.display = 'none';
                         otherCollapseText.style.display = 'inline';
@@ -2019,7 +2281,6 @@ function toggleVFMRows() {
         collapseText.style.display = 'none';
         expandIcon.textContent = '▼';
     } else {
-
         hiddenRows.style.display = '';
         expandText.style.display = 'none';
         collapseText.style.display = 'inline';
