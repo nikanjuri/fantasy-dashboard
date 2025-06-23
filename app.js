@@ -2296,7 +2296,7 @@ class DashboardApp {
             if (hiddenRows.length > 0) {
                 tablesHTML += `
                     <div class="table-expand-controls">
-                        <button class="expand-btn" onclick="toggleTableRows('${tableId}')" style="color: ${teamColor}; border-color: ${teamColor}">
+                        <button class="expand-btn" onclick="toggleTableRows('${tableId}')" style="background-color: ${teamColor}; border-color: ${teamColor}; color: white;">
                             <span class="expand-text">Show All (${sortedPlayers.length})</span>
                             <span class="collapse-text" style="display: none">Show Less</span>
                             <span class="expand-icon">▼</span>
