@@ -295,9 +295,9 @@ class DashboardApp {
                                     balls: 0,
                                     fours: 0,
                                     sixes: 0,
-                                    wickets: 0,
+                    wickets: 0,
                                     dots: 0,
-                                    catches: 0,
+                    catches: 0,
                                     averagePoints: 0
                                 };
                             }
@@ -1877,7 +1877,7 @@ class DashboardApp {
                     <div class="performer-details">
                         <span class="stat-value">${player.runs}</span>
                         <span>${player.matches} matches</span>
-                    </div>
+                </div>
                 </div>
             `).join('');
         }
@@ -1895,7 +1895,7 @@ class DashboardApp {
                     <div class="performer-details">
                         <span class="stat-value">${player.boundaries}</span>
                         <span>${player.fours} 4s, ${player.sixes} 6s</span>
-                    </div>
+            </div>
                 </div>
             `).join('');
         }
@@ -1910,7 +1910,7 @@ class DashboardApp {
                     <div class="performer-details">
                         <span class="stat-value">${player.wickets}</span>
                         <span>${player.matches} matches</span>
-                    </div>
+                </div>
                 </div>
             `).join('');
         }
@@ -1925,7 +1925,7 @@ class DashboardApp {
                     <div class="performer-details">
                         <span class="stat-value">${player.dots}</span>
                         <span>${player.matches} matches</span>
-                    </div>
+                </div>
                 </div>
             `).join('');
         }
@@ -1989,8 +1989,8 @@ class DashboardApp {
                     <div class="match-team-card" style="background: ${bgColor}; border: 2px solid ${borderColor};">
                         <h4>${isWinner ? '🏆 ' : ''}${teamName}</h4>
                         <div class="team-match-points">${total.toFixed(1)} pts</div>
-                </div>
-                `;
+            </div>
+        `;
             }).join('');
         
         // Create scorecard HTML (without player table)

@@ -1576,6 +1576,16 @@ select.form-control {
   }
 }
 
+/* Shimmer animation for enhanced buttons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(300%) rotate(45deg);
+  }
+}
+
 /* More compact charts */
 .charts-grid {
   display: grid;
@@ -2257,29 +2267,81 @@ select.form-control {
 .vfm-expand-controls {
     display: flex;
     justify-content: center;
-    padding: var(--space-16) 0;
+    padding: var(--space-12) 0;
     border-top: 1px solid var(--color-border);
-    margin-top: var(--space-8);
+    margin-top: 0;
 }
 
+/* Enhanced VFM Expand Button - Theme Aligned with Premium Styling */
 .vfm-expand-btn {
-    background: transparent;
-    border: 1px solid #4ade80;
-    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%) !important;
+    border: 1px solid var(--color-primary) !important;
+    border-radius: var(--radius-md) !important;
     padding: var(--space-8) var(--space-16);
   font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    color: #4ade80;
+    font-weight: var(--font-weight-semibold) !important;
+    color: var(--color-btn-primary-text) !important;
     cursor: pointer;
     transition: all var(--duration-fast) var(--ease-standard);
     display: flex;
     align-items: center;
     gap: var(--space-8);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm) !important;
 }
 
 .vfm-expand-btn:hover {
-    background: rgba(74, 222, 128, 0.1);
+    background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%) !important;
     transform: translateY(-1px);
+    box-shadow: var(--shadow-md) !important;
+    border-color: var(--color-primary-hover) !important;
+}
+
+.vfm-expand-btn:focus {
+    outline: 2px solid var(--color-primary) !important;
+    outline-offset: 2px;
+}
+
+.vfm-expand-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* Shimmer effect for VFM expand button */
+.vfm-expand-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: all var(--duration-slow) var(--ease-standard);
+    opacity: 0;
+}
+
+.vfm-expand-btn:hover::before {
+    opacity: 1;
+    animation: shimmer 1.5s ease-in-out;
+}
+
+/* Dark theme support for VFM expand button */
+[data-color-scheme="dark"] .vfm-expand-btn {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%) !important;
+    border-color: var(--color-primary) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+[data-color-scheme="dark"] .vfm-expand-btn:hover {
+    background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary-active) 100%) !important;
+    box-shadow: var(--shadow-md) !important;
 }
 
 .vfm-expand-icon {
@@ -2325,6 +2387,20 @@ select.form-control {
 .vfm-table tbody tr:hover {
     background: var(--color-hover);
     transform: translateX(2px);
+}
+
+/* VFM Table - White text for first 2 columns */
+.vfm-table tbody td:nth-child(1),
+.vfm-table tbody td:nth-child(1) *,
+.vfm-table tbody td:nth-child(2),
+.vfm-table tbody td:nth-child(2) * {
+    color: white !important;
+}
+
+/* Ensure rank badge remains visible with white text */
+.vfm-table .vfm-rank {
+    background-color: var(--color-text) !important;
+    color: var(--color-background) !important;
 }
 
 
@@ -2642,8 +2718,13 @@ select.form-control {
   }
   
   .vfm-expand-btn {
-    padding: var(--space-6) var(--space-12);
-    font-size: var(--font-size-xs);
+    padding: var(--space-6) var(--space-12) !important;
+    font-size: var(--font-size-xs) !important;
+    /* Maintain all enhanced styling on mobile */
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%) !important;
+    border: 1px solid var(--color-primary) !important;
+    color: var(--color-btn-primary-text) !important;
+    box-shadow: var(--shadow-sm) !important;
   }
   
   /* Match Point Cards Mobile - Better layout */
