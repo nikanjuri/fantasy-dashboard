@@ -1822,6 +1822,118 @@ class DashboardApp {
         console.log('✅ Leaderboards rendered');
     }
 
+    renderTopPerformersTables() {
+        if (!this.data.players || this.data.players.length === 0) return;
+
+        // Enhanced stats collection with additional metrics
+        let allStats = {};
+        
+        // Process data from Fantasy_Points_2025.json for comprehensive stats
+        Object.values(this.rawData || {}).forEach(matchWeek => {
+            Object.values(matchWeek).forEach(match => {
+                Object.values(match).forEach(teamData => {
+                    if (teamData && teamData.Players) {
+                        let playersList = [];
+                        if (Array.isArray(teamData.Players)) {
+                            playersList = teamData.Players;
+                        } else if (teamData.Players.Players) {
+                            playersList = teamData.Players.Players;
+                        }
+                        
+                        playersList.forEach(p => {
+                            if (!allStats[p.Player]) {
+                                allStats[p.Player] = {
+                                    player: p.Player,
+                                    runs: 0,
+                                    fours: 0,
+                                    sixes: 0,
+                                    wickets: 0,
+                                    dots: 0,
+                                    catches: 0,
+                                    matches: 0
+                                };
+                            }
+                            
+                            const stats = allStats[p.Player];
+                            stats.runs += p.Score || 0;
+                            stats.fours += p['4s'] || 0;
+                            stats.sixes += p['6s'] || 0;
+                            stats.wickets += p.Wickets || 0;
+                            stats.dots += p['0s'] || 0;
+                            stats.catches += (p.Catch || 0) + (p.Runout || 0);
+                            if (p.Score !== null || p.Wickets !== null) stats.matches++;
+                        });
+                    }
+                });
+            });
+        });
+
+        const allPlayers = Object.values(allStats);
+
+        // Most Runs
+        const topRunsBody = document.getElementById('topRunsBody');
+        if (topRunsBody) {
+            const topRuns = [...allPlayers].sort((a, b) => b.runs - a.runs).slice(0, 5);
+            topRunsBody.innerHTML = topRuns.map(player => `
+                <div class="performer-item">
+                    <strong>${player.player}</strong>
+                    <div class="performer-details">
+                        <span class="stat-value">${player.runs}</span>
+                        <span>${player.matches} matches</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Most Boundaries (4s + 6s)
+        const topBoundariesBody = document.getElementById('topBoundariesBody');
+        if (topBoundariesBody) {
+            const topBoundaries = [...allPlayers]
+                .map(p => ({...p, boundaries: p.fours + p.sixes}))
+                .sort((a, b) => b.boundaries - a.boundaries)
+                .slice(0, 5);
+            topBoundariesBody.innerHTML = topBoundaries.map(player => `
+                <div class="performer-item">
+                    <strong>${player.player}</strong>
+                    <div class="performer-details">
+                        <span class="stat-value">${player.boundaries}</span>
+                        <span>${player.fours} 4s, ${player.sixes} 6s</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Most Wickets
+        const topWicketsBody = document.getElementById('topWicketsBody');
+        if (topWicketsBody) {
+            const topWickets = [...allPlayers].sort((a, b) => b.wickets - a.wickets).slice(0, 5);
+            topWicketsBody.innerHTML = topWickets.map(player => `
+                <div class="performer-item">
+                    <strong>${player.player}</strong>
+                    <div class="performer-details">
+                        <span class="stat-value">${player.wickets}</span>
+                        <span>${player.matches} matches</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Most Dot Balls
+        const topDotBallsBody = document.getElementById('topDotBallsBody');
+        if (topDotBallsBody) {
+            const topDots = [...allPlayers].sort((a, b) => b.dots - a.dots).slice(0, 5);
+            topDotBallsBody.innerHTML = topDots.map(player => `
+                <div class="performer-item">
+                    <strong>${player.player}</strong>
+                    <div class="performer-details">
+                        <span class="stat-value">${player.dots}</span>
+                        <span>${player.matches} matches</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
     updateMatchSelector() {
         const matchSelector = document.getElementById('matchSelector');
         if (!matchSelector || !this.data.matches) return;
