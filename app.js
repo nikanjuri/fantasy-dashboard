@@ -1482,6 +1482,143 @@ class DashboardApp {
         console.log('✅ All event listeners setup complete');
     }
 
+    setupTableSorting() {
+        console.log('📊 Setting up table sorting...');
+        
+        // Initialize sorting state only if not already initialized
+        if (!this.currentSort) {
+            this.currentSort = {
+                column: null,
+                direction: null // 'asc' or 'desc'
+            };
+        }
+        
+        // Add click listeners to sortable headers
+        const table = document.getElementById('playersTable');
+        if (table) {
+            const headers = table.querySelectorAll('th[data-sort]');
+            headers.forEach(header => {
+                // Remove existing listeners by cloning the element
+                const newHeader = header.cloneNode(true);
+                header.parentNode.replaceChild(newHeader, header);
+                
+                // Add new event listener
+                newHeader.addEventListener('click', (e) => {
+                    const sortKey = e.target.getAttribute('data-sort');
+                    this.sortTable(sortKey);
+                });
+            });
+            console.log('✅ Table sorting listeners added');
+        }
+    }
+
+    sortTable(sortKey) {
+        console.log('🔄 Sorting table by:', sortKey);
+        console.log('🔄 Current sort state:', this.currentSort);
+        
+        // Determine sort direction
+        let direction = 'desc'; // Default to descending for most stats
+        if (this.currentSort && this.currentSort.column === sortKey) {
+            // Toggle direction if same column
+            direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+            console.log('🔄 Toggling direction from', this.currentSort.direction, 'to', direction);
+        } else {
+            console.log('🔄 New column, using default direction:', direction);
+        }
+        
+        // Update sort state
+        this.currentSort = { column: sortKey, direction };
+        console.log('🔄 Updated sort state:', this.currentSort);
+        
+        // Update header classes
+        this.updateSortHeaders(sortKey, direction);
+        
+        // Sort the data
+        this.sortPlayersData(sortKey, direction);
+        
+        // Re-render the table
+        this.renderFilteredPlayersTable();
+    }
+
+    updateSortHeaders(activeColumn, direction) {
+        const headers = document.querySelectorAll('#playersTable th[data-sort]');
+        headers.forEach(header => {
+            const column = header.getAttribute('data-sort');
+            header.classList.remove('sort-asc', 'sort-desc');
+            
+            if (column === activeColumn) {
+                header.classList.add(direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            }
+        });
+    }
+
+    sortPlayersData(sortKey, direction) {
+        const playersToSort = this.filteredPlayers.length > 0 || this.hasActiveFilters()
+            ? this.filteredPlayers 
+            : this.data.players;
+            
+        playersToSort.sort((a, b) => {
+            let aValue, bValue;
+            
+            // Get values based on sort key
+            switch (sortKey) {
+                case 'matchesPlayed':
+                    aValue = a.matches || this.data.playerStats[a.player]?.matches || 0;
+                    bValue = b.matches || this.data.playerStats[b.player]?.matches || 0;
+                    break;
+                case 'totalPoints':
+                    aValue = a.totalPoints || 0;
+                    bValue = b.totalPoints || 0;
+                    break;
+                case 'runs':
+                    aValue = a.runs || this.data.playerStats[a.player]?.runs || 0;
+                    bValue = b.runs || this.data.playerStats[b.player]?.runs || 0;
+                    break;
+                case 'fours':
+                    aValue = this.data.playerStats[a.player]?.fours || 0;
+                    bValue = this.data.playerStats[b.player]?.fours || 0;
+                    break;
+                case 'sixes':
+                    aValue = this.data.playerStats[a.player]?.sixes || 0;
+                    bValue = this.data.playerStats[b.player]?.sixes || 0;
+                    break;
+                case 'strikeRate':
+                    aValue = parseFloat(this.calculateStrikeRate(a)) || 0;
+                    bValue = parseFloat(this.calculateStrikeRate(b)) || 0;
+                    break;
+                case 'wickets':
+                    aValue = a.wickets || this.data.playerStats[a.player]?.wickets || 0;
+                    bValue = b.wickets || this.data.playerStats[b.player]?.wickets || 0;
+                    break;
+                case 'dots':
+                    aValue = this.data.playerStats[a.player]?.dots || 0;
+                    bValue = this.data.playerStats[b.player]?.dots || 0;
+                    break;
+                case 'economyRate':
+                    aValue = parseFloat(this.calculateEconomy(a)) || 999; // High value for players without economy
+                    bValue = parseFloat(this.calculateEconomy(b)) || 999;
+                    break;
+                default:
+                    return 0;
+            }
+            
+            // Handle string/numeric comparison
+            if (typeof aValue === 'string' && typeof bValue === 'string') {
+                aValue = aValue.toLowerCase();
+                bValue = bValue.toLowerCase();
+            }
+            
+            // Sort comparison
+            if (direction === 'asc') {
+                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+            } else {
+                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+            }
+        });
+        
+        console.log(`📊 Sorted ${playersToSort.length} players by ${sortKey} (${direction})`);
+    }
+
     handlePlayerSearch(searchTerm) {
         console.log('🔍 Player search:', searchTerm);
         this.currentFilters = this.currentFilters || { search: '', team: '', position: '' };
@@ -1533,6 +1670,11 @@ class DashboardApp {
         
         // Reset pagination when filters are applied
         this.showAllPlayers = false;
+        
+        // Reapply current sort if one exists
+        if (this.currentSort && this.currentSort.column) {
+            this.sortPlayersData(this.currentSort.column, this.currentSort.direction);
+        }
         
         this.renderFilteredPlayersTable();
         this.updateSearchResultsCount();
@@ -1813,6 +1955,14 @@ class DashboardApp {
         
         // Re-setup event listeners for dynamic elements
         this.setupShowAllButtonListener();
+        
+        // Re-setup table sorting after re-rendering to ensure event listeners are preserved
+        this.setupTableSorting();
+        
+        // Ensure sorting headers are properly styled after re-rendering
+        if (this.currentSort && this.currentSort.column) {
+            this.updateSortHeaders(this.currentSort.column, this.currentSort.direction);
+        }
     }
 
     hasActiveFilters() {
@@ -1829,6 +1979,9 @@ class DashboardApp {
             this.initializePlayerFilters();
         }
         this.renderFilteredPlayersTable();
+        
+        // Setup table sorting AFTER the table is rendered
+        this.setupTableSorting();
     }
 
     renderLeaderboards() {

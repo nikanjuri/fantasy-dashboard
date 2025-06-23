@@ -1110,6 +1110,16 @@ select.form-control {
   border-bottom: 1px solid var(--color-border);
 }
 
+/* Center align all columns except the first one */
+.data-table td:not(:first-child) {
+  text-align: center;
+}
+
+/* Keep first column left-aligned for player names */
+.data-table td:first-child {
+  text-align: left;
+}
+
 .data-table tbody tr:hover {
   background-color: var(--color-hover);
 }
