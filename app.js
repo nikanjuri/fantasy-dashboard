@@ -18,6 +18,7 @@ class DashboardApp {
         this.sortColumn = null;
         this.sortDirection = 'asc';
         this.enhancedFilters = null;
+        this.showAllPlayers = false;
         
         // Initialize theme immediately
         this.initializeTheme();
@@ -1404,11 +1405,8 @@ class DashboardApp {
             clearFiltersBtn.addEventListener('click', () => this.clearAllFilters());
         }
         
-        // Show All Players button
-        const showAllPlayersBtn = document.getElementById('showAllPlayersBtn');
-        if (showAllPlayersBtn) {
-            showAllPlayersBtn.addEventListener('click', () => this.toggleShowAllPlayers());
-        }
+        // Show All Players button will be handled separately in renderFilteredPlayersTable
+        console.log('🔄 Show All Players button will be setup dynamically');
         
         // Setup additional player filters
         setTimeout(() => {
@@ -1584,7 +1582,12 @@ class DashboardApp {
         const showAllBtn = document.getElementById('showAllPlayersBtn');
         const controls = document.getElementById('playersTableControls');
         
-        if (!showAllBtn || !controls) return;
+        if (!showAllBtn || !controls) {
+            console.log('❌ Show all button or controls not found');
+            return;
+        }
+        
+        console.log('🔄 Updating show all button, showAllPlayers:', this.showAllPlayers);
 
         const playersToShow = this.filteredPlayers.length > 0 || this.hasActiveFilters()
             ? this.filteredPlayers 
@@ -1592,23 +1595,46 @@ class DashboardApp {
 
         if (playersToShow.length > 20) {
             controls.style.display = 'flex';
+            console.log('✅ Showing controls, players to show:', playersToShow.length);
             const expandText = showAllBtn.querySelector('.expand-text');
             const collapseText = showAllBtn.querySelector('.collapse-text');
+            const expandIcon = showAllBtn.querySelector('.expand-icon');
             
             if (this.showAllPlayers) {
                 expandText.style.display = 'none';
                 collapseText.style.display = 'inline';
+                if (expandIcon) expandIcon.textContent = '▲';
             } else {
                 expandText.style.display = 'inline';
                 collapseText.style.display = 'none';
                 expandText.textContent = `Show All Players (${playersToShow.length} total)`;
+                if (expandIcon) expandIcon.textContent = '▼';
             }
         } else {
             controls.style.display = 'none';
         }
     }
 
+    setupShowAllButtonListener() {
+        const showAllPlayersBtn = document.getElementById('showAllPlayersBtn');
+        if (showAllPlayersBtn) {
+            // Remove any existing listeners by cloning the element
+            const newBtn = showAllPlayersBtn.cloneNode(true);
+            showAllPlayersBtn.parentNode.replaceChild(newBtn, showAllPlayersBtn);
+            
+            // Add new event listener
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔄 Show All Players button clicked');
+                this.toggleShowAllPlayers();
+            });
+            console.log('✅ Show All Players button listener setup complete');
+        }
+    }
+
     toggleShowAllPlayers() {
+        console.log('🔄 Toggling show all players:', !this.showAllPlayers);
         this.showAllPlayers = !this.showAllPlayers;
         this.renderFilteredPlayersTable();
     }
@@ -1718,6 +1744,9 @@ class DashboardApp {
 
         // Update show all button
         this.updateShowAllButton();
+        
+        // Re-setup event listeners for dynamic elements
+        this.setupShowAllButtonListener();
     }
 
     hasActiveFilters() {
