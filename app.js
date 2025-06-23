@@ -1560,7 +1560,7 @@ class DashboardApp {
     }
 
     updateSearchResultsCount() {
-        const countElement = document.getElementById('searchResultsCount');
+        const countElement = document.getElementById('resultsCounter');
         if (!countElement) return;
         
         const playersToShow = this.filteredPlayers.length > 0 || this.hasActiveFilters()
@@ -1568,10 +1568,15 @@ class DashboardApp {
             : this.data.players;
         
         if (this.hasActiveFilters()) {
-            countElement.textContent = `${playersToShow.length} players found`;
+            const playerText = playersToShow.length === 1 ? 'player' : 'players';
+            countElement.textContent = `${playersToShow.length} ${playerText}`;
             countElement.style.display = 'inline';
         } else {
-            countElement.style.display = 'none';
+            // Show total players when no filters are active
+            const totalPlayers = this.data.players ? this.data.players.length : 0;
+            const playerText = totalPlayers === 1 ? 'player' : 'players';
+            countElement.textContent = `${totalPlayers} ${playerText}`;
+            countElement.style.display = 'inline';
         }
     }
 

@@ -3462,6 +3462,17 @@ select.form-control {
     justify-content: center;
 }
 
+/* Results counter styling */
+.results-counter {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: auto; /* Push to the end of the row */
+    padding-left: var(--space-16);
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
     .filter-controls {
@@ -3485,6 +3496,15 @@ select.form-control {
         order: 3;
         margin-top: var(--space-8);
         width: 100%;
+    }
+    
+    .results-counter {
+        order: 4;
+        margin-left: 0;
+        margin-top: var(--space-8);
+        padding-left: 0;
+        width: 100%;
+        text-align: center;
     }
 }
 
