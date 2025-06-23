@@ -68,6 +68,7 @@ class DashboardApp {
             darkIcon.style.visibility = 'hidden';
             console.log('🌙 Dark mode: showing light bulb icon');
         } else {
+
             // In light mode, show moon (🌙) to switch to dark mode
             lightIcon.style.display = 'none';
             lightIcon.style.opacity = '0';
@@ -118,11 +119,21 @@ class DashboardApp {
             this.updateAllDashboards();
             
             this.hideLoading();
+            
+            // Ensure theme toggle works after everything is loaded
+            setTimeout(() => {
+                this.ensureThemeToggle();
+            }, 1000);
             console.log('✅ Dashboard initialized successfully!');
             
         } catch (error) {
             console.error('❌ Error initializing dashboard:', error);
             this.hideLoading();
+            
+            // Ensure theme toggle works after everything is loaded
+            setTimeout(() => {
+                this.ensureThemeToggle();
+            }, 1000);
             this.showError(`Failed to initialize dashboard: ${error.message}`);
         }
     }
@@ -494,6 +505,7 @@ class DashboardApp {
         if (mostExpensivePlayer) {
             document.getElementById('mostExpensivePlayer').textContent = mostExpensivePlayer.Player;
         } else {
+
             document.getElementById('mostExpensivePlayer').textContent = '-';
         }
 
@@ -757,6 +769,7 @@ class DashboardApp {
                 collapseText.style.display = 'inline';
                 expandIcon.textContent = '▲';
             } else {
+
                 hiddenRows.style.display = 'none';
                 expandText.style.display = 'inline';
                 collapseText.style.display = 'none';
@@ -845,7 +858,6 @@ class DashboardApp {
                             <div class="player-card">
                                 <div class="player-name">${player.Player}</div>
                                 <div class="player-type">
-                                    <span class="type-icon">${getTypeIcon(player.Type)}</span>
                                     <span>${getTypeLabel(player.Type)}</span>
                                 </div>
                                 <div class="player-team">${player.Team || 'N/A'}</div>
@@ -1235,6 +1247,11 @@ class DashboardApp {
         if (targetTab && targetButton) {
             targetTab.classList.add('active');
             targetButton.classList.add('active');
+            
+            // Update URL hash without triggering page reload
+            if (window.location.hash !== `#${tabId}`) {
+                history.replaceState(null, null, `#${tabId}`);
+            }
         }
     }
 
@@ -1243,6 +1260,7 @@ class DashboardApp {
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         
         document.documentElement.setAttribute('data-color-scheme', newTheme);
+        this.currentTheme = newTheme;
         localStorage.setItem('theme', newTheme);
         
         this.updateThemeIcon();
@@ -1271,6 +1289,27 @@ class DashboardApp {
         const loadingDiv = document.getElementById('loadingIndicator');
         if (loadingDiv) {
             loadingDiv.remove();
+        }
+    }
+
+    ensureThemeToggle() {
+        console.log('🔧 Ensuring theme toggle works...');
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            // Remove any existing listeners
+            const newButton = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(newButton, themeToggle);
+            
+            // Add fresh event listener
+            newButton.addEventListener('click', (e) => {
+                console.log('🎯 Theme toggle clicked (ensured)!');
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleTheme();
+            });
+            console.log('✅ Theme toggle ensured and working');
+        } else {
+            console.error('❌ Theme toggle button still not found!');
         }
     }
 
@@ -1307,11 +1346,26 @@ class DashboardApp {
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
         
-        // Initialize first tab as active
-        if (tabButtons.length > 0 && tabContents.length > 0) {
-            tabButtons[0].classList.add('active');
-            tabContents[0].classList.add('active');
+        // Check URL hash to determine initial tab
+        const urlHash = window.location.hash.substring(1); // Remove #
+        let initialTab = urlHash || 'team-overview'; // Default to overview if no hash
+        
+        // Validate that the tab exists
+        const validTab = document.getElementById(initialTab);
+        if (!validTab) {
+            initialTab = 'team-overview'; // Fallback to overview if invalid tab
         }
+        
+        // Initialize the correct tab based on URL hash
+        this.switchTab(initialTab);
+        
+        // Listen for hash changes (back/forward button support)
+        window.addEventListener('hashchange', () => {
+            const newHash = window.location.hash.substring(1);
+            if (newHash && document.getElementById(newHash)) {
+                this.switchTab(newHash);
+            }
+        });
         
         // Add click listeners for tab switching with mobile support
         tabButtons.forEach(button => {
@@ -1326,6 +1380,7 @@ class DashboardApp {
                 } else if (e.target.classList.contains('tab-text')) {
                     targetTab = e.target.parentElement.dataset.tab;
                 } else {
+
                     targetTab = e.target.closest('.tab-button')?.dataset.tab;
                 }
                 
@@ -1338,7 +1393,7 @@ class DashboardApp {
             button.addEventListener('touchend', handleTabClick);
         });
         
-        console.log('✅ Tabs initialized successfully with mobile support');
+        console.log('✅ Tabs initialized successfully with URL hash support and mobile compatibility');
     }
 
     setupEventListeners() {
@@ -1347,8 +1402,20 @@ class DashboardApp {
         // Theme toggle button
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
-            themeToggle.addEventListener('click', () => this.toggleTheme());
+            console.log('✅ Theme toggle button found, adding listener...');
+            themeToggle.addEventListener('click', (e) => {
+                console.log('🎯 Theme toggle clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    this.toggleTheme();
+                } catch (error) {
+                    console.error('❌ Error toggling theme:', error);
+                }
+            });
             console.log('✅ Theme toggle listener added');
+        } else {
+            console.error('❌ Theme toggle button not found!');
         }
         
         // Generate Best XI button
@@ -1365,6 +1432,7 @@ class DashboardApp {
                 if (e.target.value) {
                     this.updateMatchDetails(parseInt(e.target.value));
                 } else {
+
                     // Clear match details when "Select Match" is chosen
                     this.clearMatchDetails();
                 }
@@ -1895,6 +1963,7 @@ function toggleTableRows(tableId) {
             }
         }
     } else {
+
         hiddenRows.style.display = '';
         expandText.style.display = 'none';
         collapseText.style.display = 'inline';
@@ -1919,6 +1988,7 @@ function toggleTableRows(tableId) {
                         otherCollapseText.style.display = 'none';
                         otherExpandIcon.textContent = '▼';
                     } else {
+
                         otherHiddenRows.style.display = '';
                         otherExpandText.style.display = 'none';
                         otherCollapseText.style.display = 'inline';
@@ -1949,6 +2019,7 @@ function toggleVFMRows() {
         collapseText.style.display = 'none';
         expandIcon.textContent = '▼';
     } else {
+
         hiddenRows.style.display = '';
         expandText.style.display = 'none';
         collapseText.style.display = 'inline';
