@@ -3479,14 +3479,17 @@ select.form-control {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: var(--space-12) 0;
-    margin-top: var(--space-12);
-    border-top: 1px solid var(--color-border);
+    padding: var(--space-16) 0 var(--space-16) 0;
+    margin: 0 calc(-1 * var(--space-16)) calc(-1 * var(--space-16)) calc(-1 * var(--space-16));
+    width: calc(100% + 2 * var(--space-16));
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .table-controls .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: var(--space-8);
     padding: var(--space-8) var(--space-16);
     background-color: var(--color-surface);
@@ -3498,6 +3501,7 @@ select.form-control {
     cursor: pointer;
     transition: all var(--duration-fast) var(--ease-standard);
     text-decoration: none;
+    margin: 0 auto;
 }
 
 .table-controls .btn:hover {
@@ -3567,8 +3571,8 @@ select.form-control {
     }
     
     .table-controls {
-        padding: var(--space-12) 0;
-        margin-top: var(--space-12);
+        padding: var(--space-12) 0 var(--space-12) 0;
+        margin: 0 calc(-1 * var(--space-16)) calc(-1 * var(--space-16)) calc(-1 * var(--space-16));
     }
     
     .table-controls .btn {
