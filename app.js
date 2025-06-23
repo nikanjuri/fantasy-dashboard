@@ -420,9 +420,9 @@ class DashboardApp {
     calculateValueForMoney(points, price) {
         if (price === 0 || price === null || price === undefined) return points > 0 ? 1000 : 0;
         const ratio = points / price;
-        if (ratio > 150) return 'Excellent';
-        if (ratio > 100) return 'Good';
-        if (ratio > 50) return 'Fair';
+        if (ratio >= 150) return 'Excellent';
+        if (ratio >= 100) return 'Good';
+        if (ratio >= 50) return 'Fair';
         return 'Poor';
     }
 
@@ -725,18 +725,27 @@ class DashboardApp {
             const teamColor = teamColors[player.fantasyTeam] || themeColors.textColor;
             const rankColor = index < 5 ? '#4ade80' : index < 10 ? '#fbbf24' : '#94a3b8';
             
+            // Color the Points/₹Cr column based on value rating
+            let pointsPerCroreColor = '#6b7280'; // Default grey for poor
+            if (player.valueForMoney === 'Excellent') {
+                pointsPerCroreColor = '#22c55e'; // Green
+            } else if (player.valueForMoney === 'Good') {
+                pointsPerCroreColor = '#3b82f6'; // Blue
+            } else if (player.valueForMoney === 'Fair') {
+                pointsPerCroreColor = '#fbbf24'; // Yellow
+            }
+            
             return `
                 <tr>
                     <td>
                         <div class="vfm-player-cell">
-                            <span class="vfm-rank" style="background: ${rankColor}">${index + 1}</span>
                             <strong style="color: ${teamColor}">${player.Player}</strong>
                         </div>
                     </td>
                     <td style="color: ${teamColor}; font-weight: 500">${player.fantasyTeam}</td>
-                    <td style="color: ${themeColors.subtleTextColor}">₹${player.Price.toFixed(1)}</td>
+                    <td style="color: ${themeColors.textColor}; font-weight: 600">₹${player.Price.toFixed(1)}</td>
                     <td style="color: ${themeColors.textColor}; font-weight: 600">${player.performance.totalPoints}</td>
-                    <td style="color: #4ade80; font-weight: 600">${player.pointsPerCrore.toFixed(1)}</td>
+                    <td style="color: ${pointsPerCroreColor}; font-weight: 600">${player.pointsPerCrore.toFixed(1)}</td>
                     <td><span class="value-badge ${player.valueForMoney.toLowerCase()}">${player.valueForMoney}</span></td>
                 </tr>
             `;

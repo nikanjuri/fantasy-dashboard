@@ -2081,9 +2081,8 @@ select.form-control {
 }
 
 .section-divider {
-    margin: var(--space-32) 0 var(--space-24) 0;
-    padding-bottom: var(--space-16);
-    border-bottom: 1px solid var(--color-border);
+    margin: var(--space-32) 0 var(--space-12) 0;
+    padding-bottom: 0;
 }
 
 .section-divider h3 {
@@ -2366,21 +2365,21 @@ select.form-control {
 }
 
 .value-badge.good {
-    background: rgba(74, 222, 128, 0.2);
-    color: #4ade80;
-    border: 1px solid rgba(74, 222, 128, 0.3);
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-.value-badge.average {
+.value-badge.fair {
     background: rgba(251, 191, 36, 0.2);
     color: #fbbf24;
     border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .value-badge.poor {
-    background: rgba(248, 113, 113, 0.2);
-    color: #f87171;
-    border: 1px solid rgba(248, 113, 113, 0.3);
+    background: rgba(107, 114, 128, 0.2);
+    color: #6b7280;
+    border: 1px solid rgba(107, 114, 128, 0.3);
 }
 
 /* VFM Table specific row styling */
@@ -2401,6 +2400,17 @@ select.form-control {
 .vfm-table .vfm-rank {
     background-color: var(--color-text) !important;
     color: var(--color-background) !important;
+}
+
+/* VFM Table column alignment */
+.vfm-table th:first-child,
+.vfm-table td:first-child {
+    text-align: left !important;
+}
+
+.vfm-table th:not(:first-child),
+.vfm-table td:not(:first-child) {
+    text-align: center !important;
 }
 
 
