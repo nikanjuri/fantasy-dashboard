@@ -1399,11 +1399,6 @@ class DashboardApp {
             positionFilter.addEventListener('change', (e) => this.handlePositionFilter(e.target.value));
         }
         
-        const performanceFilter = document.getElementById('performanceFilter');
-        if (performanceFilter) {
-            performanceFilter.addEventListener('change', (e) => this.handlePerformanceFilter(e.target.value));
-        }
-        
         const clearFiltersBtn = document.getElementById('clearFilters');
         if (clearFiltersBtn) {
             clearFiltersBtn.addEventListener('click', () => this.clearAllFilters());
@@ -1415,12 +1410,17 @@ class DashboardApp {
             showAllPlayersBtn.addEventListener('click', () => this.toggleShowAllPlayers());
         }
         
+        // Setup additional player filters
+        setTimeout(() => {
+            setupPlayerFilters();
+        }, 100);
+        
         console.log('✅ All event listeners setup complete');
     }
 
     handlePlayerSearch(searchTerm) {
         console.log('🔍 Player search:', searchTerm);
-        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
+        this.currentFilters = this.currentFilters || { search: '', team: '', position: '' };
         this.currentFilters.search = searchTerm.toLowerCase();
         this.applyFilters();
         this.updateSearchResultsCount();
@@ -1428,22 +1428,15 @@ class DashboardApp {
 
     handleTeamFilter(team) {
         console.log('🏏 Team filter:', team);
-        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
+        this.currentFilters = this.currentFilters || { search: '', team: '', position: '' };
         this.currentFilters.team = team;
         this.applyFilters();
     }
 
     handlePositionFilter(position) {
         console.log('📍 Position filter:', position);
-        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
+        this.currentFilters = this.currentFilters || { search: '', team: '', position: '' };
         this.currentFilters.position = position;
-        this.applyFilters();
-    }
-
-    handlePerformanceFilter(performance) {
-        console.log('🎯 Performance filter:', performance);
-        this.currentFilters = this.currentFilters || { search: '', team: '', position: '', performance: '' };
-        this.currentFilters.performance = performance;
         this.applyFilters();
     }
 
@@ -1472,11 +1465,6 @@ class DashboardApp {
             });
         }
         
-        // Apply performance filter
-        if (this.currentFilters.performance) {
-            filtered = this.applyPerformanceFilter(filtered, this.currentFilters.performance);
-        }
-        
         this.filteredPlayers = filtered;
         
         // Reset pagination when filters are applied
@@ -1494,27 +1482,6 @@ class DashboardApp {
             'WK': 'Wicket-keeper'
         };
         return typeMap[type] || type;
-    }
-
-    applyPerformanceFilter(players, performance) {
-        switch (performance) {
-            case 'top':
-                return players.sort((a, b) => b.totalPoints - a.totalPoints).slice(0, 20);
-            case 'rising':
-                // Players with good recent form (simplified)
-                return players.filter(p => p.totalPoints > 150).sort((a, b) => b.averagePoints - a.averagePoints);
-            case 'consistent':
-                // Players with consistent performance
-                return players.filter(p => p.matches >= 5 && p.averagePoints > 30);
-            case 'value':
-                // Value picks based on auction data
-                return players.filter(p => {
-                    const profile = this.data.playerProfiles[p.player];
-                    return profile && (profile.Price || 0) < 8 && p.totalPoints > 100;
-                });
-            default:
-                return players;
-        }
     }
 
     calculateStrikeRate(player) {
@@ -1643,7 +1610,7 @@ class DashboardApp {
 
     clearAllFilters() {
         // Reset all filter values
-        this.currentFilters = { search: '', team: '', position: '', performance: '' };
+        this.currentFilters = { search: '', team: '', position: '' };
         this.filteredPlayers = [];
         this.showAllPlayers = false;
         
@@ -1651,12 +1618,10 @@ class DashboardApp {
         const playerSearch = document.getElementById('playerSearch');
         const teamFilter = document.getElementById('teamFilter');
         const positionFilter = document.getElementById('positionFilter');
-        const performanceFilter = document.getElementById('performanceFilter');
         
         if (playerSearch) playerSearch.value = '';
         if (teamFilter) teamFilter.value = '';
         if (positionFilter) positionFilter.value = '';
-        if (performanceFilter) performanceFilter.value = '';
         
         // Update display
         this.renderFilteredPlayersTable();
@@ -1669,8 +1634,7 @@ class DashboardApp {
         this.currentFilters = {
             search: '',
             team: '',
-            position: '',
-            performance: ''
+            position: ''
         };
         this.filteredPlayers = [];
         this.showAllPlayers = false;
@@ -1755,8 +1719,7 @@ class DashboardApp {
         return this.currentFilters && (
             this.currentFilters.search || 
             this.currentFilters.team || 
-            this.currentFilters.position || 
-            this.currentFilters.performance
+            this.currentFilters.position
         );
     }
 
@@ -2400,9 +2363,80 @@ function toggleVFMRows() {
     }
 }
 
+// Global filters state
+let currentFilters = {
+    search: '',
+    team: '',
+    position: ''
+};
+
 // Initialize the dashboard
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Initializing Fantasy Dashboard...');
     window.dashboard = new DashboardApp();
     window.dashboard.init();
 });
+
+// Setup event listeners for player filters
+function setupPlayerFilters() {
+    const playerSearch = document.getElementById('playerSearch');
+    const teamFilter = document.getElementById('teamFilter');
+    const positionFilter = document.getElementById('positionFilter');
+    const clearFilters = document.getElementById('clearFilters');
+
+    // Search functionality
+    if (playerSearch) {
+        playerSearch.addEventListener('input', (e) => {
+            currentFilters.search = e.target.value.toLowerCase();
+            if (window.dashboard) {
+                window.dashboard.currentFilters = currentFilters;
+                window.dashboard.applyFilters();
+            }
+        });
+    }
+
+    // Team filter
+    if (teamFilter) {
+        teamFilter.addEventListener('change', (e) => {
+            currentFilters.team = e.target.value;
+            if (window.dashboard) {
+                window.dashboard.currentFilters = currentFilters;
+                window.dashboard.applyFilters();
+            }
+        });
+    }
+
+    // Position filter
+    if (positionFilter) {
+        positionFilter.addEventListener('change', (e) => {
+            currentFilters.position = e.target.value;
+            if (window.dashboard) {
+                window.dashboard.currentFilters = currentFilters;
+                window.dashboard.applyFilters();
+            }
+        });
+    }
+
+    // Clear all filters
+    if (clearFilters) {
+        clearFilters.addEventListener('click', () => {
+            // Reset all filters
+            currentFilters = {
+                search: '',
+                team: '',
+                position: ''
+            };
+            
+            // Reset form values
+            if (playerSearch) playerSearch.value = '';
+            if (teamFilter) teamFilter.value = '';
+            if (positionFilter) positionFilter.value = '';
+            
+            // Re-render table
+            if (window.dashboard) {
+                window.dashboard.currentFilters = currentFilters;
+                window.dashboard.clearAllFilters();
+            }
+        });
+    }
+}
