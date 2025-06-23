@@ -1328,11 +1328,44 @@ class DashboardApp {
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
         
-        // Initialize first tab as active
-        if (tabButtons.length > 0 && tabContents.length > 0) {
-            tabButtons[0].classList.add('active');
-            tabContents[0].classList.add('active');
-        }
+        // URL to data-tab mapping
+        const urlToDataTab = {
+            'overview': 'team-overview',
+            'auction': 'auction-analysis', 
+            'teams': 'team-composition',
+            'players': 'player-analytics',
+            'matches': 'match-analysis',
+            'stats': 'statistics',
+            'scoring': 'scoring-rules'
+        };
+        
+        // Data-tab to URL mapping (reverse)
+        const dataTabToUrl = {
+            'team-overview': 'overview',
+            'auction-analysis': 'auction',
+            'team-composition': 'teams', 
+            'player-analytics': 'players',
+            'match-analysis': 'matches',
+            'statistics': 'stats',
+            'scoring-rules': 'scoring'
+        };
+        
+        // Get active tab from URL parameter or default to 'overview'
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlTab = urlParams.get('tab') || 'overview';
+        const activeTab = urlToDataTab[urlTab] || 'team-overview';
+        
+        // Set initial active tab based on URL
+        this.setActiveTab(activeTab, tabButtons, tabContents);
+        
+        // Listen for browser back/forward navigation
+        window.addEventListener('popstate', (e) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlTab = urlParams.get('tab') || 'overview';
+            const newTab = urlToDataTab[urlTab] || 'team-overview';
+            this.setActiveTab(newTab, tabButtons, tabContents);
+            this.switchTab(newTab);
+        });
         
         // Add click listeners for tab switching with mobile support
         tabButtons.forEach(button => {
@@ -1351,6 +1384,12 @@ class DashboardApp {
                 }
                 
                 if (targetTab) {
+                    // Convert data-tab to user-friendly URL
+                    const urlTab = dataTabToUrl[targetTab] || 'overview';
+                    const newUrl = new URL(window.location);
+                    newUrl.searchParams.set('tab', urlTab);
+                    window.history.pushState({ tab: urlTab }, '', newUrl);
+                    
                     this.switchTab(targetTab);
                 }
             };
@@ -1359,7 +1398,25 @@ class DashboardApp {
             button.addEventListener('touchend', handleTabClick);
         });
         
-        console.log('✅ Tabs initialized successfully with mobile support');
+        console.log('✅ Tabs initialized successfully with user-friendly URL navigation and mobile support');
+    }
+
+    setActiveTab(targetTab, tabButtons, tabContents) {
+        // Remove active class from all buttons and contents
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // Find and activate the target tab button
+        const targetButton = document.querySelector(`[data-tab="${targetTab}"]`);
+        if (targetButton) {
+            targetButton.classList.add('active');
+        }
+        
+        // Activate the corresponding content
+        const targetContent = document.getElementById(targetTab);
+        if (targetContent) {
+            targetContent.classList.add('active');
+        }
     }
 
     setupEventListeners() {
