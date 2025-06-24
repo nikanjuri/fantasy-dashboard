@@ -2174,12 +2174,12 @@ class DashboardApp {
                 .slice(0, 5);
 
             topBoundariesBody.innerHTML = topBoundaries.map(player => `
-                <div class="performer-item">
-                    <div class="performer-name">${player.player}</div>
-                    <div class="performer-stats">
-                        <span class="stat-number">${player.fours}</span>
-                        <span class="stat-number">${player.sixes}</span>
-                        <span class="stat-number">${player.fours + player.sixes}</span>
+                <div class="stats-row">
+                    <div class="player-name">${player.player}</div>
+                    <div class="stat-values">
+                        <div class="stat-col">${player.fours}</div>
+                        <div class="stat-col">${player.sixes}</div>
+                        <div class="stat-col">${player.fours + player.sixes}</div>
                     </div>
                 </div>
             `).join('');
@@ -2190,10 +2190,10 @@ class DashboardApp {
         if (topWicketsBody) {
             const topWickets = [...allPlayers].sort((a, b) => b.wickets - a.wickets).slice(0, 5);
             topWicketsBody.innerHTML = topWickets.map(player => `
-                <div class="performer-item">
-                    <div class="performer-name">${player.player}</div>
-                    <div class="performer-stats">
-                        <span class="stat-number">${player.wickets}</span>
+                <div class="stats-row">
+                    <div class="player-name">${player.player}</div>
+                    <div class="stat-values">
+                        <div class="stat-col">${player.wickets}</div>
                     </div>
                 </div>
             `).join('');
@@ -2204,10 +2204,10 @@ class DashboardApp {
         if (topDotBallsBody) {
             const topDots = [...allPlayers].sort((a, b) => b.dots - a.dots).slice(0, 5);
             topDotBallsBody.innerHTML = topDots.map(player => `
-                <div class="performer-item">
-                    <div class="performer-name">${player.player}</div>
-                    <div class="performer-stats">
-                        <span class="stat-number">${player.dots}</span>
+                <div class="stats-row">
+                    <div class="player-name">${player.player}</div>
+                    <div class="stat-values">
+                        <div class="stat-col">${player.dots}</div>
                     </div>
                 </div>
             `).join('');
@@ -2770,27 +2770,28 @@ class DashboardApp {
     populatePlayerStatTables(playerData) {
         // Helper function to create player stat item
         function createStatItem(player, statValue, extraStats = null) {
-            const item = document.createElement('div');
-            item.className = 'bargain-item';
-            
-            const playerName = document.createElement('strong');
-            playerName.textContent = player;
-            
-            const details = document.createElement('div');
-            details.className = 'bargain-details';
-            
+            const row = document.createElement('div');
+            row.className = 'stats-row';
+
+            const playerNameDiv = document.createElement('div');
+            playerNameDiv.className = 'player-name';
+            playerNameDiv.textContent = player;
+
+            const valuesDiv = document.createElement('div');
+            valuesDiv.className = 'stat-values';
+
             if (extraStats) {
-                details.innerHTML = extraStats;
+                valuesDiv.innerHTML = extraStats;
             } else {
-                const valueSpan = document.createElement('span');
-                valueSpan.className = 'value-ratio';
-                valueSpan.textContent = statValue;
-                details.appendChild(valueSpan);
+                const valueCol = document.createElement('div');
+                valueCol.className = 'stat-col';
+                valueCol.textContent = statValue;
+                valuesDiv.appendChild(valueCol);
             }
-            
-            item.appendChild(playerName);
-            item.appendChild(details);
-            return item;
+
+            row.appendChild(playerNameDiv);
+            row.appendChild(valuesDiv);
+            return row;
         }
 
         // Process and sort player data
