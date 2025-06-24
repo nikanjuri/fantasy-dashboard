@@ -4927,5 +4927,13 @@ select.form-control {
     margin-bottom:0!important;
 }
 
+/* Light mode – keep VFM first two columns dark text */
+[data-color-scheme="light"] .vfm-table tbody td:nth-child(1),
+[data-color-scheme="light"] .vfm-table tbody td:nth-child(1) *,
+[data-color-scheme="light"] .vfm-table tbody td:nth-child(2),
+[data-color-scheme="light"] .vfm-table tbody td:nth-child(2) * {
+    color: var(--color-text) !important;
+}
+
 
 

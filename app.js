@@ -306,6 +306,10 @@ class DashboardApp {
 
                         const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
                         
+                        const strikeRateCalc = player.Balls ? ((safeNumber(player.Score) / safeNumber(player.Balls)) * 100).toFixed(1) : '−';
+                        const economyCalc = (typeof player.ER === 'number') ? player.ER.toFixed(1) : '−';
+                        const catchesTotal = safeNumber(player.Catch) + safeNumber(player.Runout);
+
                         const playerData = {
                             name: player.Player,
                             team: fantasyTeamName,
@@ -315,6 +319,9 @@ class DashboardApp {
                             sixes: safeNumber(player['6s']),
                             wickets: safeNumber(player.Wickets),
                             dots: safeNumber(player['0s']),
+                            strikeRate: strikeRateCalc,
+                            economy: economyCalc,
+                            catches: catchesTotal,
                             fantasyPoints: safeNumber(player.Points)
                         };
                         
@@ -348,6 +355,7 @@ class DashboardApp {
                         stats.wickets += safeNumber(player.Wickets);
                         stats.dots += safeNumber(player['0s']);
                         stats.averagePoints = stats.totalPoints / stats.matches;
+                        stats.catches = (stats.catches || 0) + catchesTotal;
                     });
                 });
 
@@ -357,8 +365,9 @@ class DashboardApp {
 
         console.log('📊 Final team standings:', this.data.teamStandings);
         
-        // Create sorted players array
+        // Create sorted players array and ensure each object has a `player` alias (UI expects this key)
         this.data.players = Object.values(this.data.playerStats)
+            .map(s => ({ ...s, player: s.name }))
             .sort((a, b) => b.totalPoints - a.totalPoints);
 
         // Set this.fantasyData for the stat tables
@@ -373,83 +382,45 @@ class DashboardApp {
     }
 
     processPlayerProfiles() {
-        if (!this.playerListData || !this.fantasyData) {
+        if (!this.playerListData || !this.data.playerStats) {
             console.warn('Missing required data for processing player profiles');
             return;
         }
 
-        // Initialize playerProfiles if it doesn't exist
+        // Ensure container objects exist
         this.data.playerProfiles = this.data.playerProfiles || {};
 
-        // Create a lookup map from the auction data for efficient merging
+        // Build a quick lookup for auction details
         const auctionDataMap = {};
         Object.entries(this.playerListData).forEach(([teamName, players]) => {
-            players.forEach(player => {
-                if (player.Player) {
-                    auctionDataMap[player.Player.trim()] = {
-                        ...player,
-                        auctionTeam: teamName
-                    };
+            players.forEach(p => {
+                if (p.Player) {
+                    auctionDataMap[p.Player.trim()] = { ...p, auctionTeam: teamName };
                 }
             });
         });
 
-        // Process each match to build player stats
-        this.fantasyData.forEach(match => {
-            match.players.forEach(player => {
-                if (!player.name) return;
+        // Create player profiles directly from aggregated stats (no extra mutation)
+        Object.values(this.data.playerStats).forEach(stats => {
+            const auctionData = auctionDataMap[stats.name] || {};
 
-                // Get existing stats or create new ones
-                const stats = this.data.playerStats[player.name] || {
-                    name: player.name,
-                    team: player.team,
-                    totalPoints: 0,
-                    matches: 0,
-                    runs: 0,
-                    balls: 0,
-                    fours: 0,
-                    sixes: 0,
-                    wickets: 0,
-                    dots: 0,
-                    catches: 0,
-                    averagePoints: 0
-                };
-
-                // Update stats
-                stats.totalPoints += player.fantasyPoints || 0;
-                stats.matches += 1;
-                stats.runs += player.runs || 0;
-                stats.balls += player.balls || 0;
-                stats.fours += player.fours || 0;
-                stats.sixes += player.sixes || 0;
-                stats.wickets += player.wickets || 0;
-                stats.dots += player.dots || 0;
-                stats.averagePoints = stats.totalPoints / stats.matches;
-
-                // Store updated stats
-                this.data.playerStats[player.name] = stats;
-
-                // Create or update player profile
-                const auctionData = auctionDataMap[player.name] || {};
-                this.data.playerProfiles[player.name] = {
-                    Player: player.name,
-                    Type: auctionData.Type || 'N/A',
-                    Team: auctionData.auctionTeam || 'N/A',
-                    Price: auctionData.Price || 0,
-                    Sale: auctionData.Sale || 'Unsold',
-                    Overseas: auctionData.Overseas || false,
-                    'Cap/Un': auctionData['Cap/Un'] || 'Uncapped',
-                    fantasyTeam: player.team,
-                    performance: stats,
-                    valueForMoney: this.calculateValueForMoney(stats.totalPoints, auctionData.Price || 0),
-                    priceCategory: this.categorizePriceRange(auctionData.Price || 0)
-                };
-            });
+            this.data.playerProfiles[stats.name] = {
+                Player: stats.name,
+                Type: auctionData.Type || 'N/A',
+                Team: auctionData.auctionTeam || 'N/A',
+                Price: auctionData.Price || 0,
+                Sale: auctionData.Sale || 'Unsold',
+                Overseas: auctionData.Overseas || false,
+                'Cap/Un': auctionData['Cap/Un'] || 'Uncapped',
+                fantasyTeam: stats.team,
+                performance: stats,
+                valueForMoney: this.calculateValueForMoney(stats.totalPoints, auctionData.Price || 0),
+                priceCategory: this.categorizePriceRange(auctionData.Price || 0)
+            };
         });
 
-        // Update players array with latest stats
-        this.data.players = Object.values(this.data.playerStats)
-            .sort((a, b) => b.totalPoints - a.totalPoints);
+        // Ensure data.players reference is up to date
+        this.data.players = Object.values(this.data.playerStats).sort((a, b) => b.totalPoints - a.totalPoints);
 
         console.log('✅ Player profiles processed:', {
             stats: Object.keys(this.data.playerStats).length,
@@ -1980,7 +1951,7 @@ class DashboardApp {
 
         // Determine how many players to show
         const maxPlayers = this.showAllPlayers ? playersToShow.length : Math.min(20, playersToShow.length);
-        const displayPlayers = playersToShow.slice(0, maxPlayers);
+        const displayPlayers = playersToShow.slice(0, maxPlayers).map(p => ({ ...p, player: p.player || p.name }));
 
         console.log(`📊 Rendering ${displayPlayers.length} of ${playersToShow.length} players`);
 
@@ -2619,10 +2590,10 @@ class DashboardApp {
         const player1Stats = this.data.playerStats[player1Name] || {};
         const player2Stats = this.data.playerStats[player2Name] || {};
         
-        const player1StrikeRate = this.calculateStrikeRate({ player: player1Name });
-        const player2StrikeRate = this.calculateStrikeRate({ player: player2Name });
-        const player1Economy = this.calculateEconomy({ player: player1Name });
-        const player2Economy = this.calculateEconomy({ player: player2Name });
+        const player1StrikeRate = this.calculateStrikeRate({ name: player1Name });
+        const player2StrikeRate = this.calculateStrikeRate({ name: player2Name });
+        const player1Economy = this.calculateEconomy({ name: player1Name });
+        const player2Economy = this.calculateEconomy({ name: player2Name });
         
         // Create the comparison table HTML
         let comparisonHTML = `
