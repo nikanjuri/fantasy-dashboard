@@ -16,14 +16,12 @@ class DashboardApp {
         this.charts = {};
         this.currentTheme = 'light';
         this.sortColumn = null;
-        this.sortDirection = 'asc';
+        this.sortDirection = { matchesPlayed: 'desc', totalPoints: 'desc', runs: 'desc', fours: 'desc', sixes: 'desc', strikeRate: 'desc', wickets: 'desc', dots: 'desc', economyRate: 'desc' };
         this.enhancedFilters = null;
         this.showAllPlayers = false;
         
         // Initialize theme immediately
         this.initializeTheme();
-        
-        this.init();
     }
 
     initializeTheme() {
@@ -81,56 +79,72 @@ class DashboardApp {
     }
 
     async init() {
-        console.log('🚀 Initializing dashboard...');
         try {
             this.showLoading();
+            console.log('📝 Starting initialization...');
             
-            // Load and process data
-            console.log('📡 Loading data...');
+            // Initialize theme
+            this.initializeTheme();
+            console.log('✅ Theme initialized');
+            
+            // Load all data
+            console.log('📂 Loading data...');
             await this.loadAllData();
-            console.log('✅ Data loaded successfully');
+            console.log('✅ Data loaded');
             
+            // Process loaded data
             console.log('🔄 Processing data...');
             this.processAllData();
-            console.log('✅ Data processed successfully');
+            console.log('✅ Data processed');
             
-            // Initialize UI components
-            console.log('🎛️ Setting up UI...');
-        this.initializeTabs();
+            // Update all dashboard sections
+            console.log('🔄 Updating dashboard sections...');
+            this.updateAllDashboards();
+            console.log('✅ Dashboard sections updated');
+            
+            // Initialize tabs
+            console.log('🔄 Initializing tabs...');
+            this.initializeTabs();
+            console.log('✅ Tabs initialized');
+            
+            // Setup event listeners
+            console.log('🔄 Setting up event listeners...');
             this.setupEventListeners();
+            console.log('✅ Event listeners set up');
             
-            // Initialize theme icons after DOM elements are ready
-        setTimeout(() => {
-                this.updateThemeIcon();
-        }, 100);
+            // Setup table sorting
+            console.log('🔄 Setting up table sorting...');
+            this.setupTableSorting();
+            console.log('✅ Table sorting set up');
             
-            // Skip charts for now to avoid errors
-            console.log('📊 Setting up charts...');
-            try {
-                // Delay chart setup to ensure data is fully processed
-                setTimeout(() => {
-                    this.setupCharts();
-                }, 500);
-            } catch (chartError) {
-                console.warn('Charts failed to load:', chartError);
+            // Initialize player filters
+            console.log('🔄 Initializing player filters...');
+            this.initializePlayerFilters();
+            console.log('✅ Player filters initialized');
+            
+            // Populate player stat tables with processed fantasy data
+            console.log('🔄 Populating player stat tables...');
+            if (this.fantasyData && Array.isArray(this.fantasyData)) {
+                console.log('📊 Processing', this.fantasyData.length, 'matches for stat tables');
+                this.populatePlayerStatTables(this.fantasyData);
+                console.log('✅ Stat tables populated');
+            } else {
+                console.error('❌ Fantasy data not in expected format:', this.fantasyData);
+                throw new Error('Fantasy data not in expected format for stat tables');
             }
             
-            console.log('🔄 Updating dashboard...');
-            this.updateAllDashboards();
-            
             this.hideLoading();
-            console.log('✅ Dashboard initialized successfully!');
-            
+            console.log('✅ Dashboard initialization complete!');
         } catch (error) {
             console.error('❌ Error initializing dashboard:', error);
-            this.hideLoading();
-            this.showError(`Failed to initialize dashboard: ${error.message}`);
+            this.showError(`Failed to initialize dashboard: ${error.message}. Please try refreshing the page.`);
+            throw error;
         }
     }
 
     async loadAllData() {
         try {
-            console.log('📂 Starting data load...');
+            console.log('📂 Loading data files...');
             
             // Load all three JSON files
             const [fantasyResponse, playerListResponse, scoringResponse] = await Promise.all([
@@ -139,33 +153,39 @@ class DashboardApp {
                 fetch('data/Scoring_System.json')
             ]);
 
-            console.log('📊 Response status:', {
-                fantasy: fantasyResponse.status,
-                playerList: playerListResponse.status,
-                scoring: scoringResponse.status
-            });
-
-            if (!fantasyResponse.ok || !playerListResponse.ok || !scoringResponse.ok) {
-                throw new Error('Failed to fetch one or more data files');
-            }
+            // Check responses
+            if (!fantasyResponse.ok) throw new Error(`Failed to load fantasy data: ${fantasyResponse.status}`);
+            if (!playerListResponse.ok) throw new Error(`Failed to load player list: ${playerListResponse.status}`);
+            if (!scoringResponse.ok) throw new Error(`Failed to load scoring system: ${scoringResponse.status}`);
 
             // Process fantasy points data
-            console.log('📝 Processing fantasy data...');
+            console.log('📝 Loading fantasy data...');
             const rawText = await fantasyResponse.text();
             const cleanedText = rawText.replace(/:\s*NaN/g, ': null');
             this.rawData = JSON.parse(cleanedText);
-            console.log('Fantasy data loaded:', Object.keys(this.rawData).length, 'matches');
+            
+            if (!this.rawData || typeof this.rawData !== 'object') {
+                throw new Error('Invalid fantasy data format');
+            }
+            console.log('✅ Fantasy data loaded:', Object.keys(this.rawData).length, 'matches');
 
-            // Load other data files
-            console.log('📝 Processing player list...');
+            // Load player list
+            console.log('📝 Loading player list...');
             this.playerListData = await playerListResponse.json();
-            console.log('Player list loaded:', Object.keys(this.playerListData).length, 'teams');
+            if (!this.playerListData || typeof this.playerListData !== 'object') {
+                throw new Error('Invalid player list format');
+            }
+            console.log('✅ Player list loaded:', Object.keys(this.playerListData).length, 'teams');
 
-            console.log('📝 Processing scoring system...');
+            // Load scoring system
+            console.log('📝 Loading scoring system...');
             this.scoringSystemData = await scoringResponse.json();
-            console.log('Scoring system loaded');
+            if (!this.scoringSystemData || typeof this.scoringSystemData !== 'object') {
+                throw new Error('Invalid scoring system format');
+            }
+            console.log('✅ Scoring system loaded');
 
-            console.log('✅ All data loaded successfully');
+            return true;
         } catch (error) {
             console.error('❌ Error loading data:', error);
             throw error;
@@ -173,12 +193,15 @@ class DashboardApp {
     }
 
     processAllData() {
-        if (!this.rawData || !this.playerListData || !this.scoringSystemData) return;
+        if (!this.rawData || !this.playerListData || !this.scoringSystemData) {
+            console.warn('Missing required data for processing');
+            return;
+        }
 
-        // Process fantasy points data (existing logic)
+        // Process fantasy points data first
         this.processFantasyData();
         
-        // Process player profiles with auction data
+        // Process player profiles with fantasy data
         this.processPlayerProfiles();
         
         // Process team compositions
@@ -187,22 +210,33 @@ class DashboardApp {
         // Process auction analysis
         this.processAuctionData();
         
-        console.log('All data processed successfully');
+        console.log('✅ All data processed successfully');
     }
 
     processFantasyData() {
-        // Initialize data structures
-        const teamTotals = {};
-        const playerStats = {};
-        const matches = [];
+        if (!this.rawData || typeof this.rawData !== 'object') {
+            console.error('Invalid raw data format');
+            return;
+        }
 
-        // Process each match WEEK (Level 1: MatchWeeks)
+        console.log('🔄 Starting fantasy data processing...');
+
+        // Initialize data structures
+        this.data = {
+            teamTotals: {},
+            teamStandings: {},  // Add team standings structure
+            playerStats: {},
+            players: [],
+            matches: []
+        };
+
+        // Process each match WEEK
         Object.entries(this.rawData).forEach(([matchWeekName, matchWeekData]) => {
-            console.log(`Processing ${matchWeekName}`);
+            console.log(`📅 Processing match week: ${matchWeekName}`);
             
-            // Process each MATCH within the week (Level 2: Matches)
+            // Process each MATCH within the week
             Object.entries(matchWeekData).forEach(([matchName, matchData]) => {
-                console.log(`  Processing match: ${matchName}`);
+                console.log(`🏏 Processing match: ${matchName}`);
                 
                 const matchInfo = {
                     matchWeek: matchWeekName,
@@ -212,170 +246,216 @@ class DashboardApp {
                     players: []
                 };
 
-                // Process each FANTASY TEAM in the match (Level 3: Fantasy Teams)
+                // Process each FANTASY TEAM in the match
                 Object.entries(matchData).forEach(([fantasyTeamName, teamData]) => {
                     if (fantasyTeamName === 'Team Total') return;
                     
-                    console.log(`    Processing fantasy team: ${fantasyTeamName}`);
-                    
-                    // Add null check for teamData
                     if (!teamData || typeof teamData !== 'object') {
                         console.warn(`⚠️ Skipping invalid team data for ${fantasyTeamName} in ${matchName}`);
                         return;
                     }
 
-                    // Handle BOTH data structures:
-                    // Structure 1: { "Players": { "Players": [...], "Team Total": X } }
-                    // Structure 2: { "Players": [...], "Team Total": X }
-                    
+                    // Extract team total and players list from nested structure
                     let teamTotal = 0;
                     let playersList = [];
-                    
+
                     if (teamData.Players) {
                         if (Array.isArray(teamData.Players)) {
-                            // Structure 2: Direct array
                             playersList = teamData.Players;
                             teamTotal = teamData['Team Total'] || 0;
-                            console.log(`      Structure 2 detected - Direct Players array, Team Total: ${teamTotal}`);
                         } else if (teamData.Players.Players && Array.isArray(teamData.Players.Players)) {
-                            // Structure 1: Nested object with Players array
                             playersList = teamData.Players.Players;
                             teamTotal = teamData.Players['Team Total'] || 0;
-                            console.log(`      Structure 1 detected - Nested Players object, Team Total: ${teamTotal}`);
                         }
                     }
-                    
-                    if (playersList.length === 0) {
-                        console.warn(`⚠️ No players found for ${fantasyTeamName} in ${matchName}`);
-                        return;
-                    }
+
+                    console.log(`📊 Team ${fantasyTeamName} scored ${teamTotal} points in ${matchName}`);
                     
                     matchInfo.teamTotals[fantasyTeamName] = teamTotal;
 
-                    // Accumulate points for FANTASY TEAMS (not MatchWeeks!)
-                    if (!teamTotals[fantasyTeamName]) {
-                        teamTotals[fantasyTeamName] = 0;
+                    // Initialize team standings if not exists
+                    if (!this.data.teamStandings[fantasyTeamName]) {
+                        this.data.teamStandings[fantasyTeamName] = {
+                            name: fantasyTeamName,
+                            matches: 0,
+                            totalPoints: 0,
+                            averagePoints: 0,
+                            highestScore: 0,
+                            lowestScore: Number.MAX_VALUE
+                        };
+                        console.log(`🆕 Initialized standings for ${fantasyTeamName}`);
                     }
-                    teamTotals[fantasyTeamName] += teamTotal;
 
-                    // Process individual players for this match
-                    if (playersList && Array.isArray(playersList)) {
-                        playersList.forEach(player => {
-                            const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
-                            const safeValue = (val) => (val !== null && val !== undefined && !isNaN(val)) ? val : '-';
-                            
-                            const playerData = {
-                                name: player.Player || 'Unknown',
-                                team: fantasyTeamName, // Use FANTASY team name
-                                runs: safeNumber(player.Score),
-                                balls: safeNumber(player.Balls),
-                                fours: safeNumber(player['4s']),
-                                sixes: safeNumber(player['6s']),
-                                strikeRate: safeValue(player.SR),
-                                wickets: safeNumber(player.Wickets),
-                                dots: safeNumber(player['0s']),
-                                economy: safeValue(player.ER),
-                                catches: safeNumber(player.Catch) + safeNumber(player.Runout),
-                                multiplier: safeValue(player['C/VC']),
-                                fantasyPoints: safeNumber(player.Points)
+                    // Update team standings
+                    const standings = this.data.teamStandings[fantasyTeamName];
+                    standings.matches++;
+                    standings.totalPoints += teamTotal;
+                    standings.averagePoints = standings.totalPoints / standings.matches;
+                    standings.highestScore = Math.max(standings.highestScore, teamTotal);
+                    standings.lowestScore = Math.min(standings.lowestScore, teamTotal);
+
+                    console.log(`📈 Updated standings for ${fantasyTeamName}:`, {
+                        matches: standings.matches,
+                        totalPoints: standings.totalPoints,
+                        avgPoints: standings.averagePoints
+                    });
+
+                    // Process individual players
+                    playersList.forEach(player => {
+                        if (!player || !player.Player) return;
+
+                        const safeNumber = (val) => typeof val === 'number' && !isNaN(val) ? val : 0;
+                        
+                        const playerData = {
+                            name: player.Player,
+                            team: fantasyTeamName,
+                            runs: safeNumber(player.Score),
+                            balls: safeNumber(player.Balls),
+                            fours: safeNumber(player['4s']),
+                            sixes: safeNumber(player['6s']),
+                            wickets: safeNumber(player.Wickets),
+                            dots: safeNumber(player['0s']),
+                            fantasyPoints: safeNumber(player.Points)
+                        };
+                        
+                        matchInfo.players.push(playerData);
+
+                        // Update player stats
+                        const playerKey = player.Player;
+                        if (!this.data.playerStats[playerKey]) {
+                            this.data.playerStats[playerKey] = {
+                                name: playerKey,
+                                team: fantasyTeamName,
+                                totalPoints: 0,
+                                matches: 0,
+                                runs: 0,
+                                balls: 0,
+                                fours: 0,
+                                sixes: 0,
+                                wickets: 0,
+                                dots: 0,
+                                averagePoints: 0
                             };
-                            
-                            matchInfo.players.push(playerData);
+                        }
 
-                            // Store in overall player stats
-                            const playerKey = player.Player;
-                            if (!playerStats[playerKey]) {
-                                playerStats[playerKey] = {
-                                    player: player.Player,
-                                    name: player.Player,
-                                    team: fantasyTeamName, // Use FANTASY team name
-                                    totalPoints: 0,
-                                    matches: 0,
-                                    runs: 0,
-                                    balls: 0,
-                                    fours: 0,
-                                    sixes: 0,
-                    wickets: 0,
-                                    dots: 0,
-                    catches: 0,
-                                    averagePoints: 0
-                                };
-                            }
-
-                            playerStats[playerKey].totalPoints += safeNumber(player.Points);
-                            playerStats[playerKey].matches += 1;
-                            playerStats[playerKey].runs += safeNumber(player.Score);
-                            playerStats[playerKey].balls += safeNumber(player.Balls);
-                            playerStats[playerKey].fours += safeNumber(player['4s']);
-                            playerStats[playerKey].sixes += safeNumber(player['6s']);
-                            playerStats[playerKey].wickets += safeNumber(player.Wickets);
-                            playerStats[playerKey].dots += safeNumber(player['0s']);
-                            playerStats[playerKey].catches += safeNumber(player.Catch) + safeNumber(player.Runout);
-                            playerStats[playerKey].averagePoints = playerStats[playerKey].totalPoints / playerStats[playerKey].matches;
-                        });
-                    }
+                        const stats = this.data.playerStats[playerKey];
+                        stats.totalPoints += safeNumber(player.Points);
+                        stats.matches += 1;
+                        stats.runs += safeNumber(player.Score);
+                        stats.balls += safeNumber(player.Balls);
+                        stats.fours += safeNumber(player['4s']);
+                        stats.sixes += safeNumber(player['6s']);
+                        stats.wickets += safeNumber(player.Wickets);
+                        stats.dots += safeNumber(player['0s']);
+                        stats.averagePoints = stats.totalPoints / stats.matches;
+                    });
                 });
 
-                matches.push(matchInfo);
+                this.data.matches.push(matchInfo);
             });
         });
 
-        // Create players array for compatibility with existing code
-        const players = Object.values(playerStats).sort((a, b) => b.totalPoints - a.totalPoints);
+        console.log('📊 Final team standings:', this.data.teamStandings);
+        
+        // Create sorted players array
+        this.data.players = Object.values(this.data.playerStats)
+            .sort((a, b) => b.totalPoints - a.totalPoints);
 
-        // Store processed data
-        this.data = {
-            teamTotals,
-            teamStandings: teamTotals, // Now contains FANTASY team totals
-            playerStats,
-            players,
-            matches,
-            totalMatches: matches.length
-        };
+        // Set this.fantasyData for the stat tables
+        this.fantasyData = this.data.matches;
 
-        console.log('✅ Fantasy data processed. Team standings keys:', Object.keys(this.data.teamStandings));
-        console.log('✅ Total matches processed:', matches.length);
-        console.log('✅ Fantasy teams found:', Object.keys(teamTotals));
+        console.log('✅ Fantasy data processed:', {
+            matches: this.data.matches.length,
+            players: Object.keys(this.data.playerStats).length,
+            teams: Object.keys(this.data.teamTotals).length,
+            standings: Object.keys(this.data.teamStandings).length
+        });
     }
 
     processPlayerProfiles() {
-        const profiles = {};
-        
-        // Create a lookup map from the auction data for efficient merging.
+        if (!this.playerListData || !this.fantasyData) {
+            console.warn('Missing required data for processing player profiles');
+            return;
+        }
+
+        // Initialize playerProfiles if it doesn't exist
+        this.data.playerProfiles = this.data.playerProfiles || {};
+
+        // Create a lookup map from the auction data for efficient merging
         const auctionDataMap = {};
-        Object.values(this.playerListData).flat().forEach(player => {
-            if (player.Player) {
-                auctionDataMap[player.Player.trim()] = player;
-            }
+        Object.entries(this.playerListData).forEach(([teamName, players]) => {
+            players.forEach(player => {
+                if (player.Player) {
+                    auctionDataMap[player.Player.trim()] = {
+                        ...player,
+                        auctionTeam: teamName
+                    };
+                }
+            });
         });
 
-        // Use the playerStats list as the primary source of all players.
-        Object.keys(this.data.playerStats).forEach(playerName => {
-            const performanceData = this.data.playerStats[playerName];
-            const auctionData = auctionDataMap[playerName] || {};
+        // Process each match to build player stats
+        this.fantasyData.forEach(match => {
+            match.players.forEach(player => {
+                if (!player.name) return;
 
-            profiles[playerName] = {
-                // Start with auction data, providing defaults
-                Player: playerName,
-                Type: auctionData.Type || 'N/A',
-                Team: auctionData.Team || 'N/A',
-                Price: auctionData.Price || 0,
-                Sale: auctionData.Sale || 'Unsold',
-                Overseas: auctionData.Overseas || false,
-                'Cap/Un': auctionData['Cap/Un'] || 'Uncapped',
-                // Add the fantasy team name from performance data
-                fantasyTeam: performanceData.team,
-                // Nest the performance data
-                performance: performanceData,
-                // Recalculate value metrics with complete data
-                valueForMoney: this.calculateValueForMoney(performanceData.totalPoints, auctionData.Price || 0),
-                priceCategory: this.categorizePriceRange(auctionData.Price || 0),
-                experienceLevel: this.categorizeExperience(auctionData)
-            };
+                // Get existing stats or create new ones
+                const stats = this.data.playerStats[player.name] || {
+                    name: player.name,
+                    team: player.team,
+                    totalPoints: 0,
+                    matches: 0,
+                    runs: 0,
+                    balls: 0,
+                    fours: 0,
+                    sixes: 0,
+                    wickets: 0,
+                    dots: 0,
+                    catches: 0,
+                    averagePoints: 0
+                };
+
+                // Update stats
+                stats.totalPoints += player.fantasyPoints || 0;
+                stats.matches += 1;
+                stats.runs += player.runs || 0;
+                stats.balls += player.balls || 0;
+                stats.fours += player.fours || 0;
+                stats.sixes += player.sixes || 0;
+                stats.wickets += player.wickets || 0;
+                stats.dots += player.dots || 0;
+                stats.averagePoints = stats.totalPoints / stats.matches;
+
+                // Store updated stats
+                this.data.playerStats[player.name] = stats;
+
+                // Create or update player profile
+                const auctionData = auctionDataMap[player.name] || {};
+                this.data.playerProfiles[player.name] = {
+                    Player: player.name,
+                    Type: auctionData.Type || 'N/A',
+                    Team: auctionData.auctionTeam || 'N/A',
+                    Price: auctionData.Price || 0,
+                    Sale: auctionData.Sale || 'Unsold',
+                    Overseas: auctionData.Overseas || false,
+                    'Cap/Un': auctionData['Cap/Un'] || 'Uncapped',
+                    fantasyTeam: player.team,
+                    performance: stats,
+                    valueForMoney: this.calculateValueForMoney(stats.totalPoints, auctionData.Price || 0),
+                    priceCategory: this.categorizePriceRange(auctionData.Price || 0)
+                };
+            });
         });
 
-        this.data.playerProfiles = profiles;
-        console.log('✅ Player profiles processed robustly.');
+        // Update players array with latest stats
+        this.data.players = Object.values(this.data.playerStats)
+            .sort((a, b) => b.totalPoints - a.totalPoints);
+
+        console.log('✅ Player profiles processed:', {
+            stats: Object.keys(this.data.playerStats).length,
+            profiles: Object.keys(this.data.playerProfiles).length,
+            players: this.data.players.length
+        });
     }
 
     processTeamCompositions() {
@@ -478,13 +558,14 @@ class DashboardApp {
         this.updateVFMTable();
         this.updateTeamComposition();
         this.updateStats();
-        this.populatePlayerComparisonDropdowns(); // <-- ADD THIS LINE
+        this.populatePlayerComparisonDropdowns();
         this.updateScoringRules();
         this.updateMatchSelector();
         this.setupCharts();
         this.initializePlayerFilters();
         this.renderPlayersTable();
         this.renderLeaderboards();
+        this.renderTopPerformersTables(); // Added this line
     }
 
     updateTeamOverview() {
@@ -546,6 +627,7 @@ class DashboardApp {
 
         // Show what teams we have
         console.log('🏏 Available teams:', Object.keys(this.data.teamStandings));
+        console.log('📊 Team standings data:', this.data.teamStandings);
 
         // Create a mapping for consistent team display
         const teamDisplayMap = {
@@ -579,22 +661,31 @@ class DashboardApp {
             'The Kingsmen': 'rgba(16, 185, 129, 0.3)'
         };
 
+        // Sort teams by total points
         const sortedTeams = Object.entries(this.data.teamStandings)
-            .sort(([,a], [,b]) => b - a)
-            .map(([team, points], index) => {
+            .sort(([,a], [,b]) => b.totalPoints - a.totalPoints)
+            .map(([team, standings], index) => {
                 // Find composition data using team name mapping
                 const compositionKey = this.findCompositionKey(team);
                 const composition = this.data.teamCompositions[compositionKey];
                 
+                console.log(`📊 Processing team card for ${team}:`, {
+                    standings,
+                    composition,
+                    rank: index + 1
+                });
+                
                 return {
                     team: teamDisplayMap[team] || team,
-                    points,
+                    standings,
                     rank: index + 1,
                     composition
                 };
             });
 
-        const cardsHTML = sortedTeams.map(({team, points, rank, composition}) => {
+        console.log('📊 Sorted teams:', sortedTeams);
+
+        const cardsHTML = sortedTeams.map(({team, standings, rank, composition}) => {
             const bgColor = teamBackgrounds[team] || 'rgba(128, 128, 128, 0.1)';
             const borderColor = teamBorderColors[team] || 'rgba(128, 128, 128, 0.3)';
             const accentColor = teamColors[team] || '#007bff';
@@ -605,7 +696,7 @@ class DashboardApp {
                         <h4>${team}</h4>
                         <div class="team-rank" style="background: ${accentColor};">#${rank}</div>
                     </div>
-                    <div class="team-points">${points.toLocaleString()} pts</div>
+                    <div class="team-points">${standings.totalPoints.toLocaleString()} pts</div>
                     
                     <div class="team-investment-stats">
                         <span>Investment: ₹${(composition?.totalInvestment || 0).toFixed(2)}Cr</span>
@@ -1534,30 +1625,15 @@ class DashboardApp {
     }
 
     sortTable(sortKey) {
-        console.log('🔄 Sorting table by:', sortKey);
-        console.log('🔄 Current sort state:', this.currentSort);
-        
-        // Determine sort direction
-        let direction = 'desc'; // Default to descending for most stats
-        if (this.currentSort && this.currentSort.column === sortKey) {
-            // Toggle direction if same column
-            direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
-            console.log('🔄 Toggling direction from', this.currentSort.direction, 'to', direction);
-        } else {
-            console.log('🔄 New column, using default direction:', direction);
-        }
-        
-        // Update sort state
-        this.currentSort = { column: sortKey, direction };
-        console.log('🔄 Updated sort state:', this.currentSort);
-        
-        // Update header classes
-        this.updateSortHeaders(sortKey, direction);
-        
-        // Sort the data
-        this.sortPlayersData(sortKey, direction);
-        
-        // Re-render the table
+        const currentDirection = this.sortDirection[sortKey] || 'desc';
+        const newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+        this.sortDirection[sortKey] = newDirection;
+
+        // Update sort headers
+        this.updateSortHeaders(sortKey, newDirection);
+
+        // Sort and render
+        this.sortPlayersData(sortKey, newDirection);
         this.renderFilteredPlayersTable();
     }
 
@@ -1574,70 +1650,30 @@ class DashboardApp {
     }
 
     sortPlayersData(sortKey, direction) {
-        const playersToSort = this.filteredPlayers.length > 0 || this.hasActiveFilters()
-            ? this.filteredPlayers 
-            : this.data.players;
-            
-        playersToSort.sort((a, b) => {
-            let aValue, bValue;
-            
-            // Get values based on sort key
-            switch (sortKey) {
-                case 'matchesPlayed':
-                    aValue = a.matches || this.data.playerStats[a.player]?.matches || 0;
-                    bValue = b.matches || this.data.playerStats[b.player]?.matches || 0;
-                    break;
-                case 'totalPoints':
-                    aValue = a.totalPoints || 0;
-                    bValue = b.totalPoints || 0;
-                    break;
-                case 'runs':
-                    aValue = a.runs || this.data.playerStats[a.player]?.runs || 0;
-                    bValue = b.runs || this.data.playerStats[b.player]?.runs || 0;
-                    break;
-                case 'fours':
-                    aValue = this.data.playerStats[a.player]?.fours || 0;
-                    bValue = this.data.playerStats[b.player]?.fours || 0;
-                    break;
-                case 'sixes':
-                    aValue = this.data.playerStats[a.player]?.sixes || 0;
-                    bValue = this.data.playerStats[b.player]?.sixes || 0;
-                    break;
-                case 'strikeRate':
-                    aValue = parseFloat(this.calculateStrikeRate(a)) || 0;
-                    bValue = parseFloat(this.calculateStrikeRate(b)) || 0;
-                    break;
-                case 'wickets':
-                    aValue = a.wickets || this.data.playerStats[a.player]?.wickets || 0;
-                    bValue = b.wickets || this.data.playerStats[b.player]?.wickets || 0;
-                    break;
-                case 'dots':
-                    aValue = this.data.playerStats[a.player]?.dots || 0;
-                    bValue = this.data.playerStats[b.player]?.dots || 0;
-                    break;
-                case 'economyRate':
-                    aValue = parseFloat(this.calculateEconomy(a)) || 999; // High value for players without economy
-                    bValue = parseFloat(this.calculateEconomy(b)) || 999;
-                    break;
-                default:
-                    return 0;
+        if (!Array.isArray(this.filteredPlayers)) {
+            console.warn('No filtered players data to sort');
+            return;
+        }
+
+        const compareValues = (a, b) => {
+            // Safely get values, handling undefined objects
+            const aVal = a && a.performance ? a.performance[sortKey] : 0;
+            const bVal = b && b.performance ? b.performance[sortKey] : 0;
+
+            // Handle numeric comparisons
+            if (typeof aVal === 'number' && typeof bVal === 'number') {
+                return direction === 'asc' ? aVal - bVal : bVal - aVal;
             }
-            
-            // Handle string/numeric comparison
-            if (typeof aValue === 'string' && typeof bValue === 'string') {
-                aValue = aValue.toLowerCase();
-                bValue = bValue.toLowerCase();
-            }
-            
-            // Sort comparison
-            if (direction === 'asc') {
-                return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-            } else {
-                return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-            }
-        });
-        
-        console.log(`📊 Sorted ${playersToSort.length} players by ${sortKey} (${direction})`);
+
+            // Handle string comparisons
+            const aStr = String(aVal || '');
+            const bStr = String(bVal || '');
+            return direction === 'asc' ? 
+                aStr.localeCompare(bStr) : 
+                bStr.localeCompare(aStr);
+        };
+
+        this.filteredPlayers.sort(compareValues);
     }
 
     handlePlayerSearch(searchTerm) {
@@ -1665,26 +1701,32 @@ class DashboardApp {
     applyFilters() {
         if (!this.data.players) return;
         
+        console.log('🔍 Applying filters:', this.currentFilters);
+        console.log('📊 Initial players count:', this.data.players.length);
+        
         let filtered = [...this.data.players];
         
         // Apply search filter
-        if (this.currentFilters.search) {
+        if (this.currentFilters?.search) {
             filtered = filtered.filter(player => 
-                player.player.toLowerCase().includes(this.currentFilters.search)
+                player.name.toLowerCase().includes(this.currentFilters.search)
             );
+            console.log('🔍 After search filter:', filtered.length);
         }
         
         // Apply team filter
-        if (this.currentFilters.team) {
+        if (this.currentFilters?.team) {
             filtered = filtered.filter(player => player.team === this.currentFilters.team);
+            console.log('🏏 After team filter:', filtered.length);
         }
         
-        // Apply position filter (need to get position from player profiles)
-        if (this.currentFilters.position) {
+        // Apply position filter
+        if (this.currentFilters?.position) {
             filtered = filtered.filter(player => {
-                const profile = this.data.playerProfiles[player.player];
+                const profile = this.data.playerProfiles[player.name];
                 return profile && this.getPlayerPosition(profile.Type) === this.currentFilters.position;
             });
+            console.log('📍 After position filter:', filtered.length);
         }
         
         this.filteredPlayers = filtered;
@@ -1693,7 +1735,7 @@ class DashboardApp {
         this.showAllPlayers = false;
         
         // Reapply current sort if one exists
-        if (this.currentSort && this.currentSort.column) {
+        if (this.currentSort?.column) {
             this.sortPlayersData(this.currentSort.column, this.currentSort.direction);
         }
         
@@ -1732,7 +1774,7 @@ class DashboardApp {
                         }
                         
                         playersList.forEach(p => {
-                            if (p.Player === player.player && p.Score !== null && p.Balls !== null) {
+                            if (p.Player === player.name && p.Score !== null && p.Balls !== null) {
                                 totalRuns += p.Score || 0;
                                 totalBalls += p.Balls || 0;
                                 if (p.Score > 0 || p.Balls > 0) matchCount++;
@@ -1768,12 +1810,9 @@ class DashboardApp {
                         }
                         
                         playersList.forEach(p => {
-                            if (p.Player === player.player && p.ER !== null && p.ER !== undefined) {
-                                // ER is economy rate, accumulate for average
-                                if (typeof p.ER === 'number' && p.ER > 0) {
-                                    totalRuns += p.ER;
-                                    matchCount++;
-                                }
+                            if (p.Player === player.name && p.ER !== null) {
+                                totalRuns += p.ER || 0;
+                                matchCount++;
                             }
                         });
                     }
@@ -1782,8 +1821,8 @@ class DashboardApp {
         });
         
         if (matchCount === 0) return '-';
-        const avgER = totalRuns / matchCount;
-        return avgER.toFixed(2);
+        const economy = totalRuns / matchCount;
+        return economy.toFixed(2);
     }
 
     updateSearchResultsCount() {
@@ -2060,7 +2099,7 @@ class DashboardApp {
     }
 
     renderTopPerformersTables() {
-        if (!this.data.players || this.data.players.length === 0) return;
+        if (!this.rawData) return;
 
         // Enhanced stats collection with additional metrics
         let allStats = {};
@@ -2108,16 +2147,15 @@ class DashboardApp {
         const allPlayers = Object.values(allStats);
 
         // Most Runs
-        const topRunsBody = document.getElementById('topRunsBody');
-        if (topRunsBody) {
+        const mostRunsList = document.getElementById('mostRunsList');
+        if (mostRunsList) {
             const topRuns = [...allPlayers].sort((a, b) => b.runs - a.runs).slice(0, 5);
-            topRunsBody.innerHTML = topRuns.map(player => `
-                <div class="performer-item">
-                    <strong>${player.player}</strong>
-                    <div class="performer-details">
-                        <span class="stat-value">${player.runs}</span>
-                        <span>${player.matches} matches</span>
-                </div>
+            mostRunsList.innerHTML = topRuns.map(player => `
+                <div class="stats-row">
+                    <div class="player-name">${player.player}</div>
+                    <div class="stat-values">
+                        <div class="stat-col">${player.runs}</div>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2126,16 +2164,23 @@ class DashboardApp {
         const topBoundariesBody = document.getElementById('topBoundariesBody');
         if (topBoundariesBody) {
             const topBoundaries = [...allPlayers]
-                .map(p => ({...p, boundaries: p.fours + p.sixes}))
-                .sort((a, b) => b.boundaries - a.boundaries)
+                .sort((a, b) => {
+                    const totalA = a.fours + a.sixes;
+                    const totalB = b.fours + b.sixes;
+                    if (totalB !== totalA) return totalB - totalA;
+                    if (b.fours !== a.fours) return b.fours - a.fours;
+                    return b.sixes - a.sixes;
+                })
                 .slice(0, 5);
+
             topBoundariesBody.innerHTML = topBoundaries.map(player => `
                 <div class="performer-item">
-                    <strong>${player.player}</strong>
-                    <div class="performer-details">
-                        <span class="stat-value">${player.boundaries}</span>
-                        <span>${player.fours} 4s, ${player.sixes} 6s</span>
-            </div>
+                    <div class="performer-name">${player.player}</div>
+                    <div class="performer-stats">
+                        <span class="stat-number">${player.fours}</span>
+                        <span class="stat-number">${player.sixes}</span>
+                        <span class="stat-number">${player.fours + player.sixes}</span>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2146,11 +2191,10 @@ class DashboardApp {
             const topWickets = [...allPlayers].sort((a, b) => b.wickets - a.wickets).slice(0, 5);
             topWicketsBody.innerHTML = topWickets.map(player => `
                 <div class="performer-item">
-                    <strong>${player.player}</strong>
-                    <div class="performer-details">
-                        <span class="stat-value">${player.wickets}</span>
-                        <span>${player.matches} matches</span>
-                </div>
+                    <div class="performer-name">${player.player}</div>
+                    <div class="performer-stats">
+                        <span class="stat-number">${player.wickets}</span>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2161,11 +2205,10 @@ class DashboardApp {
             const topDots = [...allPlayers].sort((a, b) => b.dots - a.dots).slice(0, 5);
             topDotBallsBody.innerHTML = topDots.map(player => `
                 <div class="performer-item">
-                    <strong>${player.player}</strong>
-                    <div class="performer-details">
-                        <span class="stat-value">${player.dots}</span>
-                        <span>${player.matches} matches</span>
-                </div>
+                    <div class="performer-name">${player.player}</div>
+                    <div class="performer-stats">
+                        <span class="stat-number">${player.dots}</span>
+                    </div>
                 </div>
             `).join('');
         }
@@ -2690,31 +2733,29 @@ class DashboardApp {
     }
 
     populatePlayerComparisonDropdowns() {
-        const player1Select = document.getElementById('comparePlayer1');
-        const player2Select = document.getElementById('comparePlayer2');
+        const dropdowns = ['playerA', 'playerB'].map(id => document.getElementById(id));
         
-        if (!player1Select || !player2Select || !this.data.players) {
-            console.error('Player comparison dropdowns or player data not found!');
+        if (!dropdowns.every(Boolean)) {
+            console.warn('❌ Player comparison dropdowns not found');
             return;
         }
 
-        const players = [...this.data.players].sort((a, b) => a.player.localeCompare(b.player));
+        // Get sorted list of all players
+        const players = Object.values(this.data.playerProfiles)
+            .sort((a, b) => a.Player.localeCompare(b.Player));
 
-        // Clear existing options but keep the placeholder
-        player1Select.innerHTML = '<option value="">Select Player 1</option>';
-        player2Select.innerHTML = '<option value="">Select Player 2</option>';
+        // Create dropdown options
+        const options = players.map(player => {
+            const stats = this.data.playerStats[player.Player] || {};
+            return `<option value="${player.Player}">${player.Player} (${stats.totalPoints || 0} pts)</option>`;
+        }).join('');
 
-        players.forEach(player => {
-            const option1 = document.createElement('option');
-            option1.value = player.player;
-            option1.textContent = player.player;
-            player1Select.appendChild(option1);
-
-            const option2 = document.createElement('option');
-            option2.value = player.player;
-            option2.textContent = player.player;
-            player2Select.appendChild(option2);
+        // Set the same options for both dropdowns
+        dropdowns.forEach(dropdown => {
+            dropdown.innerHTML = '<option value="">Select Player</option>' + options;
         });
+
+        console.log('✅ Player comparison dropdowns populated with', players.length, 'players');
     }
 
     getBetterValueClass(value1, value2, higherIsBetter = true) {
@@ -2723,6 +2764,126 @@ class DashboardApp {
         
         const isBetter = higherIsBetter ? value2 > value1 : value2 < value1;
         return isBetter ? 'better-value' : 'worse-value';
+    }
+
+    // Function to populate player stat tables
+    populatePlayerStatTables(playerData) {
+        // Helper function to create player stat item
+        function createStatItem(player, statValue, extraStats = null) {
+            const item = document.createElement('div');
+            item.className = 'bargain-item';
+            
+            const playerName = document.createElement('strong');
+            playerName.textContent = player;
+            
+            const details = document.createElement('div');
+            details.className = 'bargain-details';
+            
+            if (extraStats) {
+                details.innerHTML = extraStats;
+            } else {
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'value-ratio';
+                valueSpan.textContent = statValue;
+                details.appendChild(valueSpan);
+            }
+            
+            item.appendChild(playerName);
+            item.appendChild(details);
+            return item;
+        }
+
+        // Process and sort player data
+        const playerStats = {};
+        playerData.forEach(match => {
+            match.players.forEach(player => {
+                if (!playerStats[player.name]) {
+                    playerStats[player.name] = {
+                        runs: 0,
+                        fours: 0,
+                        sixes: 0,
+                        wickets: 0,
+                        dots: 0
+                    };
+                }
+                playerStats[player.name].runs += player.runs || 0;
+                playerStats[player.name].fours += player.fours || 0;
+                playerStats[player.name].sixes += player.sixes || 0;
+                playerStats[player.name].wickets += player.wickets || 0;
+                playerStats[player.name].dots += player.dots || 0;
+            });
+        });
+
+        // Convert to array for sorting
+        const players = Object.entries(playerStats).map(([name, stats]) => ({
+            name,
+            ...stats
+        }));
+
+        // Populate Most Runs
+        const mostRunsList = document.getElementById('mostRunsList');
+        if (mostRunsList) {
+            mostRunsList.innerHTML = '';
+            players
+                .sort((a, b) => b.runs - a.runs)
+                .slice(0, 5)
+                .forEach(player => {
+                    mostRunsList.appendChild(createStatItem(player.name, player.runs));
+                });
+        }
+
+        // Populate Most Boundaries
+        const mostBoundariesList = document.getElementById('mostBoundariesList');
+        if (mostBoundariesList) {
+            mostBoundariesList.innerHTML = '';
+            players
+                .sort((a, b) => ((b.fours + b.sixes) - (a.fours + a.sixes)))
+                .slice(0, 5)
+                .forEach(player => {
+                    const row = document.createElement('div');
+                    row.className = 'stats-row';
+                    
+                    const name = document.createElement('div');
+                    name.className = 'player-name';
+                    name.textContent = player.name;
+                    
+                    const values = document.createElement('div');
+                    values.className = 'stat-values';
+                    values.innerHTML = `
+                        <div class="stat-value">${player.fours}</div>
+                        <div class="stat-value">${player.sixes}</div>
+                        <div class="stat-value">${player.fours + player.sixes}</div>
+                    `;
+                    
+                    row.appendChild(name);
+                    row.appendChild(values);
+                    mostBoundariesList.appendChild(row);
+                });
+        }
+
+        // Populate Most Wickets
+        const mostWicketsList = document.getElementById('mostWicketsList');
+        if (mostWicketsList) {
+            mostWicketsList.innerHTML = '';
+            players
+                .sort((a, b) => b.wickets - a.wickets)
+                .slice(0, 5)
+                .forEach(player => {
+                    mostWicketsList.appendChild(createStatItem(player.name, player.wickets));
+                });
+        }
+
+        // Populate Most Dots
+        const mostDotsList = document.getElementById('mostDotsList');
+        if (mostDotsList) {
+            mostDotsList.innerHTML = '';
+            players
+                .sort((a, b) => b.dots - a.dots)
+                .slice(0, 5)
+                .forEach(player => {
+                    mostDotsList.appendChild(createStatItem(player.name, player.dots));
+                });
+        }
     }
 }
 
@@ -2749,7 +2910,7 @@ function toggleTableRows(tableId) {
         if (window.innerWidth > 768) {
             const tableSection = document.getElementById('teamAuctionTables');
             if (tableSection) {
-        setTimeout(() => {
+                setTimeout(() => {
                     tableSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 150);
             }
@@ -2797,9 +2958,9 @@ function toggleVFMRows() {
     
     if (!hiddenRows || !button) return;
     
-    const expandText = button.querySelector('.vfm-expand-text');
-    const collapseText = button.querySelector('.vfm-collapse-text');
-    const expandIcon = button.querySelector('.vfm-expand-icon');
+    const expandText = button.querySelector('.expand-text');
+    const collapseText = button.querySelector('.collapse-text');
+    const expandIcon = button.querySelector('.expand-icon');
     
     const isExpanded = hiddenRows.style.display !== 'none';
     
@@ -2816,80 +2977,46 @@ function toggleVFMRows() {
     }
 }
 
-// Global filters state
-let currentFilters = {
-    search: '',
-    team: '',
-    position: ''
-};
-
-// Initialize the dashboard
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 Initializing Fantasy Dashboard...');
-    window.dashboard = new DashboardApp();
-    window.dashboard.init();
-});
-
-// Setup event listeners for player filters
 function setupPlayerFilters() {
+    const app = window.dashboardApp;
+    if (!app) return;
+
+    // Initialize filters
+    app.initializePlayerFilters();
+
+    // Set up event listeners
     const playerSearch = document.getElementById('playerSearch');
     const teamFilter = document.getElementById('teamFilter');
     const positionFilter = document.getElementById('positionFilter');
-    const clearFilters = document.getElementById('clearFilters');
+    const clearFiltersBtn = document.getElementById('clearFilters');
 
-    // Search functionality
     if (playerSearch) {
-        playerSearch.addEventListener('input', (e) => {
-            currentFilters.search = e.target.value.toLowerCase();
-            if (window.dashboard) {
-                window.dashboard.currentFilters = currentFilters;
-                window.dashboard.applyFilters();
-            }
-        });
+        playerSearch.addEventListener('input', (e) => app.handlePlayerSearch(e.target.value));
     }
 
-    // Team filter
     if (teamFilter) {
-        teamFilter.addEventListener('change', (e) => {
-            currentFilters.team = e.target.value;
-            if (window.dashboard) {
-                window.dashboard.currentFilters = currentFilters;
-                window.dashboard.applyFilters();
-            }
-        });
+        teamFilter.addEventListener('change', (e) => app.handleTeamFilter(e.target.value));
     }
 
-    // Position filter
     if (positionFilter) {
-        positionFilter.addEventListener('change', (e) => {
-            currentFilters.position = e.target.value;
-            if (window.dashboard) {
-                window.dashboard.currentFilters = currentFilters;
-                window.dashboard.applyFilters();
-            }
-        });
+        positionFilter.addEventListener('change', (e) => app.handlePositionFilter(e.target.value));
     }
 
-    // Clear all filters
-    if (clearFilters) {
-        clearFilters.addEventListener('click', () => {
-            // Reset all filters
-            currentFilters = {
-                search: '',
-                team: '',
-                position: ''
-            };
-            
-            // Reset form values
-            if (playerSearch) playerSearch.value = '';
-            if (teamFilter) teamFilter.value = '';
-            if (positionFilter) positionFilter.value = '';
-            
-            // Re-render table
-            if (window.dashboard) {
-                window.dashboard.currentFilters = currentFilters;
-                window.dashboard.clearAllFilters();
-            }
-        });
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', () => app.clearAllFilters());
     }
+
+    // Initial render
+    app.applyFilters();
 }
+
+// Initialize the dashboard when the DOM is ready
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        console.log('🚀 Initializing Fantasy Dashboard...');
+        window.dashboardApp = new DashboardApp();
+        await window.dashboardApp.init();
+    } catch (error) {
+        console.error('❌ Error initializing dashboard:', error);
+    }
+});
