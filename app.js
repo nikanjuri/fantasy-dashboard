@@ -341,29 +341,41 @@ class DashboardApp {
     processPlayerProfiles() {
         const profiles = {};
         
-        // Combine fantasy performance with auction data
-        Object.entries(this.playerListData).forEach(([teamName, players]) => {
-            players.forEach(player => {
-                const fantasyPlayer = this.data.playerStats[player.Player];
-                
-                profiles[player.Player] = {
-                    ...player,
-                    fantasyTeam: teamName,
-                    performance: fantasyPlayer || {
-                        totalPoints: 0,
-                    runs: 0,
-                    wickets: 0,
-                    catches: 0,
-                        matchesPlayed: 0
-                    },
-                    valueForMoney: this.calculateValueForMoney(fantasyPlayer?.totalPoints || 0, player.Price || 0),
-                    priceCategory: this.categorizePriceRange(player.Price || 0),
-                    experienceLevel: this.categorizeExperience(player)
-                };
-            });
+        // Create a lookup map from the auction data for efficient merging.
+        const auctionDataMap = {};
+        Object.values(this.playerListData).flat().forEach(player => {
+            if (player.Player) {
+                auctionDataMap[player.Player.trim()] = player;
+            }
+        });
+
+        // Use the playerStats list as the primary source of all players.
+        Object.keys(this.data.playerStats).forEach(playerName => {
+            const performanceData = this.data.playerStats[playerName];
+            const auctionData = auctionDataMap[playerName] || {};
+
+            profiles[playerName] = {
+                // Start with auction data, providing defaults
+                Player: playerName,
+                Type: auctionData.Type || 'N/A',
+                Team: auctionData.Team || 'N/A',
+                Price: auctionData.Price || 0,
+                Sale: auctionData.Sale || 'Unsold',
+                Overseas: auctionData.Overseas || false,
+                'Cap/Un': auctionData['Cap/Un'] || 'Uncapped',
+                // Add the fantasy team name from performance data
+                fantasyTeam: performanceData.team,
+                // Nest the performance data
+                performance: performanceData,
+                // Recalculate value metrics with complete data
+                valueForMoney: this.calculateValueForMoney(performanceData.totalPoints, auctionData.Price || 0),
+                priceCategory: this.categorizePriceRange(auctionData.Price || 0),
+                experienceLevel: this.categorizeExperience(auctionData)
+            };
         });
 
         this.data.playerProfiles = profiles;
+        console.log('✅ Player profiles processed robustly.');
     }
 
     processTeamCompositions() {
@@ -466,6 +478,7 @@ class DashboardApp {
         this.updateVFMTable();
         this.updateTeamComposition();
         this.updateStats();
+        this.populatePlayerComparisonDropdowns(); // <-- ADD THIS LINE
         this.updateScoringRules();
         this.updateMatchSelector();
         this.setupCharts();
@@ -1478,6 +1491,12 @@ class DashboardApp {
         setTimeout(() => {
             setupPlayerFilters();
         }, 100);
+        
+        // Player Comparison Button
+        const compareBtn = document.getElementById('compareBtn');
+        if (compareBtn) {
+            compareBtn.addEventListener('click', () => this.compareSelectedPlayers());
+        }
         
         console.log('✅ All event listeners setup complete');
     }
@@ -2523,6 +2542,160 @@ class DashboardApp {
 
         tablesHTML += '</div>';
         container.innerHTML = tablesHTML;
+    }
+
+    compareSelectedPlayers() {
+        console.log('🔄 Comparing selected players...');
+        
+        const player1Name = document.getElementById('comparePlayer1').value.trim();
+        const player2Name = document.getElementById('comparePlayer2').value.trim();
+        const resultsContainer = document.getElementById('comparisonResults');
+
+        // --- ADD THESE TWO LINES FOR DEBUGGING ---
+        // console.log('Looking for players:', { player1Name, player2Name });
+        // console.log('Available player keys:', Object.keys(this.data.playerProfiles));
+        
+        if (!player1Name || !player2Name) {
+            resultsContainer.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-20);">Please select both players to compare.</p>';
+            return;
+        }
+
+        if (player1Name === player2Name) {
+            resultsContainer.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-20);">Please select different players to compare.</p>';
+            return;
+        }
+        
+        const player1 = this.data.playerProfiles[player1Name];
+        const player2 = this.data.playerProfiles[player2Name];
+
+        if (!player1 || !player2) {
+            resultsContainer.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-20);">Player data not found. Please try again.</p>';
+            console.error('Could not find player profiles for:', { player1Name, player2Name });
+            return;
+        }
+        
+        const player1Stats = player1.performance || {};
+        const player2Stats = player2.performance || {};
+        
+        const player1StrikeRate = this.calculateStrikeRate(player1Stats);
+        const player2StrikeRate = this.calculateStrikeRate(player2Stats);
+        const player1Economy = this.calculateEconomy(player1Stats);
+        const player2Economy = this.calculateEconomy(player2Stats);
+        
+        const player1FieldingPoints = (player1Stats.catches || 0) + (player1Stats.runouts || 0);
+        const player2FieldingPoints = (player2Stats.catches || 0) + (player2Stats.runouts || 0);
+        
+        resultsContainer.innerHTML = `
+            <div class="comparison-table">
+                <div class="comparison-header">
+                    <div class="player-header">${player1.Player}</div>
+                    <div class="stat-header">Statistics</div>
+                    <div class="player-header">${player2.Player}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1.fantasyTeam || 'N/A'}</div>
+                    <div class="stat-label">Team</div>
+                    <div class="player-value">${player2.fantasyTeam || 'N/A'}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${this.getPlayerPosition(player1.Type) || 'N/A'}</div>
+                    <div class="stat-label">Position</div>
+                    <div class="player-value">${this.getPlayerPosition(player2.Type) || 'N/A'}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">₹${player1.Price || 0}Cr</div>
+                    <div class="stat-label">Price</div>
+                    <div class="player-value ${this.getBetterValueClass(player1.Price || 0, player2.Price || 0, false)}">₹${player2.Price || 0}Cr</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Stats.totalPoints || 0}</div>
+                    <div class="stat-label">Total Points</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.totalPoints || 0, player2Stats.totalPoints || 0)}">${player2Stats.totalPoints || 0}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Stats.matchesPlayed || 0}</div>
+                    <div class="stat-label">Matches</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.matchesPlayed || 0, player2Stats.matchesPlayed || 0)}">${player2Stats.matchesPlayed || 0}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Stats.runs || 0}</div>
+                    <div class="stat-label">Runs</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.runs || 0, player2Stats.runs || 0)}">${player2Stats.runs || 0}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Stats.fours || 0}</div>
+                    <div class="stat-label">4s</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.fours || 0, player2Stats.fours || 0)}">${player2Stats.fours || 0}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Stats.sixes || 0}</div>
+                    <div class="stat-label">6s</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.sixes || 0, player2Stats.sixes || 0)}">${player2Stats.sixes || 0}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1StrikeRate}</div>
+                    <div class="stat-label">Strike Rate</div>
+                    <div class="player-value ${this.getBetterValueClass(parseFloat(player1StrikeRate) || 0, parseFloat(player2StrikeRate) || 0)}">${player2StrikeRate}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Stats.wickets || 0}</div>
+                    <div class="stat-label">Wickets</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.wickets || 0, player2Stats.wickets || 0)}">${player2Stats.wickets || 0}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Stats.dots || 0}</div>
+                    <div class="stat-label">Dots</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.dots || 0, player2Stats.dots || 0)}">${player2Stats.dots || 0}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1Economy}</div>
+                    <div class="stat-label">Economy</div>
+                    <div class="player-value ${this.getBetterValueClass(parseFloat(player1Economy) || 999, parseFloat(player2Economy) || 999, false)}">${player2Economy}</div>
+                </div>
+                <div class="comparison-row">
+                    <div class="player-value">${player1FieldingPoints}</div>
+                    <div class="stat-label">Fielding Points</div>
+                    <div class="player-value ${this.getBetterValueClass(player1FieldingPoints, player2FieldingPoints)}">${player2FieldingPoints}</div>
+                </div>
+            </div>
+        `;
+        console.log('✅ Player comparison completed');
+    }
+
+    populatePlayerComparisonDropdowns() {
+        const player1Select = document.getElementById('comparePlayer1');
+        const player2Select = document.getElementById('comparePlayer2');
+        
+        if (!player1Select || !player2Select || !this.data.players) {
+            console.error('Player comparison dropdowns or player data not found!');
+            return;
+        }
+
+        const players = [...this.data.players].sort((a, b) => a.player.localeCompare(b.player));
+
+        // Clear existing options but keep the placeholder
+        player1Select.innerHTML = '<option value="">Select Player 1</option>';
+        player2Select.innerHTML = '<option value="">Select Player 2</option>';
+
+        players.forEach(player => {
+            const option1 = document.createElement('option');
+            option1.value = player.player;
+            option1.textContent = player.player;
+            player1Select.appendChild(option1);
+
+            const option2 = document.createElement('option');
+            option2.value = player.player;
+            option2.textContent = player.player;
+            player2Select.appendChild(option2);
+        });
+    }
+
+    getBetterValueClass(value1, value2, higherIsBetter = true) {
+        // Return CSS class for better value styling
+        if (value1 === value2) return '';
+        
+        const isBetter = higherIsBetter ? value2 > value1 : value2 < value1;
+        return isBetter ? 'better-value' : 'worse-value';
     }
 }
 
