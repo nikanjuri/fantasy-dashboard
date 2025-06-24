@@ -739,14 +739,30 @@ select.form-control {
   gap: var(--space-20);
 }
 
-.header-stats {
-  display: flex;
-  gap: var(--space-16);
-  padding: var(--space-6) var(--space-12);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  border-radius: var(--radius-base);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Compact Header Stats Widget */
+.dashboard-header .header-stats {
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    gap: var(--space-12) !important;
+}
+[data-color-scheme="light"] .dashboard-header .header-stats {
+    background: none !important;
+}
+.dashboard-header .header-stats .stat-item {
+    min-width: 60px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+}
+.dashboard-header .header-stats .stat-label {
+    font-size: var(--font-size-xs) !important;
+    color: var(--color-text-secondary) !important;
+    letter-spacing: 0.04em !important;
+}
+.dashboard-header .header-stats .stat-value {
+    font-size: var(--font-size-sm) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    color: var(--color-text) !important;
 }
 
 .header-stats::before {
@@ -772,6 +788,27 @@ select.form-control {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   color: #ffffff;
+}
+
+/* --- Pill style badges for header stats --- */
+.stat-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    background: rgba(255, 255, 255, 0.08);
+    padding: var(--space-2) var(--space-8);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+}
+[data-color-scheme="light"] .stat-badge {
+    background: rgba(0, 0, 0, 0.05);
+}
+.stat-badge .stat-value {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
 }
 
 /* Enhanced Navigation */
@@ -2125,7 +2162,7 @@ select.form-control {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-6) var(--space-8);
+  padding: var(--space-4) var(--space-8)!important;
   border-radius: var(--radius-sm);
   transition: background-color var(--duration-fast) var(--ease-standard);
   font-size: var(--font-size-sm);
@@ -4779,6 +4816,111 @@ select.form-control {
 .stats-table:has(#topDotBallsBody) .stat-values {
     grid-template-columns: 36px; /* single column keeps number flush right */
 }
+
+/* --- Minimal metric badges for header --- */
+.dashboard-header .header-stats{padding:0!important;background:none!important;border:none!important;gap:var(--space-12)!important}
+.metric{display:inline-flex;align-items:center;gap:var(--space-4);font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--color-text)}
+.metric .badge{background:var(--color-primary);color:var(--color-btn-primary-text);padding:2px 8px;border-radius:9999px;font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);line-height:1}
+
+/* --- Resized pill badges with full text --- */
+.metric{display:inline-flex;align-items:center;font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);color:var(--color-btn-primary-text);padding:4px 12px;border-radius:9999px;line-height:1}
+.badge-teams{background:var(--color-primary);} 
+.badge-matches{background:var(--color-warning);} 
+
+/* --- Outline colors for top performer tables --- */
+.runs-card{border-color:var(--color-primary)!important;border-width:2px!important}
+.boundaries-card{border-color:var(--color-warning)!important;border-width:2px!important}
+.wickets-card{border-color:var(--color-success)!important;border-width:2px!important}
+.dots-card{border-color:var(--color-error)!important;border-width:2px!important}
+
+/* Adjust performer table outlines: color only on left */
+.runs-card{
+    border-color:var(--color-border)!important; /* reset other sides */
+    border-left:3px solid var(--color-primary)!important;
+}
+.boundaries-card{
+    border-color:var(--color-border)!important;
+    border-left:3px solid var(--color-warning)!important;
+}
+.wickets-card{
+    border-color:var(--color-border)!important;
+    border-left:3px solid var(--color-success)!important;
+}
+.dots-card{
+    border-color:var(--color-border)!important;
+    border-left:3px solid var(--color-error)!important;
+}
+
+/* Align price/points and ratio to the right edge in auction insight lists */
+.bargain-item strong,
+.expensive-item strong,
+.highrisk-item strong {
+    flex: 0 1 auto;           /* allow natural width, no forced flex-grow */
+    margin-right: var(--space-12);
+}
+.bargain-details,
+.expensive-details,
+.highrisk-details {
+    margin-left: auto;        /* push details block to far right */
+    justify-content: flex-end; /* ensure internal gap appears to left */
+}
+
+.bargain-details,
+.expensive-details,
+.highrisk-details{
+    white-space:nowrap!important;
+    gap:var(--space-4)!important;
+}
+.value-ratio{padding:var(--space-0) var(--space-4)!important;}
+
+/* --- Auction insight row alignment fix --- */
+.bargain-item,
+.expensive-item,
+.highrisk-item{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    align-items:center!important;
+    column-gap:var(--space-12)!important;
+}
+.bargain-item strong,
+.expensive-item strong,
+.highrisk-item strong{
+    margin-right:0!important;
+}
+.bargain-details,
+.expensive-details,
+.highrisk-details{
+    margin-left:0!important;
+    white-space:nowrap!important;
+    gap:var(--space-4)!important;
+}
+
+.bargain-details .value-ratio,
+.expensive-details .value-ratio,
+.highrisk-details .value-ratio{
+    margin-left:var(--space-8)!important;
+}
+
+/* --- FINAL override: ensure auction details align & never overlap --- */
+.bargain-details,
+.expensive-details,
+.highrisk-details{
+    display:inline-flex!important; /* override any earlier grid rules */
+    align-items:center!important;
+    justify-content:flex-end!important;
+    gap:var(--space-8)!important;
+    white-space:nowrap!important;
+    width:auto!important;
+}
+
+/* Center align contents in stat cards */
+.stat-card{
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+    align-items:center!important;
+}
+.stat-card h3,.stat-card .stat-value{width:100%;text-align:center!important;}
 
 
 

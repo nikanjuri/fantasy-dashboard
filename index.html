@@ -28,14 +28,8 @@
                 </div>
                 <div class="header-controls flex items-center gap-16">
                     <div class="header-stats">
-                        <span class="stat-item">
-                            <span class="stat-label">Teams</span>
-                            <span class="stat-value">4</span>
-                        </span>
-                        <span class="stat-item">
-                            <span class="stat-label">Matches</span>
-                            <span class="stat-value">74</span>
-                        </span>
+                        <span class="metric badge-teams">4&nbsp;Teams</span>
+                        <span class="metric badge-matches">74&nbsp;Matches</span>
                     </div>
                     <!-- Export button hidden for now -->
                     <button class="btn btn--secondary btn--sm" id="exportBtn" style="display: none;">Export Data</button>
@@ -133,7 +127,7 @@
                                 <h4>Expensive Picks</h4>
                                 <div id="expensivePicks" class="expensive-list"></div>
                             </div>
-                            <div class="insight-card info">
+                            <div class="insight-card info runs-card">
                                 <h4>High-Risk, High-Reward</h4>
                                 <div id="highRiskReward" class="highrisk-list"></div>
                             </div>
@@ -242,7 +236,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="insight-card info">
+                        <div class="insight-card info boundaries-card">
                             <div class="stats-table">
                                 <div class="stats-row header">
                                     <div class="player-name">Most 4s & 6s</div>
@@ -257,7 +251,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="insight-card info">
+                        <div class="insight-card info wickets-card">
                             <div class="stats-table">
                                 <div class="stats-row header">
                                     <div class="player-name">Most Wickets</div>
@@ -270,7 +264,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="insight-card info">
+                        <div class="insight-card info dots-card">
                             <div class="stats-table">
                                 <div class="stats-row header">
                                     <div class="player-name">Most Dot Balls</div>
