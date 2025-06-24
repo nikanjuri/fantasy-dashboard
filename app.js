@@ -2581,82 +2581,112 @@ class DashboardApp {
         const player1Economy = this.calculateEconomy({ player: player1Name });
         const player2Economy = this.calculateEconomy({ player: player2Name });
         
-        resultsContainer.innerHTML = `
-            <div class="comparison-table">
-                <div class="comparison-header">
-                    <div class="player-header">${player1.Player}</div>
-                    <div class="stat-header">Statistics</div>
-                    <div class="player-header">${player2.Player}</div>
+        // Create the comparison table HTML
+        let comparisonHTML = `
+            <div class="comparison-wrapper">
+                <div class="comparison-table">
+                    <div class="comparison-header">
+                        <div class="player-header">${player1.Player}</div>
+                        <div class="stat-header">Statistics</div>
+                        <div class="player-header">${player2.Player}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1.Team || 'N/A'}</div>
+                        <div class="stat-label">Team</div>
+                        <div class="player-value">${player2.Team || 'N/A'}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${this.getPlayerPosition(player1.Type) || 'N/A'}</div>
+                        <div class="stat-label">Position</div>
+                        <div class="player-value">${this.getPlayerPosition(player2.Type) || 'N/A'}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">₹${player1.Price || 0}Cr</div>
+                        <div class="stat-label">Price</div>
+                        <div class="player-value ${this.getBetterValueClass(player1.Price || 0, player2.Price || 0, false)}">₹${player2.Price || 0}Cr</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.totalPoints || 0}</div>
+                        <div class="stat-label">Total Points</div>
+                        <div class="player-value ${this.getBetterValueClass(player1Stats.totalPoints || 0, player2Stats.totalPoints || 0)}">${player2Stats.totalPoints || 0}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.matches || 0}</div>
+                        <div class="stat-label">Matches</div>
+                        <div class="player-value">${player2Stats.matches || 0}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.runs || 0}</div>
+                        <div class="stat-label">Runs</div>
+                        <div class="player-value ${this.getBetterValueClass(player1Stats.runs || 0, player2Stats.runs || 0)}">${player2Stats.runs || 0}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.fours || 0}</div>
+                        <div class="stat-label">4s</div>
+                        <div class="player-value ${this.getBetterValueClass(player1Stats.fours || 0, player2Stats.fours || 0)}">${player2Stats.fours || 0}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.sixes || 0}</div>
+                        <div class="stat-label">6s</div>
+                        <div class="player-value ${this.getBetterValueClass(player1Stats.sixes || 0, player2Stats.sixes || 0)}">${player2Stats.sixes || 0}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1StrikeRate}</div>
+                        <div class="stat-label">Strike Rate</div>
+                        <div class="player-value ${this.getBetterValueClass(parseFloat(player1StrikeRate) || 0, parseFloat(player2StrikeRate) || 0)}">${player2StrikeRate}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.wickets || 0}</div>
+                        <div class="stat-label">Wickets</div>
+                        <div class="player-value ${this.getBetterValueClass(player1Stats.wickets || 0, player2Stats.wickets || 0)}">${player2Stats.wickets || 0}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.dots || 0}</div>
+                        <div class="stat-label">Dots</div>
+                        <div class="player-value ${this.getBetterValueClass(player1Stats.dots || 0, player2Stats.dots || 0)}">${player2Stats.dots || 0}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Economy}</div>
+                        <div class="stat-label">Economy</div>
+                        <div class="player-value ${this.getBetterValueClass(parseFloat(player1Economy) || 999, parseFloat(player2Economy) || 999, false)}">${player2Economy}</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="player-value">${player1Stats.catches || 0}</div>
+                        <div class="stat-label">Fielding Points</div>
+                        <div class="player-value ${this.getBetterValueClass(player1Stats.catches || 0, player2Stats.catches || 0)}">${player2Stats.catches || 0}</div>
+                    </div>
                 </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1.Team || 'N/A'}</div>
-                    <div class="stat-label">Team</div>
-                    <div class="player-value">${player2.Team || 'N/A'}</div>
                 </div>
-                <div class="comparison-row">
-                    <div class="player-value">${this.getPlayerPosition(player1.Type) || 'N/A'}</div>
-                    <div class="stat-label">Position</div>
-                    <div class="player-value">${this.getPlayerPosition(player2.Type) || 'N/A'}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">₹${player1.Price || 0}Cr</div>
-                    <div class="stat-label">Price</div>
-                    <div class="player-value ${this.getBetterValueClass(player1.Price || 0, player2.Price || 0, false)}">₹${player2.Price || 0}Cr</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.totalPoints || 0}</div>
-                    <div class="stat-label">Total Points</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.totalPoints || 0, player2Stats.totalPoints || 0)}">${player2Stats.totalPoints || 0}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.matches || 0}</div>
-                    <div class="stat-label">Matches</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.matches || 0, player2Stats.matches || 0)}">${player2Stats.matches || 0}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.runs || 0}</div>
-                    <div class="stat-label">Runs</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.runs || 0, player2Stats.runs || 0)}">${player2Stats.runs || 0}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.fours || 0}</div>
-                    <div class="stat-label">4s</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.fours || 0, player2Stats.fours || 0)}">${player2Stats.fours || 0}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.sixes || 0}</div>
-                    <div class="stat-label">6s</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.sixes || 0, player2Stats.sixes || 0)}">${player2Stats.sixes || 0}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1StrikeRate}</div>
-                    <div class="stat-label">Strike Rate</div>
-                    <div class="player-value ${this.getBetterValueClass(parseFloat(player1StrikeRate) || 0, parseFloat(player2StrikeRate) || 0)}">${player2StrikeRate}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.wickets || 0}</div>
-                    <div class="stat-label">Wickets</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.wickets || 0, player2Stats.wickets || 0)}">${player2Stats.wickets || 0}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.dots || 0}</div>
-                    <div class="stat-label">Dots</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.dots || 0, player2Stats.dots || 0)}">${player2Stats.dots || 0}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Economy}</div>
-                    <div class="stat-label">Economy</div>
-                    <div class="player-value ${this.getBetterValueClass(parseFloat(player1Economy) || 999, parseFloat(player2Economy) || 999, false)}">${player2Economy}</div>
-                </div>
-                <div class="comparison-row">
-                    <div class="player-value">${player1Stats.catches || 0}</div>
-                    <div class="stat-label">Fielding Points</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.catches || 0, player2Stats.catches || 0)}">${player2Stats.catches || 0}</div>
+                <div class="comparison-actions">
+                    <button class="btn btn--outline btn--lg" id="clearComparisonBtn">Clear Comparison</button>
                 </div>
             </div>
         `;
-        
-        console.log('✅ Player comparison completed');
+
+        // Create a wrapper for centering
+        resultsContainer.innerHTML = '<div class="comparison-results">' + comparisonHTML + '</div>';
+
+        // Add event listener to the clear button
+        const clearComparisonBtn = document.getElementById('clearComparisonBtn');
+        if (clearComparisonBtn) {
+            const clearComparison = () => {
+                // Reset dropdowns
+                document.getElementById('comparePlayer1').value = '';
+                document.getElementById('comparePlayer2').value = '';
+                // Clear results
+                const wrapper = document.querySelector('.comparison-wrapper');
+                if (wrapper) {
+                    wrapper.remove();
+                }
+                resultsContainer.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-20);">Please select both players to compare.</p>';
+            };
+            
+            // Remove any existing listeners
+            clearComparisonBtn.removeEventListener('click', clearComparison);
+            // Add new listener
+            clearComparisonBtn.addEventListener('click', clearComparison);
+            console.log('✅ Clear comparison button listener added');
+        }
     }
 
     populatePlayerComparisonDropdowns() {
