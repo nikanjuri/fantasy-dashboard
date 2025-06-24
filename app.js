@@ -2733,7 +2733,9 @@ class DashboardApp {
     }
 
     populatePlayerComparisonDropdowns() {
-        const dropdowns = ['playerA', 'playerB'].map(id => document.getElementById(id));
+        // Support current markup IDs comparePlayer1 / comparePlayer2
+        const dropdownIds = ['comparePlayer1','comparePlayer2'];
+        const dropdowns = dropdownIds.map(id => document.getElementById(id));
         
         if (!dropdowns.every(Boolean)) {
             console.warn('❌ Player comparison dropdowns not found');
