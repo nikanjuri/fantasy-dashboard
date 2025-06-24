@@ -4922,5 +4922,10 @@ select.form-control {
 }
 .stat-card h3,.stat-card .stat-value{width:100%;text-align:center!important;}
 
+/* Match Analysis – keep the coloured left outline flush with the table */
+.player-performance-container .team-section .team-players-table{
+    margin-bottom:0!important;
+}
+
 
 
