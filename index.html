@@ -395,39 +395,33 @@
                 <div class="tab-content" id="statistics">
                     <div class="section-header">
                         <h2>Statistics Dashboard</h2>
-                        <p>Key performance indicators and trends</p>
+                        <p>Key Performance Indicators & Charts</p>
                     </div>
 
-                    <div class="kpi-grid">
-                        <div class="kpi-card">
-                            <h4>Total Runs</h4>
-                            <div class="kpi-value" id="totalRuns">0</div>
-                        </div>
-                        <div class="kpi-card">
-                            <h4>Total Wickets</h4>
-                            <div class="kpi-value" id="totalWickets">0</div>
-                        </div>
-                        <div class="kpi-card">
-                            <h4>Total Catches</h4>
-                            <div class="kpi-value" id="totalCatches">0</div>
-                        </div>
-                        <div class="kpi-card">
-                            <h4>Highest Score</h4>
-                            <div class="kpi-value" id="highestScore">0</div>
-                        </div>
-                    </div>
-
+                    <!-- Match Progression Charts -->
                     <div class="charts-grid">
                         <div class="card">
                             <div class="card__body">
-                                <h3>Performance Categories</h3>
-                                <canvas id="categoryChart" width="400" height="300"></canvas>
+                                <h3>Match-week Points Progression by Team</h3>
+                                <canvas id="matchWeekProgressChart" width="400" height="300"></canvas>
                             </div>
                         </div>
                         <div class="card">
                             <div class="card__body">
-                                <h3>Team Comparison Radar</h3>
-                                <canvas id="radarChart" width="400" height="300"></canvas>
+                                <h3>Cumulative Points per Match-week</h3>
+                                <canvas id="cumulativeWeekPointsChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Position Progression by Match-week</h3>
+                                <canvas id="positionProgressChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Position Progression by Match</h3>
+                                <canvas id="positionMatchChart" width="400" height="300"></canvas>
                             </div>
                         </div>
                     </div>

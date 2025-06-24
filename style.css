@@ -4935,5 +4935,9 @@ select.form-control {
     color: var(--color-text) !important;
 }
 
+@media (min-width: 768px){
+  .charts-grid{grid-template-columns:repeat(2,1fr);}
+}
+
 
 

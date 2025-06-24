@@ -153,7 +153,21 @@ fantasy-dashboard/
 
 ## Version History
 
-### v2.0 (Current)
+### v3.0 (Latest)
+Released Jun 2025 – UI polish & data-accuracy release
+
+• Unified performer tables with consistent font, spacing, and right-aligned numeric columns  
+• Compact header-stats replaced by colour-coded pill badges (Teams / Matches)  
+• Distinct left-border accents for Runs / 4s&6s / Wickets / Dots insight cards  
+• Auction-insight rows rebuilt to single-line grid – no overlap on any screen size  
+• Value-for-Money table supports light & dark mode text colours  
+• Player table shows correct names; no stat doubling after refactor  
+• Player-comparison widget now displays Strike Rate, Economy & Fielding points  
+• Match-analysis player tables include SR, Economy & Catches with accurate totals  
+• Numerous CSS overrides cleaned & consolidated; theme-aware styling throughout  
+• Tagged in Git as `v3.0`.
+
+### v2.0
 - Enhanced Player Analytics with head-to-head comparison feature
 - Improved layout consistency with proper centering
 - Advanced player comparison with detailed statistics

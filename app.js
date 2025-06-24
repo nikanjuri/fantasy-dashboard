@@ -1025,12 +1025,10 @@ class DashboardApp {
         });
 
         // Only create charts for elements that exist
-        this.createPricePointsChart();
-        this.createInvestmentChart();
-        
-        // These charts don't have corresponding HTML elements, so skip them
-        // // this.createPlayerTypeChart(); // Canvas element does not exist
-        // // this.createExperienceChart(); // Canvas element does not exist
+        this.createMatchWeekProgressChart();
+        this.createPositionProgressChart();
+        this.createCumulativeWeekPointsChart();
+        this.createPositionByMatchChart();
     }
 
     getThemeColors() {
@@ -1044,131 +1042,211 @@ class DashboardApp {
         };
     }
 
-    createPricePointsChart() {
-        const ctx = document.getElementById('pricePointsChart');
+    createMatchWeekProgressChart() {
+        const ctx = document.getElementById('matchWeekProgressChart');
         if (!ctx || typeof Chart === 'undefined') return;
 
-        // Check if data exists
-        if (!this.data.playerProfiles || Object.keys(this.data.playerProfiles).length === 0) {
-            console.warn('No player profiles data available for price points chart');
+        const matches = this.data.matches || [];
+        if (matches.length === 0) {
+            console.warn('No matches data available for match-week progression chart');
             return;
         }
+
+        // Identify unique match weeks in chronological order
+        const weekLabels = [];
+        matches.forEach(m => {
+            if (!weekLabels.includes(m.matchWeek)) weekLabels.push(m.matchWeek);
+        });
+
+        const teams = Object.keys(this.data.teamStandings || {});
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#f59e0b',
+            'Silly Pointers': '#3b82f6',
+            'The Kingsmen': '#10b981'
+        };
+
+        const shortLabels = weekLabels.map(w=>{const n=(w||'').match(/\d+/);return n?`MW${n[0]}`:w;});
+
+        const datasets = teams.map((team, i) => {
+            const dataPoints = weekLabels.map(week => {
+                // Sum points for this team for all matches in this week
+                const weeklyTotal = matches
+                    .filter(m => m.matchWeek === week)
+                    .reduce((sum, m) => sum + (m.teamTotals[team] || 0), 0);
+                return weeklyTotal;
+            });
+            return {
+                label: team,
+                data: dataPoints,
+                borderColor: teamColors[team] || '#888',
+                backgroundColor: teamColors[team] || '#888',
+                fill: false,
+                tension: 0.25,
+                pointRadius: 3
+            };
+        });
+
+        if (this.charts.matchWeekProgress) this.charts.matchWeekProgress.destroy();
 
         const themeColors = this.getThemeColors();
 
-        // Get player data for scatter plot
-        const playerData = Object.values(this.data.playerProfiles)
-            .filter(p => p.Price > 0 && p.performance.totalPoints > 0)
-            .map(p => ({
-                x: p.Price,
-                y: p.performance.totalPoints,
-                player: p.Player,
-                team: p.fantasyTeam
-            }));
-
-        if (playerData.length === 0) {
-            console.warn('No valid player data for price points chart');
-            ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
-            return;
-        }
-
-        if (this.charts.pricePoints) {
-            this.charts.pricePoints.destroy();
-        }
-
-        this.charts.pricePoints = new Chart(ctx, {
-            type: 'scatter',
-            data: {
-                datasets: [{
-                    label: 'Players',
-                    data: playerData,
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    pointRadius: 6,
-                    pointHoverRadius: 10,
-                    borderWidth: 2
-                }]
-            },
+        this.charts.matchWeekProgress = new Chart(ctx, {
+            type: 'line',
+            data: { labels: shortLabels, datasets },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    title: {
-                        display: false
-                    },
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: themeColors.backgroundColor,
-                        titleColor: themeColors.textColor,
-                        bodyColor: themeColors.textColor,
-                        borderColor: themeColors.subtleTextColor,
-                        borderWidth: 1,
-                        callbacks: {
-                            label: function(context) {
-                                const point = context.raw;
-                                return [
-                                    `${point.player}`,
-                                    `Price: ₹${point.x}Cr`,
-                                    `Points: ${point.y}`,
-                                    `Team: ${point.team}`
-                                ];
-                            }
-                        }
-                    }
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
                 },
+                interaction: { mode: 'nearest', intersect: false },
                 scales: {
                     x: {
-                        title: {
-                            display: true,
-                            text: 'Price (₹Cr)',
-                            color: themeColors.textColor,
-                            font: {
-                                size: 14,
-                                weight: 'normal'
-                            }
-                        },
-                        ticks: {
-                            color: themeColors.subtleTextColor,
-                            font: {
-                                size: 12
-                            }
-                        },
-                        grid: {
-                            display: false
-                        },
-                        border: {
-                            color: themeColors.borderColor,
-                            width: 2
-                        }
+                        ticks: { color: themeColors.subtleTextColor },
+                        grid: { display: false }
                     },
                     y: {
-                        title: {
-                            display: true,
-                            text: 'Fantasy Points',
-                            color: themeColors.textColor,
-                            font: {
-                                size: 14,
-                                weight: 'normal'
-                            }
-                        },
-                        ticks: {
-                            color: themeColors.subtleTextColor,
-                            font: {
-                                size: 12
-                            }
-                        },
-                        grid: {
-                            display: false
-                        },
-                        border: {
-                            color: themeColors.borderColor,
-                            width: 2
-                        }
+                        ticks: { color: themeColors.subtleTextColor, precision:0, stepSize:1 },
+                        grid: { color: themeColors.borderColor }
                     }
                 }
             }
         });
+    }
+
+    createPositionProgressChart() {
+        const ctx = document.getElementById('positionProgressChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        const matches = this.data.matches || [];
+        if (matches.length === 0) {
+            console.warn('No matches data for position chart');
+            return;
+        }
+
+        const teams = Object.keys(this.data.teamStandings || {});
+
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#f59e0b',
+            'Silly Pointers': '#3b82f6',
+            'The Kingsmen': '#10b981'
+        };
+
+        // Initialize cumulative points
+        const cumulative = {};
+        teams.forEach(t => cumulative[t] = 0);
+
+        // Derive unique week labels chronologically
+        const weekLabels = [];
+        matches.forEach(m => { if(!weekLabels.includes(m.matchWeek)) weekLabels.push(m.matchWeek); });
+
+        // Prepare rank data structure
+        const rankData = {}; teams.forEach(t=>rankData[t]=[]);
+
+        // Reset cumulative per team
+        teams.forEach(t=> cumulative[t]=0);
+
+        weekLabels.forEach(week => {
+            // Add this week's points to cumulative
+            matches.filter(m=>m.matchWeek===week).forEach(m=>{
+                teams.forEach(team=>{ cumulative[team]+= (m.teamTotals[team]||0); });
+            });
+
+            // Compute ranks after this week
+            const sorted=[...teams].sort((a,b)=>cumulative[b]-cumulative[a]);
+            teams.forEach(team=>{ rankData[team].push(sorted.indexOf(team)+1); });
+        });
+
+        const labels = weekLabels.map(w=>{const n=(w||'').match(/\d+/);return n?`MW${n[0]}`:w;});
+
+        const datasets = teams.map(team => ({
+            label: team,
+            data: rankData[team],
+            borderColor: teamColors[team] || '#888',
+            backgroundColor: teamColors[team] || '#888',
+            fill: false,
+            tension: 0.25,
+            pointRadius: 3
+        }));
+
+        if (this.charts.positionProgress) this.charts.positionProgress.destroy();
+
+        const themeColors = this.getThemeColors();
+
+        this.charts.positionProgress = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                interaction: { mode: 'nearest', intersect: false },
+                scales: {
+                    x: {
+                        ticks: { color: themeColors.subtleTextColor },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: { color: themeColors.subtleTextColor, precision:0, stepSize:1 },
+                        grid: { color: themeColors.borderColor },
+                        reverse: true,
+                        min: 1,
+                        max: teams.length + 0.5,
+                        stepSize: 1,
+                        title: { display: true, text: 'Rank', color: themeColors.textColor }
+                    }
+                }
+            }
+        });
+    }
+
+    createCumulativeWeekPointsChart() {
+        const ctx = document.getElementById('cumulativeWeekPointsChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        const matches = this.data.matches || [];
+        if (matches.length === 0) {
+            console.warn('No matches data for cumulative week chart');
+            return;
+        }
+
+        // gather week labels in order
+        const weekLabels = [];
+        matches.forEach(m => { if(!weekLabels.includes(m.matchWeek)) weekLabels.push(m.matchWeek); });
+
+        const teams = Object.keys(this.data.teamStandings || {});
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#f59e0b',
+            'Silly Pointers': '#3b82f6',
+            'The Kingsmen': '#10b981'
+        };
+
+        // cumulative structure
+        const cumulative = {}; teams.forEach(t => cumulative[t] = 0);
+
+        const shortLabels = weekLabels.map(w=>{const n=(w||'').match(/\d+/);return n?`MW${n[0]}`:w;});
+
+        const datasets = teams.map(team => {
+            const dataPoints = [];
+            weekLabels.forEach(week => {
+                const weeklyTotal = matches.filter(m => m.matchWeek === week).reduce((sum, m) => sum + (m.teamTotals[team] || 0), 0);
+                cumulative[team] += weeklyTotal;
+                dataPoints.push(cumulative[team]);
+            });
+            return { label: team, data: dataPoints, borderColor: teamColors[team] || '#888', backgroundColor: teamColors[team] || '#888', fill: false, tension: 0.25, pointRadius: 3 };
+        });
+
+        if (this.charts.cumulativeWeekPoints) this.charts.cumulativeWeekPoints.destroy();
+
+        const themeColors = this.getThemeColors();
+        this.charts.cumulativeWeekPoints = new Chart(ctx, { type: 'line', data: { labels: shortLabels, datasets }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } }, interaction: { mode: 'nearest', intersect: false }, scales: { x: { ticks: { color: themeColors.subtleTextColor }, grid: { display: false } }, y: { ticks: { color: themeColors.subtleTextColor }, grid: { color: themeColors.borderColor } } } } });
     }
 
     createInvestmentChart() {
@@ -2858,6 +2936,50 @@ class DashboardApp {
                     mostDotsList.appendChild(createStatItem(player.name, player.dots));
                 });
         }
+    }
+
+    createPositionByMatchChart() {
+        const ctx=document.getElementById('positionMatchChart');
+        if(!ctx||typeof Chart==='undefined') return;
+
+        const matches=this.data.matches||[];
+        if(matches.length===0){console.warn('No matches data for position-by-match chart');return;}
+
+        const teams=Object.keys(this.data.teamStandings||{});
+        const teamColors={
+            'Royal Smashers':'#ff6384',
+            'Sher-e-Punjab':'#f59e0b',
+            'Silly Pointers':'#3b82f6',
+            'The Kingsmen':'#10b981'
+        };
+
+        // cumulative points per team
+        const cumulative={};teams.forEach(t=>cumulative[t]=0);
+
+        const labels=matches.map((m,i)=>`M${i+1}`);
+
+        const rankData={};teams.forEach(t=>rankData[t]=[]);
+
+        matches.forEach(match=>{
+            teams.forEach(team=>{ cumulative[team]+= (match.teamTotals[team]||0); });
+            const sorted=[...teams].sort((a,b)=> cumulative[b]-cumulative[a]);
+            teams.forEach(team=> rankData[team].push(sorted.indexOf(team)+1));
+        });
+
+        const datasets=teams.map(team=>({
+            label:team,
+            data:rankData[team],
+            borderColor:teamColors[team]||'#888',
+            backgroundColor:teamColors[team]||'#888',
+            fill:false,
+            tension:0.25,
+            pointRadius:3
+        }));
+
+        if(this.charts.positionMatch) this.charts.positionMatch.destroy();
+
+        const themeColors=this.getThemeColors();
+        this.charts.positionMatch=new Chart(ctx,{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},interaction:{mode:'nearest',intersect:false},scales:{x:{ticks:{color:themeColors.subtleTextColor},grid:{display:false}},y:{ticks:{color:themeColors.subtleTextColor,precision:0,stepSize:1},grid:{color:themeColors.borderColor},reverse:true,min:1,max:teams.length+0.5}}}});
     }
 }
 
