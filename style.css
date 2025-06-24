@@ -4773,5 +4773,12 @@ select.form-control {
     font-weight: var(--font-weight-medium);
 }
 
+/* Right-align numeric columns in single-stat performer tables */
+.stats-table:has(#mostRunsList) .stat-values,
+.stats-table:has(#topWicketsBody) .stat-values,
+.stats-table:has(#topDotBallsBody) .stat-values {
+    grid-template-columns: 36px; /* single column keeps number flush right */
+}
+
 
 
