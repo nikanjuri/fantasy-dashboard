@@ -489,7 +489,7 @@ class DashboardApp {
 
     updateTeamOverview() {
         // Update enhanced stats
-        const totalPlayers = Object.values(this.data.playerProfiles).length;
+        const totalPlayers = Object.values(this.playerListData).reduce((sum, teamPlayers) => sum + teamPlayers.length, 0);
         const totalInvestment = Object.values(this.data.teamCompositions)
             .reduce((sum, team) => sum + team.totalInvestment, 0);
         const avgPrice = totalInvestment / totalPlayers;
@@ -499,15 +499,17 @@ class DashboardApp {
         let highestPrice = 0;
         let highestBid = 0;
         
-        Object.values(this.data.playerProfiles).forEach(player => {
-            if (player.Price > highestPrice) {
-                highestPrice = player.Price;
-                mostExpensivePlayer = player;
-            }
-            // Track highest bid separately
-            if (player.Price > highestBid) {
-                highestBid = player.Price;
-            }
+        Object.values(this.playerListData).forEach(teamPlayers => {
+            teamPlayers.forEach(player => {
+                if (player.Price > highestPrice) {
+                    highestPrice = player.Price;
+                    mostExpensivePlayer = player;
+                }
+                // Track highest bid separately
+                if (player.Price > highestBid) {
+                    highestBid = player.Price;
+                }
+            });
         });
 
         document.getElementById('totalPlayers').textContent = totalPlayers;
@@ -2550,10 +2552,6 @@ class DashboardApp {
         const player1Name = document.getElementById('comparePlayer1').value.trim();
         const player2Name = document.getElementById('comparePlayer2').value.trim();
         const resultsContainer = document.getElementById('comparisonResults');
-
-        // --- ADD THESE TWO LINES FOR DEBUGGING ---
-        // console.log('Looking for players:', { player1Name, player2Name });
-        // console.log('Available player keys:', Object.keys(this.data.playerProfiles));
         
         if (!player1Name || !player2Name) {
             resultsContainer.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-20);">Please select both players to compare.</p>';
@@ -2567,23 +2565,21 @@ class DashboardApp {
         
         const player1 = this.data.playerProfiles[player1Name];
         const player2 = this.data.playerProfiles[player2Name];
-
+        
         if (!player1 || !player2) {
             resultsContainer.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); padding: var(--space-20);">Player data not found. Please try again.</p>';
             console.error('Could not find player profiles for:', { player1Name, player2Name });
             return;
         }
+
+        // Get player stats from the correct data source
+        const player1Stats = this.data.playerStats[player1Name] || {};
+        const player2Stats = this.data.playerStats[player2Name] || {};
         
-        const player1Stats = player1.performance || {};
-        const player2Stats = player2.performance || {};
-        
-        const player1StrikeRate = this.calculateStrikeRate(player1Stats);
-        const player2StrikeRate = this.calculateStrikeRate(player2Stats);
-        const player1Economy = this.calculateEconomy(player1Stats);
-        const player2Economy = this.calculateEconomy(player2Stats);
-        
-        const player1FieldingPoints = (player1Stats.catches || 0) + (player1Stats.runouts || 0);
-        const player2FieldingPoints = (player2Stats.catches || 0) + (player2Stats.runouts || 0);
+        const player1StrikeRate = this.calculateStrikeRate({ player: player1Name });
+        const player2StrikeRate = this.calculateStrikeRate({ player: player2Name });
+        const player1Economy = this.calculateEconomy({ player: player1Name });
+        const player2Economy = this.calculateEconomy({ player: player2Name });
         
         resultsContainer.innerHTML = `
             <div class="comparison-table">
@@ -2593,9 +2589,9 @@ class DashboardApp {
                     <div class="player-header">${player2.Player}</div>
                 </div>
                 <div class="comparison-row">
-                    <div class="player-value">${player1.fantasyTeam || 'N/A'}</div>
+                    <div class="player-value">${player1.Team || 'N/A'}</div>
                     <div class="stat-label">Team</div>
-                    <div class="player-value">${player2.fantasyTeam || 'N/A'}</div>
+                    <div class="player-value">${player2.Team || 'N/A'}</div>
                 </div>
                 <div class="comparison-row">
                     <div class="player-value">${this.getPlayerPosition(player1.Type) || 'N/A'}</div>
@@ -2613,9 +2609,9 @@ class DashboardApp {
                     <div class="player-value ${this.getBetterValueClass(player1Stats.totalPoints || 0, player2Stats.totalPoints || 0)}">${player2Stats.totalPoints || 0}</div>
                 </div>
                 <div class="comparison-row">
-                    <div class="player-value">${player1Stats.matchesPlayed || 0}</div>
+                    <div class="player-value">${player1Stats.matches || 0}</div>
                     <div class="stat-label">Matches</div>
-                    <div class="player-value ${this.getBetterValueClass(player1Stats.matchesPlayed || 0, player2Stats.matchesPlayed || 0)}">${player2Stats.matchesPlayed || 0}</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.matches || 0, player2Stats.matches || 0)}">${player2Stats.matches || 0}</div>
                 </div>
                 <div class="comparison-row">
                     <div class="player-value">${player1Stats.runs || 0}</div>
@@ -2653,12 +2649,13 @@ class DashboardApp {
                     <div class="player-value ${this.getBetterValueClass(parseFloat(player1Economy) || 999, parseFloat(player2Economy) || 999, false)}">${player2Economy}</div>
                 </div>
                 <div class="comparison-row">
-                    <div class="player-value">${player1FieldingPoints}</div>
+                    <div class="player-value">${player1Stats.catches || 0}</div>
                     <div class="stat-label">Fielding Points</div>
-                    <div class="player-value ${this.getBetterValueClass(player1FieldingPoints, player2FieldingPoints)}">${player2FieldingPoints}</div>
+                    <div class="player-value ${this.getBetterValueClass(player1Stats.catches || 0, player2Stats.catches || 0)}">${player2Stats.catches || 0}</div>
                 </div>
             </div>
         `;
+        
         console.log('✅ Player comparison completed');
     }
 
