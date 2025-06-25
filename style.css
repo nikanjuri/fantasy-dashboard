@@ -5021,5 +5021,12 @@ select.form-control {
   display: none !important;
 }
 
+@media (max-width: 768px) {
+  /* ... existing mobile overrides ... */
+  .team-type-summary-inline {
+    margin-left: 0 !important; /* ensure centered */
+  }
+}
+
 
 
