@@ -1189,8 +1189,9 @@ select.form-control {
 }
 
 .comparison-controls .form-control {
-  width: 100%;
-  max-width: 280px;
+  width: auto !important;
+  min-width: 160px;
+  max-width: 240px;
 }
 
 .comparison-controls .btn {

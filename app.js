@@ -407,7 +407,8 @@ class DashboardApp {
             this.data.playerProfiles[stats.name] = {
                 Player: stats.name,
                 Type: auctionData.Type || 'N/A',
-                Team: auctionData.auctionTeam || 'N/A',
+                Team: auctionData.auctionTeam || 'N/A', // fantasy team
+                IPLTeam: auctionData.Team || 'N/A',
                 Price: auctionData.Price || 0,
                 Sale: auctionData.Sale || 'Unsold',
                 Overseas: auctionData.Overseas || false,
@@ -1796,10 +1797,21 @@ class DashboardApp {
             console.log('🔍 After search filter:', filtered.length);
         }
         
-        // Apply team filter
+        // Apply IPL team filter
         if (this.currentFilters?.team) {
-            filtered = filtered.filter(player => player.team === this.currentFilters.team);
+            const sel = this.currentFilters.team.toLowerCase();
+            filtered = filtered.filter(player => (player.team || '').toLowerCase().includes(sel));
             console.log('🏏 After team filter:', filtered.length);
+        }
+        
+        // Apply additional IPL filter if separate dropdown is used
+        if (this.currentFilters?.iplTeam) {
+            const selIpl = this.currentFilters.iplTeam.toLowerCase();
+            filtered = filtered.filter(player => {
+                const iplTeam = this.playerIplMap ? this.playerIplMap[(player.name || player.player || '').toLowerCase()] : '';
+                return (iplTeam || '').toLowerCase() === selIpl;
+            });
+            console.log('🏏 After IPL team filter:', filtered.length);
         }
         
         // Apply position filter
@@ -1991,7 +2003,7 @@ class DashboardApp {
 
     clearAllFilters() {
         // Reset all filter values
-        this.currentFilters = { search: '', team: '', position: '' };
+        this.currentFilters = { search: '', team: '', iplTeam: '', position: '' };
         this.filteredPlayers = [];
         this.showAllPlayers = false;
         
@@ -1999,10 +2011,12 @@ class DashboardApp {
         const playerSearch = document.getElementById('playerSearch');
         const teamFilter = document.getElementById('teamFilter');
         const positionFilter = document.getElementById('positionFilter');
+        const iplFilter = document.getElementById('iplTeamFilter');
         
         if (playerSearch) playerSearch.value = '';
         if (teamFilter) teamFilter.value = '';
         if (positionFilter) positionFilter.value = '';
+        if (iplFilter) iplFilter.value = '';
         
         // Update display
         this.renderFilteredPlayersTable();
@@ -2015,6 +2029,7 @@ class DashboardApp {
         this.currentFilters = {
             search: '',
             team: '',
+            iplTeam: '',
             position: ''
         };
         this.filteredPlayers = [];
@@ -2024,6 +2039,7 @@ class DashboardApp {
         
         // Initialize UI
         this.populateTeamFilter();
+        this.populateIplTeamFilter();
         this.renderFilteredPlayersTable();
         this.updateSearchResultsCount();
         
@@ -2037,12 +2053,43 @@ class DashboardApp {
         // Clear existing options except "All Teams"
         teamFilter.innerHTML = '<option value="">All Teams</option>';
         
-        // Add team options
-        Object.keys(this.data.teamStandings).forEach(team => {
+        // Collect unique IPL team names from players data
+        const iplSet = new Set(this.data.players.map(p => p.team).filter(Boolean));
+        const teams = Array.from(iplSet).sort();
+
+        teams.forEach(team => {
             const option = document.createElement('option');
             option.value = team;
             option.textContent = team;
             teamFilter.appendChild(option);
+        });
+    }
+
+    populateIplTeamFilter() {
+        const iplFilter = document.getElementById('iplTeamFilter');
+        if (!iplFilter || !Array.isArray(this.data.players)) return;
+
+        // Collect unique IPL team names from player list data (reliable)
+        const teamSet = new Set();
+        Object.values(this.playerListData || {}).forEach(arr => {
+            (arr || []).forEach(p => { if (p.Team) teamSet.add(p.Team); });
+        });
+
+        // Build options
+        iplFilter.innerHTML = '<option value="">All IPL Teams</option>';
+        Array.from(teamSet).sort().forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            iplFilter.appendChild(opt);
+        });
+
+        // Build player to IPL team lookup once
+        if (!this.playerIplMap) this.playerIplMap = {};
+        Object.values(this.playerListData || {}).forEach(arr => {
+            (arr || []).forEach(p => {
+                if (p.Player && p.Team) this.playerIplMap[p.Player.toLowerCase()] = p.Team;
+            });
         });
     }
 
@@ -2111,7 +2158,8 @@ class DashboardApp {
         return this.currentFilters && (
             this.currentFilters.search || 
             this.currentFilters.team || 
-            this.currentFilters.position
+            this.currentFilters.position ||
+            this.currentFilters.iplTeam
         );
     }
 
@@ -2717,13 +2765,13 @@ class DashboardApp {
                     </div>
                     <div class="comparison-row">
                         <div class="player-value">${player1.Team || 'N/A'}</div>
-                        <div class="stat-label">Team</div>
+                        <div class="stat-label">Fantasy Team</div>
                         <div class="player-value">${player2.Team || 'N/A'}</div>
                     </div>
                     <div class="comparison-row">
-                        <div class="player-value">${this.getPlayerPosition(player1.Type) || 'N/A'}</div>
-                        <div class="stat-label">Position</div>
-                        <div class="player-value">${this.getPlayerPosition(player2.Type) || 'N/A'}</div>
+                        <div class="player-value">${player1.IPLTeam || 'N/A'}</div>
+                        <div class="stat-label">IPL Team</div>
+                        <div class="player-value">${player2.IPLTeam || 'N/A'}</div>
                     </div>
                     <div class="comparison-row">
                         <div class="player-value">₹${player1.Price || 0}Cr</div>
@@ -2831,7 +2879,7 @@ class DashboardApp {
         // Create dropdown options
         const options = players.map(player => {
             const stats = this.data.playerStats[player.Player] || {};
-            return `<option value="${player.Player}">${player.Player} (${stats.totalPoints || 0} pts)</option>`;
+            return `<option value="${player.Player}">${player.Player}</option>`;
         }).join('');
 
         // Set the same options for both dropdowns
@@ -3357,6 +3405,13 @@ class DashboardApp {
         const topPlayerGame=Object.entries(playerMax).sort((a,b)=>b[1]-a[1]).slice(0,3);
         plGameBody.innerHTML=topPlayerGame.map(([pl,pts])=>`<tr><td>${pl}</td><td>${pts}</td></tr>`).join('');
     }
+
+    handleIplTeamFilter(team) {
+        console.log('🏏 IPL Team filter:', team);
+        this.currentFilters = this.currentFilters || {};
+        this.currentFilters.iplTeam = team;
+        this.applyFilters();
+    }
 }
 
 // Global functions
@@ -3461,6 +3516,7 @@ function setupPlayerFilters() {
     const teamFilter = document.getElementById('teamFilter');
     const positionFilter = document.getElementById('positionFilter');
     const clearFiltersBtn = document.getElementById('clearFilters');
+    const iplFilter = document.getElementById('iplTeamFilter');
 
     if (playerSearch) {
         playerSearch.addEventListener('input', (e) => app.handlePlayerSearch(e.target.value));
@@ -3476,6 +3532,10 @@ function setupPlayerFilters() {
 
     if (clearFiltersBtn) {
         clearFiltersBtn.addEventListener('click', () => app.clearAllFilters());
+    }
+
+    if (iplFilter) {
+        iplFilter.addEventListener('change', (e) => app.handleIplTeamFilter(e.target.value));
     }
 
     // Initial render
