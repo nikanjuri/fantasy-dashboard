@@ -3672,7 +3672,8 @@ select.form-control {
   .player-card {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center; /* center horizontally */
+    text-align: center;  /* ensure text centred */
     gap: var(--space-8);
     padding: var(--space-12);
   }
@@ -3681,10 +3682,12 @@ select.form-control {
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
     margin-bottom: var(--space-4);
+    text-align: center;
   }
   
   .player-type, .player-team, .player-status {
     font-size: var(--font-size-sm);
+    text-align: center;
   }
 }
 
