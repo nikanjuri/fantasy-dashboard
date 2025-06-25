@@ -529,6 +529,7 @@ class DashboardApp {
         this.updateVFMTable();
         this.updateTeamComposition();
         this.updateStats();
+        this.renderStatisticsLeaderboards();
         this.populatePlayerComparisonDropdowns();
         this.updateScoringRules();
         this.updateMatchSelector();
@@ -537,6 +538,7 @@ class DashboardApp {
         this.renderPlayersTable();
         this.renderLeaderboards();
         this.renderTopPerformersTables(); // Added this line
+        this.renderStatLeaderboards();
     }
 
     updateTeamOverview() {
@@ -3282,6 +3284,77 @@ class DashboardApp {
                 }
             }
         });
+    }
+
+    renderStatisticsLeaderboards() {
+        // Player avg points
+        const playerAvgTable = document.querySelector('#leaderboardPlayerAvg tbody');
+        const teamAvgTable = document.querySelector('#leaderboardTeamAvg tbody');
+        const teamGameTable = document.querySelector('#leaderboardTeamGame tbody');
+        const playerGameTable = document.querySelector('#leaderboardPlayerGame tbody');
+        if (!playerAvgTable || !teamAvgTable || !teamGameTable || !playerGameTable) return;
+
+        // Highest avg points player
+        const topPlayersAvg = [...this.data.players]
+            .filter(p => p.matches && p.matches>0)
+            .sort((a,b)=>b.averagePoints - a.averagePoints)
+            .slice(0,3);
+        playerAvgTable.innerHTML = topPlayersAvg.map(p=>`<tr><td>${p.name}</td><td>${p.averagePoints.toFixed(1)}</td></tr>`).join('');
+
+        // Team avg
+        const topTeamsAvg = Object.entries(this.data.teamStandings)
+            .sort(([,a],[,b])=>b.averagePoints - a.averagePoints)
+            .slice(0,3);
+        teamAvgTable.innerHTML = topTeamsAvg.map(([team,stat])=>`<tr><td>${team}</td><td>${stat.averagePoints.toFixed(1)}</td></tr>`).join('');
+
+        // Highest points game team
+        const teamMaxMap = {};
+        this.data.matches.forEach(match=>{
+            Object.entries(match.teamTotals).forEach(([team,pts])=>{
+                if((teamMaxMap[team]||0)<pts) teamMaxMap[team]=pts;
+            });
+        });
+        const topTeamGame = Object.entries(teamMaxMap)
+            .sort(([,a],[,b])=>b-a)
+            .slice(0,3);
+        teamGameTable.innerHTML = topTeamGame.map(([team,pts])=>`<tr><td>${team}</td><td>${pts}</td></tr>`).join('');
+
+        // Highest points game player
+        const playerMaxMap = {};
+        this.data.matches.forEach(match=>{
+            match.players.forEach(pl=>{
+                if((playerMaxMap[pl.name]||0)<pl.fantasyPoints) playerMaxMap[pl.name]=pl.fantasyPoints;
+            });
+        });
+        const topPlayerGame = Object.entries(playerMaxMap)
+            .sort(([,a],[,b])=>b-a)
+            .slice(0,3);
+        playerGameTable.innerHTML = topPlayerGame.map(([player,pts])=>`<tr><td>${player}</td><td>${pts}</td></tr>`).join('');
+    }
+
+    renderStatLeaderboards() {
+        const plAvgBody=document.querySelector('#leaderPlayerAvg tbody');
+        const teamAvgBody=document.querySelector('#leaderTeamAvg tbody');
+        const teamGameBody=document.querySelector('#leaderTeamGame tbody');
+        const plGameBody=document.querySelector('#leaderPlayerGame tbody');
+        if(!plAvgBody||!teamAvgBody||!teamGameBody||!plGameBody) return;
+        // Player avg
+        const topPlayers=[...this.data.players].filter(p=>p.matches>0).sort((a,b)=>b.averagePoints-a.averagePoints).slice(0,3);
+        plAvgBody.innerHTML=topPlayers.map(p=>`<tr><td>${p.name}</td><td>${p.averagePoints.toFixed(1)}</td></tr>`).join('');
+        // Team avg
+        const teamArr=Object.entries(this.data.teamStandings).map(([team,val])=>({team,avg:val.averagePoints||0}));
+        teamArr.sort((a,b)=>b.avg-a.avg);
+        teamAvgBody.innerHTML=teamArr.slice(0,3).map(t=>`<tr><td>${t.team}</td><td>${t.avg.toFixed(1)}</td></tr>`).join('');
+        // highest game team
+        const teamMax={};
+        this.data.matches.forEach(m=>{Object.entries(m.teamTotals).forEach(([team,pts])=>{teamMax[team]=Math.max(teamMax[team]||0,pts);});});
+        const topTeamGame=Object.entries(teamMax).sort((a,b)=>b[1]-a[1]).slice(0,3);
+        teamGameBody.innerHTML=topTeamGame.map(([team,pts])=>`<tr><td>${team}</td><td>${pts}</td></tr>`).join('');
+        // highest game player
+        const playerMax={};
+        this.data.matches.forEach(m=>{m.players.forEach(p=>{playerMax[p.name]=Math.max(playerMax[p.name]||0,p.fantasyPoints);});});
+        const topPlayerGame=Object.entries(playerMax).sort((a,b)=>b[1]-a[1]).slice(0,3);
+        plGameBody.innerHTML=topPlayerGame.map(([pl,pts])=>`<tr><td>${pl}</td><td>${pts}</td></tr>`).join('');
     }
 }
 
