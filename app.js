@@ -322,6 +322,7 @@ class DashboardApp {
                             strikeRate: strikeRateCalc,
                             economy: economyCalc,
                             catches: catchesTotal,
+                            multiplier: player['C/VC'] || 1,
                             fantasyPoints: safeNumber(player.Points)
                         };
                         
