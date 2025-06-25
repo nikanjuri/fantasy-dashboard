@@ -5012,5 +5012,10 @@ select.form-control {
   }
 }
 
+/* Hide icons in player type cells (Team Composition tables) */
+.player-card .player-type .type-icon {
+  display: none !important;
+}
+
 
 
