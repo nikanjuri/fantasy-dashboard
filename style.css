@@ -1163,7 +1163,7 @@ select.form-control {
 
 /* Comparison section */
 .comparison-section {
-    margin-top: var(--space-32);
+  margin-top: var(--space-32);
 }
 
 .comparison-container {
@@ -1177,31 +1177,31 @@ select.form-control {
 }
 
 .comparison-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-16);
-    margin-bottom: var(--space-20);
-    padding: var(--space-16);
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-16);
+  margin-bottom: var(--space-20);
+  padding: var(--space-16);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .comparison-controls .form-control {
-    width: 100%;
-    max-width: 280px;
+  width: 100%;
+  max-width: 280px;
 }
 
 .comparison-controls .btn {
-    white-space: nowrap;
-    padding: var(--space-12) var(--space-24);
-    font-weight: var(--font-weight-semibold);
-    flex-shrink: 0;
+  white-space: nowrap;
+  padding: var(--space-12) var(--space-24);
+  font-weight: var(--font-weight-semibold);
+  flex-shrink: 0;
 }
 
 .comparison-results {
-    display: flex;
+  display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
@@ -1217,12 +1217,12 @@ select.form-control {
 }
 
 .comparison-table {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-card-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-    width: 100%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
     margin-bottom: var(--space-20);
 }
 

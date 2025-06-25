@@ -774,6 +774,31 @@ class DashboardApp {
 
         // Update VFM table
         this.updateVFMTable();
+
+        // Render auction charts
+        this.createPricePointsChart();
+        this.createInvestmentChart();
+
+        // Add global toggle function for VFM table
+        window.toggleVFMRows = function() {
+            const hiddenRows = document.getElementById('vfmTableBodyHidden');
+            const button = document.querySelector('.vfm-expand-btn');
+            const expandText = button.querySelector('.vfm-expand-text');
+            const collapseText = button.querySelector('.vfm-collapse-text');
+            const expandIcon = button.querySelector('.vfm-expand-icon');
+            
+            if (hiddenRows.style.display === 'none') {
+                hiddenRows.style.display = 'table-row-group';
+                expandText.style.display = 'none';
+                collapseText.style.display = 'inline';
+                expandIcon.textContent = '▲';
+            } else {
+                hiddenRows.style.display = 'none';
+                expandText.style.display = 'inline';
+                collapseText.style.display = 'none';
+                expandIcon.textContent = '▼';
+            }
+        };
     }
 
     updateVFMTable() {
@@ -1029,6 +1054,12 @@ class DashboardApp {
         this.createPositionProgressChart();
         this.createCumulativeWeekPointsChart();
         this.createPositionByMatchChart();
+        // New chart: Average points per match progression
+        this.createAvgPointsPerMatchChart();
+        // Chart: points per player per week
+        this.createPointsPerPlayerChart();
+        // Chart: players count per week
+        this.createPlayersPlayedChart();
     }
 
     getThemeColors() {
@@ -2980,6 +3011,277 @@ class DashboardApp {
 
         const themeColors=this.getThemeColors();
         this.charts.positionMatch=new Chart(ctx,{type:'line',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},interaction:{mode:'nearest',intersect:false},scales:{x:{ticks:{color:themeColors.subtleTextColor},grid:{display:false}},y:{ticks:{color:themeColors.subtleTextColor,precision:0,stepSize:1},grid:{color:themeColors.borderColor},reverse:true,min:1,max:teams.length+0.5}}}});
+    }
+
+    createAvgPointsPerMatchChart() {
+        const ctx = document.getElementById('avgPointsPerMatchChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        const matches = this.data.matches || [];
+        if (matches.length === 0) {
+            console.warn('No matches data for avg points per match-week chart');
+            return;
+        }
+
+        const teams = Object.keys(this.data.teamStandings || {});
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#f59e0b',
+            'Silly Pointers': '#3b82f6',
+            'The Kingsmen': '#10b981'
+        };
+
+        // Determine unique weeks in chronological order
+        const weekLabels = [];
+        matches.forEach(m => { if (!weekLabels.includes(m.matchWeek)) weekLabels.push(m.matchWeek); });
+
+        const shortLabels = weekLabels.map(w => {
+            const n = (w || '').match(/\d+/);
+            return n ? `MW${n[0]}` : w;
+        });
+
+        const datasets = teams.map(team => {
+            const dataPoints = weekLabels.map(week => {
+                const weekMatches = matches.filter(m => m.matchWeek === week);
+                const totalPoints = weekMatches.reduce((sum, m) => sum + (m.teamTotals[team] || 0), 0);
+                const avg = weekMatches.length ? totalPoints / weekMatches.length : 0;
+                return avg;
+            });
+            return {
+                label: team,
+                data: dataPoints,
+                borderColor: teamColors[team] || '#888',
+                backgroundColor: teamColors[team] || '#888',
+                fill: false,
+                tension: 0.25,
+                pointRadius: 3
+            };
+        });
+
+        if (this.charts.avgPointsPerMatch) this.charts.avgPointsPerMatch.destroy();
+
+        const themeColors = this.getThemeColors();
+
+        this.charts.avgPointsPerMatch = new Chart(ctx, {
+            type: 'line',
+            data: { labels: shortLabels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                interaction: { mode: 'nearest', intersect: false },
+                scales: {
+                    x: {
+                        ticks: { color: themeColors.subtleTextColor },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: { color: themeColors.subtleTextColor },
+                        grid: { color: themeColors.borderColor }
+                    }
+                }
+            }
+        });
+    }
+
+    createPricePointsChart() {
+        const ctx = document.getElementById('pricePointsChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        // Ensure data exists
+        if (!this.data.auctionData || !Array.isArray(this.data.auctionData.allPlayers) || this.data.auctionData.allPlayers.length === 0) {
+            console.warn('No auction data for price vs points chart');
+            return;
+        }
+
+        const players = this.data.auctionData.allPlayers;
+
+        const datasets = [{
+            label: 'Players',
+            data: players.map(p => ({ x: p.performance.totalPoints, y: p.Price, r: 4 })),
+            backgroundColor: players.map(p => {
+                const teamColors = {
+                    'Royal Smashers': '#ff6384',
+                    'Sher-e-Punjab': '#f59e0b',
+                    'Silly Pointers': '#3b82f6',
+                    'The Kingsmen': '#10b981'
+                };
+                return teamColors[p.fantasyTeam] || '#888';
+            })
+        }];
+
+        // Destroy existing chart
+        if (this.charts.pricePoints) this.charts.pricePoints.destroy();
+
+        const themeColors = this.getThemeColors();
+
+        this.charts.pricePoints = new Chart(ctx, {
+            type: 'scatter',
+            data: { datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const p = players[context.dataIndex];
+                                return `${p.Player}: ${p.performance.totalPoints} pts, ₹${p.Price}Cr`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Total Points', color: themeColors.textColor },
+                        ticks: { color: themeColors.subtleTextColor },
+                        grid: { color: themeColors.borderColor }
+                    },
+                    y: {
+                        title: { display: true, text: 'Price (Cr)', color: themeColors.textColor },
+                        ticks: { color: themeColors.subtleTextColor },
+                        grid: { color: themeColors.borderColor }
+                    }
+                }
+            }
+        });
+    }
+
+    createPointsPerPlayerChart() {
+        const ctx = document.getElementById('pointsPerPlayerChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        const matches = this.data.matches || [];
+        if (matches.length === 0) {
+            console.warn('No matches data for points-per-player chart');
+            return;
+        }
+
+        // Determine chronological week labels
+        const weekLabels = [];
+        matches.forEach(m => { if(!weekLabels.includes(m.matchWeek)) weekLabels.push(m.matchWeek); });
+        const shortLabels = weekLabels.map(w=>{const n=(w||'').match(/\d+/);return n?`MW${n[0]}`:w;});
+
+        const teams = Object.keys(this.data.teamStandings || {});
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#f59e0b',
+            'Silly Pointers': '#3b82f6',
+            'The Kingsmen': '#10b981'
+        };
+
+        const datasets = teams.map(team => {
+            const dataPoints = weekLabels.map(week => {
+                const weekMatches = matches.filter(m => m.matchWeek === week);
+                let totalPoints = 0;
+                let playerAppearances = 0;
+                weekMatches.forEach(match => {
+                    totalPoints += (match.teamTotals[team] || 0);
+                    match.players.forEach(pl => { if(pl.team === team) playerAppearances += 1; });
+                });
+                const value = playerAppearances ? (totalPoints / playerAppearances) : 0;
+                return value;
+            });
+            return {
+                label: team,
+                data: dataPoints,
+                borderColor: teamColors[team] || '#888',
+                backgroundColor: teamColors[team] || '#888',
+                fill: false,
+                tension: 0.25,
+                pointRadius: 3
+            };
+        });
+
+        if (this.charts.pointsPerPlayer) this.charts.pointsPerPlayer.destroy();
+
+        const themeColors = this.getThemeColors();
+
+        this.charts.pointsPerPlayer = new Chart(ctx, {
+            type: 'line',
+            data: { labels: shortLabels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                interaction: { mode: 'nearest', intersect: false },
+                scales: {
+                    x: { ticks: { color: themeColors.subtleTextColor }, grid: { display: false } },
+                    y: { ticks: { color: themeColors.subtleTextColor }, grid: { color: themeColors.borderColor } }
+                }
+            }
+        });
+    }
+
+    createPlayersPlayedChart() {
+        const ctx = document.getElementById('playersPlayedChart');
+        if (!ctx || typeof Chart === 'undefined') return;
+
+        const matches = this.data.matches || [];
+        if (matches.length === 0) {
+            console.warn('No matches data for players-played chart');
+            return;
+        }
+
+        // week labels
+        const weekLabels = [];
+        matches.forEach(m => { if (!weekLabels.includes(m.matchWeek)) weekLabels.push(m.matchWeek); });
+        const shortLabels = weekLabels.map(w => { const n=(w||'').match(/\d+/); return n?`MW${n[0]}`:w; });
+
+        const teams = Object.keys(this.data.teamStandings || {});
+        const teamColors = {
+            'Royal Smashers': '#ff6384',
+            'Sher-e-Punjab': '#f59e0b',
+            'Silly Pointers': '#3b82f6',
+            'The Kingsmen': '#10b981'
+        };
+
+        const datasets = teams.map(team => {
+            const dataPoints = weekLabels.map(week => {
+                const weekMatches = matches.filter(m => m.matchWeek === week);
+                let count = 0;
+                weekMatches.forEach(match => {
+                    const appearances = match.players.filter(pl => pl.team === team).length;
+                    count += appearances;
+                });
+                return count;
+            });
+            return {
+                label: team,
+                data: dataPoints,
+                borderColor: teamColors[team] || '#888',
+                backgroundColor: teamColors[team] || '#888',
+                fill: false,
+                tension: 0.25,
+                pointRadius: 3
+            };
+        });
+
+        if (this.charts.playersPlayed) this.charts.playersPlayed.destroy();
+
+        const themeColors = this.getThemeColors();
+
+        this.charts.playersPlayed = new Chart(ctx, {
+            type: 'line',
+            data: { labels: shortLabels, datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                interaction: { mode: 'nearest', intersect: false },
+                scales: {
+                    x: { ticks: { color: themeColors.subtleTextColor }, grid: { display: false } },
+                    y: { ticks: { color: themeColors.subtleTextColor }, grid: { color: themeColors.borderColor }, beginAtZero: true }
+                }
+            }
+        });
     }
 }
 
