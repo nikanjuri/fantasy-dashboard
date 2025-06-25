@@ -3012,10 +3012,12 @@ select.form-control {
 
   .match-team-card {
     padding: var(--space-12);
-    min-height: 60px;
+    min-height: 80px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    gap: var(--space-4);
     height: auto;
     box-shadow: var(--shadow-sm);
   }
@@ -3023,15 +3025,15 @@ select.form-control {
   .match-team-card h4 {
     font-size: var(--font-size-sm);
     margin: 0;
-    flex: 1;
-    text-align: left;
+    width: 100%;
+    text-align: center;
   }
 
   .team-match-points {
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     margin: 0;
-    text-align: right;
+    text-align: center;
   }
 }
 
@@ -4986,6 +4988,29 @@ select.form-control {
 .mini-table th,.mini-table td{padding:4px 6px;text-align:left}
 .mini-table tbody tr:nth-child(even){background:var(--color-surface-secondary)}
 [data-color-scheme="dark"] .mini-table tbody tr:nth-child(even){background:rgba(255,255,255,0.05)}
+
+@media (max-width: 768px) {
+  /* Center-align Team Composition header content */
+  .team-composition-header {
+    align-items: center !important;
+    text-align: center;
+  }
+
+  .team-stats-row {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: var(--space-6) !important;
+  }
+
+  .team-name-large {
+    margin-right: 0 !important;
+  }
+
+  .team-basic-stats,
+  .team-type-summary-inline {
+    justify-content: center !important;
+  }
+}
 
 
 

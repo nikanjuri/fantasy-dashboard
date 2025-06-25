@@ -3141,7 +3141,8 @@ class DashboardApp {
                     x: {
                         title: { display: true, text: 'Total Points', color: themeColors.textColor },
                         ticks: { color: themeColors.subtleTextColor },
-                        grid: { color: themeColors.borderColor }
+                        grid: { color: themeColors.borderColor },
+                        min: 0
                     },
                     y: {
                         title: { display: true, text: 'Price (Cr)', color: themeColors.textColor },
