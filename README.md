@@ -153,7 +153,22 @@ fantasy-dashboard/
 
 ## Version History
 
-### v3.0 (Latest)
+### v4.0 (Latest)
+Released Jul 2025 – "Everything-in" feature-complete baseline
+
+• Statistics tab expanded with six interactive charts (match-week progression, cumulative points, position progress, avg-points per match, points-per-player, players-appeared) – all theme-aware and auto-refreshing.<br/>
+• Four live leaderboards (Top Avg Points – Players/Teams, Highest Single-Game – Teams/Players) with alternating-row mini-tables and coloured accent borders.<br/>
+• Auction analysis finalised – scatter plot "Price vs Total Points" starts at 0 on X-axis; purchase-price distribution chart restored.<br/>
+• Team Composition polished for mobile – header, stats and role-icon rows fully centre-aligned; player cards stacked & centred; type icons hidden inside rows while summary icons remain.<br/>
+• Players tab now filters by real IPL franchises; added dedicated IPL Team dropdown; internal map built from Player_List_By_Team.json; case-insensitive matching eliminating zero-result bugs.<br/>
+• Player comparison dropdowns simplified (names only) and auto-width; new IPL-team row shown; symmetrical green/red highlighting on both columns for every numeric metric.
+• Match-analysis tables enriched with Captain/Vice-Captain multipliers sourced from Fantasy_Points_2025.json (accurate 2×/1.5× display) and centred team-total header rows.
+• Global mobile tweaks: centred match-team cards, tightened dropdown widths, unified button widths.
+• Codebase clean-up – removed diff artifacts, consolidated mobile media queries, added helper utilities.
+
+Tagged in Git as `v4.0`.
+
+### v3.0 (June 2025)
 Released Jun 2025 – UI polish & data-accuracy release
 
 • Unified performer tables with consistent font, spacing, and right-aligned numeric columns  
